@@ -135,9 +135,9 @@ class BridgeTests(unittest.TestCase):
     def test_preview_uses_generated_session_fixed_argv_and_is_stopped(self):
         process = Mock(pid=123)
         process.poll.return_value = None
+        self.assertEqual(self.command({"command": "preview-scene"})[0], 409)
         with patch.object(server_module.subprocess, "Popen", return_value=process) as popen:
-            status, value, _ = self.command({"command": "preview-scene"})
-        self.assertEqual(status, 200)
+            value = self.bridge.launch_preview(self.bridge.binary("the-last-stop-dev"))
         self.assertRegex(value["session"], r"^editor_[a-f0-9]{24}$")
         argv = popen.call_args.args[0]
         self.assertEqual(argv, [str(self.root / "build/the-last-stop-dev"), "--project-root", str(self.root),
@@ -190,7 +190,7 @@ class JavaScriptLogicTests(unittest.TestCase):
             finally:
                 library.JSStringRelease(string)
             self.assertFalse(exception.value, text)
-            self.assertEqual(text, "logic: 22 assertions passed")
+            self.assertEqual(text, "logic: 37 assertions passed")
         finally:
             library.JSStringRelease(script)
             library.JSGlobalContextRelease(context)

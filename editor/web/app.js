@@ -30,6 +30,7 @@
     return value;
   }
   const command = (name, extra = {}) => api('/api/command', {command: name, ...extra});
+  window.TLSStudio = {command, token, sceneDirty: () => !!model && model.dirty};
   function persist() {
     if (!storageKey || !model) return;
     try { localStorage.setItem(storageKey, JSON.stringify(model.serialize())); }

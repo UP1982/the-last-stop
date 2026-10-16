@@ -72,11 +72,12 @@ Hazel/waterwheel; Felix/mirror signal; Bea/sleepy bear; Lumi/turntable; cozy und
 **Gate:** Applied changes reopen correctly in the visual editor; ordinary play never alters authored defaults or real player saves.
 
 ## E3: Dialogue, assets and coding/agent workspace — after E1, with M3/M4
-- [ ] Structured dialogue/beat editing and asset/provenance browser.
-- [ ] Project tree, source editor, search, diff, dirty-buffer handling and diagnostics.
-- [ ] Actual check/build/run actions, logs, and truthful task/file-ownership status.
-- [ ] Structured agent edits visible in the workspace; T3 remains the delegation provider.
+- [x] Structured dialogue/beat editing and asset/provenance browser.
+- [x] Project tree, source editor, search, diff, dirty-buffer handling and diagnostics.
+- [x] Actual check/build/run actions, logs, and truthful task/file-ownership status.
+- [x] Structured agent edits visible in the workspace; T3 remains the delegation provider.
 **Gate:** Edit dialogue and source, validate/build, and observe the change in the actual game; logs reflect real commands and task status reflects real orchestration.
+**Status:** web phase implemented (T-E3-1): 20 workspace + 12 editor UI + 8 edited-story tests, 37 JS assertions; native edited-dialogue run in disposable project. run-journey awaits E2's --preview-entry. Human usability (E4) pending.
 
 ## E4: Editor reliability — before final M5 acceptance
 - [ ] Run editor acceptance demonstration in EDITOR_SPEC.md.

@@ -40,5 +40,33 @@
   const before = h.serialize();
   // The UI never calls saved() for stale/validation responses: drafts/history remain intact.
   check(TLS.canonical(before) === TLS.canonical(h.serialize()) && h.dirty, 'rejection preserves draft');
+  const doc = {kind: 'dialogue', schema_version: 2, id: 'intro', completion: {action: 'board_oliver', destination: 'train_travel'},
+    lines: {a: {speaker: 'oliver', text: 'Hello', delivery: 'onscreen'}, b: {speaker: 'rin', text: 'Hi'}}, order: ['a', 'b'],
+    beats: {first: {kind: 'line', line: 'a', stage: {actors: {}, props: {}, set: 'carriage', shot: 'wide', cue: 'none'}},
+      silent: {kind: 'stage', duration_ms: 100, stage: {actors: {}, props: {}, set: 'carriage', shot: 'wide', cue: 'none'}},
+      last: {kind: 'line', line: 'b', stage: {actors: {}, props: {}, set: 'carriage', shot: 'wide', cue: 'none'}}}, beat_order: ['first', 'silent', 'last']};
+  const dialogue = new TLS.History(doc, 'sha256:dialogue');
+  dialogue.edit(d => TLS.beatEdit(d, 'down', 'first'));
+  check(dialogue.draft.beat_order[0] === 'silent' && dialogue.draft.order.join() === 'a,b', 'only selected beat moves');
+  dialogue.edit(d => TLS.beatEdit(d, 'down', 'first'));
+  check(dialogue.draft.order.join() === 'b,a', 'line projection follows beats');
+  dialogue.undo(); check(dialogue.draft.order.join() === 'a,b', 'dialogue undo coherent');
+  dialogue.redo(); check(dialogue.draft.order.join() === 'b,a', 'dialogue redo coherent');
+  dialogue.edit(d => TLS.beatEdit(d, 'duplicate', 'first', 'copy_beat', 'copy_line'));
+  check(dialogue.draft.lines.copy_line.text === 'Hello' && dialogue.draft.beats.copy_beat.line === 'copy_line', 'duplicate has fresh line identity');
+  rejects(() => TLS.beatEdit(dialogue.draft, 'create', 'first', 'first', 'z', 'stage'), 'duplicate beat rejected');
+  rejects(() => TLS.beatEdit(dialogue.draft, 'duplicate', 'first', 'unique', 'a'), 'duplicate line rejected');
+  dialogue.edit(d => TLS.beatEdit(d, 'delete', 'copy_beat'));
+  check(!dialogue.draft.lines.copy_line && !dialogue.draft.order.includes('copy_line'), 'delete removes coherent line');
+  check(dialogue.request().document === 'intro', 'dialogue request targets its identity');
+  const preserved = TLS.History.recover(dialogue.serialize());
+  check(preserved.dirty && preserved.revision === 'sha256:dialogue', 'recovered dialogue retains stale baseline');
+  check(TLS.utf8Bytes('é😀') === 6 && TLS.codepoints('é😀') === 2, 'UTF8 bytes differ from codepoints');
+  const source = new TLS.SourceBuffer({path: 'src/main.odin', text: 'saved', sha256: 'old', writable: true});
+  source.text = 'draft'; source.observe({text: 'agent', sha256: 'agent'});
+  check(source.dirty && source.conflict && source.hash === 'old' && source.text === 'draft', 'agent update keeps dirty source and hash');
+  source.missing = true; check(source.conflict && source.text === 'draft', 'deleted source retains buffer');
+  source.observe({sha256: 'old'}); check(!source.missing && !source.conflict && source.dirty, 'returned original bytes observed without rebase');
+  check(dialogue.base.completion.action === dialogue.draft.completion.action, 'completion preserved');
   return `logic: ${count} assertions passed`;
 })();

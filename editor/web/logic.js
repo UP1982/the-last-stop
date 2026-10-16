@@ -53,7 +53,7 @@
     }
     request() {
       return {protocol_version: 1, request_id: 'editor_' + Date.now().toString(36),
-        chapter: 'oliver_flower_market', document: 'oliver_obstacle', expected_revision: this.revision,
+        chapter: 'oliver_flower_market', document: this.draft.id, expected_revision: this.revision,
         operations: [{op: 'restore_document', value: clone(this.draft)}]};
     }
     serialize() { return {base: this.base, draft: this.draft, revision: this.revision, past: this.past, future: this.future}; }
@@ -64,5 +64,40 @@
       return history;
     }
   }
-  root.TLS = {clone, canonical, snap, freshId, History};
+  const utf8Bytes = text => unescape(encodeURIComponent(text)).length;
+  const codepoints = text => Array.from(text).length;
+  function projectOrder(doc) {
+    doc.order = doc.beat_order.filter(id => doc.beats[id].kind === 'line').map(id => doc.beats[id].line);
+  }
+  function beatEdit(doc, action, id, newId, lineId, kind) {
+    if (action === 'up' || action === 'down') {
+      const at = doc.beat_order.indexOf(id), to = at + (action === 'up' ? -1 : 1);
+      if (at >= 0 && to >= 0 && to < doc.beat_order.length) [doc.beat_order[at], doc.beat_order[to]] = [doc.beat_order[to], doc.beat_order[at]];
+    } else if (action === 'delete') {
+      const beat = doc.beats[id];
+      delete doc.beats[id]; doc.beat_order = doc.beat_order.filter(value => value !== id);
+      if (beat.kind === 'line') delete doc.lines[beat.line];
+    } else {
+      if (!/^[a-z][a-z0-9_]{0,63}$/.test(newId) || doc.beats[newId]) throw Error('Enter a fresh stable beat ID.');
+      const source = doc.beats[id] || doc.beats[doc.beat_order[0]];
+      const beat = action === 'duplicate' ? clone(source) : {kind, stage: clone(source.stage)};
+      if (beat.kind === 'line') {
+        if (!/^[a-z][a-z0-9_]{0,63}$/.test(lineId) || doc.lines[lineId]) throw Error('Enter a fresh line ID.');
+        doc.lines[lineId] = action === 'duplicate' ? clone(doc.lines[source.line]) : {speaker: Object.keys(source.stage.actors)[0] || 'oliver', text: 'New line', delivery: 'onscreen'};
+        beat.line = lineId;
+      }
+      if (action !== 'duplicate' && kind === 'stage') beat.duration_ms = 0;
+      if (action !== 'duplicate' && kind === 'card') beat.string = 'supper_card';
+      doc.beats[newId] = beat; doc.beat_order.splice(doc.beat_order.indexOf(id) + 1, 0, newId);
+    }
+    projectOrder(doc);
+  }
+  class SourceBuffer {
+    constructor(file) { this.path = file.path; this.base = file.text; this.text = file.text; this.hash = file.sha256; this.observed = file.sha256; this.writable = file.writable; this.missing = false; }
+    get dirty() { return this.text !== this.base; }
+    observe(file) { this.observed = file.sha256; this.missing = false; }
+    get conflict() { return this.missing || this.observed !== this.hash; }
+    saved(result) { this.base = this.text; this.hash = result.sha256; this.observed = result.sha256; }
+  }
+  root.TLS = {clone, canonical, snap, freshId, History, utf8Bytes, codepoints, projectOrder, beatEdit, SourceBuffer};
 })(globalThis);

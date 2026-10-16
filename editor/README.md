@@ -66,3 +66,111 @@ object defaults. The backing canvas is 640x360, displayed at 2× by default; cam
 and pointer conversion use these same units. Old schema-v1 browser drafts and
 undo histories are rejected and use a separate storage namespace. Save/Undo
 preserves the loaded kind, ID and schema version; it cannot migrate a document.
+
+## E3 dialogue, assets and workspace
+
+Open the Dialogue, Assets & provenance, Coding workspace, or Tasks & ownership
+panel from Studio's navigation. The bridge remains Python 3.9 standard library;
+JavaScriptCore tests need no Node/npm. Dialogue v2 edits use one guarded
+`restore_document` transaction; the ordered beat list derives line order.
+Completion routing is read-only. Chapter speaker names and strings have separate
+forms with UTF-8 byte and Unicode codepoint counters. Save runs authoritative
+validation; “Validate saved content” excludes drafts. Each document has its own
+undo/redo, browser recovery, download and explicit reload.
+
+Source buffers use exact-byte hashes. External changes never replace drafts or
+advance their preconditions automatically. Check/build/run use saved bytes, with
+an explicit choice when drafts exist. Open-file polling reports managed agent
+writes and unmanaged external changes without attributing an unauthenticated
+writer to a model. Reload offers keep/download/discard for dirty buffers.
+
+Commands are strict JSON objects on the existing authenticated
+`POST /api/command` surface. Examples (send `X-Editor-Token`, exact loopback Host
+and same-origin Origin):
+
+```json
+{"command":"inspect-document","document":"intro"}
+{"command":"read-asset","asset_id":"milo_idle_r"}
+{"command":"read-file","path":"src/main.odin"}
+{"command":"write-source","path":"src/main.odin","expected_sha256":"<64 hex digits from read-file>","text":"<complete UTF-8 text>","request_id":"agent_change_1"}
+{"command":"build-dev"}
+{"command":"job-status","job_id":"<returned job ID>","cursor":0}
+{"command":"run-scene"}
+```
+
+Additional fixed commands: `validate-content`, `list-project`, `search-project`
+(`text`, `limit`), `diff-head` (`path`), `check-game`, `check-dev`, `build-content`,
+`build-release`, `stop-job` (`job_id`), and `task-status`. Unknown/additional
+arguments are rejected. `run-journey` is explicitly unavailable until E2 adds
+`--preview-entry chapter`. E1's `preview-scene` name now uses the same verified
+build guard as `run-scene`; build the development game in the workspace first.
+
+The startup PATH resolves Odin/Git to pinned executable paths. Compiler jobs have
+fixed argument arrays, owned output locations, PID/time/version/hash metadata,
+raw logs and actual parsed diagnostics. Successful artifacts are usable only
+when their bytes and relevant saved-source fingerprint still match. Starting a
+new build invalidates the previous artifact of that type; failed/stale/stopped
+builds cannot fall back to it. `build-content` publishes its verified private CLI
+for this bridge session. Restarting Studio requires a new development build.
+No API accepts arbitrary shell commands, flags, executables or working directories.
+
+The source boundary supports existing UTF-8 regular files up to 200,000 bytes on
+save (1 MiB on read), in `src/*.odin`, `shared/*.odin`, `tools/*.{odin,py}`,
+`editor/*.{py,js,css,html}`, and `tests/*.{odin,py,js,json,swift}` recursively.
+Data always goes through the content CLI. Documentation/assets/build/private
+files are not writable. Traversal, hidden paths, symlink components, nonregular
+files, and hardlinked write targets are rejected. Descriptor-relative no-follow
+access, parent/root identity checks, exact-byte preconditions, a permanent
+cross-process source lock, a durable before-image and atomic same-directory
+replacement protect managed saves. Source history is `.studio/source-history/`;
+prepared records retain the old bytes and candidate hash. A prepared record alone
+does not prove whether replacement occurred. Inspect disk hashes before retrying
+an unknown outcome. Post-rename failures report `committed_durability_uncertain`.
+Unmanaged writers can race the final recheck/rename; POSIX has no file compare-and-swap.
+
+Configure ownership reservations at bridge startup; clients cannot override them:
+
+```sh
+python3 -B editor/server.py --project-root "$PWD" --read-only src --read-only shared --read-only tools --read-only tests/runtime
+```
+
+Reservations block writes, not reads/checks. They are not inferred from badges or
+Git modifications. Other read-only roots are `data`, `docs`, `prompts`, `scripts`,
+`assets`; only allowlisted text extensions and root README/AGENTS are readable.
+The asset command resolves a registered ID, bounds/confines the PNG read, verifies
+its manifest hash/chunks and returns an explicit MIME/base64 envelope. The browser
+uses a blob URL and native image decoder; CSP adds only `img-src blob:`. Metadata
+and the license register are rendered as text; remote URLs are never fetched.
+
+Task evidence comes from actual local log bytes/hash and Git status/log. Recorded
+reported/reviewed/accepted claims remain distinct; contradictory ownership is
+unresolved. Optional **Opus-exported** T3 observations are read only from
+`build/studio/orchestration.json`:
+
+```json
+{"observations":[{"task_id":"<real task ID>","raw_state":"<provider-returned state>","observed_at":"<UTC ISO time>","evidence_reference":"<real tool result reference>"}]}
+```
+
+The bridge does not query providers or authenticate snapshot authors. It labels
+exports “last observed,” preserves their timestamps/raw state/evidence references,
+and displays unavailable when absent/malformed. It never derives running or
+accepted state from Git changes. A fabricated fixture is not provider evidence.
+
+Verification:
+
+```sh
+python3 -B -m unittest discover -s tests/editor_ui -v
+python3 -B -m unittest discover -s tests/editor_workspace -v
+python3 -B tests/editor_workspace/native_demo.py --journeys
+```
+
+The workspace suite uses disposable projects from committed `21d6be9` and real
+Odin/CLI processes; filesystem fault injection tests actual failed syscalls and
+SIGKILL on both sides of rename. The native demo changes only its temporary copy,
+builds/runs through HTTP workspace commands, validates the owned game window ID
+and captures only that window. `--journeys` additionally exercises edited
+advance/skip/restart routes through the existing **synthetic** input harness.
+`--serve` retains the disposable bridge for browser testing until SIGTERM.
+Evidence lives in `build/evidence/e3/`. Native inspector/E2, physical input,
+minimum-window usability, cross-launch recovery and fresh-user/E4 acceptance are
+separate gates.

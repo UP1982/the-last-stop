@@ -72,7 +72,7 @@
 | T-M4-A | gpt-6-astra (high) | M4 resilience audit vs TEST_PLAN (read-only) | worktree @ 17fe2a2 | NOT MET: 1 P1 + 4 P2; evidence copied to build/evidence/m4-audit/; editor TEST_PLAN cases re-scoped to E2–E4 by Opus |
 | T-M4-1 | gpt-6.1-sol (high) | M4 fixes + harness (audit tasks 1–6, 8) | Game @ cd44403 | delivered; Opus re-ran check.sh (0); committed; Astra R2 next |
 | T-E23-A | gpt-6-astra (high) | E2+E3 contract consult (read-only) | cd44403 | done; accepted w/ X1–X3 → docs/EDITOR_E23_CONTRACT.md |
-| T-E3-1 | gpt-6.1-sol (high) | E3 web/bridge phase (editor/, tests/editor_ui, tests/editor_workspace) | Game @ 21d6be9 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-E3-1-sol-r1 |
+| T-E3-1 | gpt-6.1-sol (high) | E3 web/bridge phase (editor/, tests/editor_ui, tests/editor_workspace) | Game @ 21d6be9 | delivered; Opus re-ran editor_ui + workspace suites, reviewed write allowlist (no data/ writes, no shell); committed |
 | T-POL-1 | gpt-6.1-sol (medium) | story staging/label polish | Game @ 17fe2a2 | delivered; Opus verified only stage numbers changed, check.sh 0, screenshots; committed |
 
 | T-M4-R2 | gpt-6-astra (high) | M4 review r2 (worktree @ c8fd7de) | /tmp | **M4 automated scope MET**; P3 ENOLCK message queued; evidence build/evidence/m4-r2/ |
