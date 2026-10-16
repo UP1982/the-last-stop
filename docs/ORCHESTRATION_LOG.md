@@ -10,11 +10,16 @@
 - Shared checkout for M0 (single implementer, one source file). Worktrees after M0 for parallel streams.
 - Dialogue canon = CHAPTER_01 exact lines; crank = press once to start; persistence planned with M2, M4 is the full gate.
 
+- 2026-10-16 user: prefer GPT models (more quota). Haiku support tasks → gpt-6-luna / gpt-5.6-luna; Opus reviews → Astra where suitable; Opus keeps integration/acceptance only.
+
 ## Tasks
 | ID | Model | Task | Checkout/base | Status |
 |---|---|---|---|---|
 | T-M0-1 | gpt-6.1-sol (medium) | M0 foundation | shared @ 4ea0e53 | delivered, reviewed, committed; keyboard check pending — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M0-1-sol-r1 |
 
+| T-E0-A | gpt-6-astra (high) | E0 contract consult (read-only) | shared @ eb04e66 | done; accepted w/ amendments → docs/E0_CONTRACT.md |
+| T-E0a-1 | gpt-6.1-sol (high) | E0a content core (no src/) | shared @ HEAD | delegating |
+
 ## Next
 - M0: human keyboard/fullscreen check (synthetic keys can't reach window).
-- T-E0-A: Astra read-only E0 schema/host consultation (started in parallel, read-only).
+- E0b after M0 acceptance. Astra reviews E0a when delivered.

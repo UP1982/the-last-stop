@@ -46,7 +46,7 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 Hazel/waterwheel; Felix/mirror signal; Bea/sleepy bear; Lumi/turntable; cozy understated finale. Author additional chapters once shared systems prove valuable.
 
 ## E0: Editor content contract — after M0, before editor-dependent M2 work
-- [ ] Record accepted host, schema, shared-loader and operation-interface decisions.
+- [x] Record accepted host, schema, shared-loader and operation-interface decisions. (docs/E0_CONTRACT.md)
 - [ ] Implement versioned scene/chapter/dialogue validation and runtime loading.
 - [ ] Provide agent-readable inspection and transactional edits with stale-write rejection.
 - [ ] Explicitly migrate the reference manifest and isolate authored content from saves.
