@@ -10,6 +10,7 @@ Game_State :: struct {
     mode: GameMode,
     pause_return_mode: GameMode,
     story: Story_Player,
+    art: Art_Playback,
     story_cues: int,
     action_latched: Action_Keys,
     puzzle: Puzzle_State,
@@ -54,6 +55,7 @@ enter_mode :: proc(game: ^Game_State, mode: GameMode) {
 
 start_scene :: proc(game: ^Game_State) {
     game.player = {position = game.scene.spawn, grounded = true, facing = 1}
+    game.art.asset=""; game.art.elapsed=0
     game.camera = {}
     follow_camera(&game.camera, game.player.position.x, game.scene.camera_bounds, game.player.position.y)
     game.focus = focus_puzzle(game.player, game.scene, game.puzzle)
@@ -85,6 +87,7 @@ update_playing :: proc(game: ^Game_State, frame_input: Input, dt: f32) {
         tick_input := input
         tick_input.jump_pressed = game.pending_jump
         step_player(&game.player, tick_input, game.scene.solids[:], game.scene.world)
+        art_step_player(game,FIXED_DT)
         refresh_puzzle_objects(game)
         if game.scene.definition==nil { game.focus = focus_nearest(game.player, game.scene.objects[:]) }
         game.response_seconds = max(0, game.response_seconds - FIXED_DT)

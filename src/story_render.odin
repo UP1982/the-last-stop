@@ -3,9 +3,10 @@ package main
 import c "../shared/content"
 import rl "vendor:raylib"
 import "core:fmt"
+import "core:slice"
 
 story_camera :: proc(g: Game_State, stage: c.Story_Stage_Def) -> Camera {
-    camera:=Camera{}
+    camera:=Camera{y=64}
     if stage.set!=.Forest_Obstacle { return camera }
     if stage.shot==.Winch_Branch {
         d:=g.scene.definition
@@ -56,7 +57,15 @@ story_prop_bounds :: proc(prop:c.Prop_Def,camera:Camera) -> rl.Rectangle {
     }
     return {f32(prop.position[0]-pixel(camera.x)),f32(prop.position[1]-pixel(camera.y)),f32(w),f32(h)}
 }
-story_draw_prop :: proc(prop: c.Prop_Def, camera: Camera) {
+story_draw_prop :: proc(g:Game_State,prop: c.Prop_Def, camera: Camera) {
+    if prop.asset!="" {
+        drawn:=false
+        if prop.kind==.Train {
+            r:=story_prop_bounds(prop,{})
+            drawn=art_train(g.content,prop.asset,{r.x+r.width/2,min(r.y+r.height,284)},camera)
+        } else { drawn=art_draw(g.content,prop.asset,{f32(prop.position[0]),f32(prop.position[1])},camera,g.story.elapsed) }
+        if drawn { return }
+    }
     rect:=story_prop_bounds(prop,camera)
     x,y,w,h:=pixel(rect.x),pixel(rect.y),pixel(rect.width),pixel(rect.height)
     color:=MINT
@@ -95,6 +104,10 @@ story_draw_prop :: proc(prop: c.Prop_Def, camera: Camera) {
     }
 }
 story_draw_actor :: proc(g: Game_State,id:c.ID,a:c.Actor_Def,camera:Camera) {
+    if art_draw(g.content,art_actor_asset(a.asset,a.pose),{f32(a.feet[0]),f32(a.feet[1])},camera,g.story.elapsed,a.facing=="left") {
+        when DEV_TOOLS { if g.art.debug_boxes { art_outline(story_actor_bounds(a,{}),camera,MINT) } }
+        return
+    }
     x,y:=a.feet[0]-pixel(camera.x),a.feet[1]-pixel(camera.y)
     color:=CREAM
     if id=="milo" { color={221,157,100,255} }
@@ -113,11 +126,11 @@ story_draw_actor :: proc(g: Game_State,id:c.ID,a:c.Actor_Def,camera:Camera) {
         rl.DrawLineEx({f32(x),f32(y-19)},{f32(end),f32(y-25)},4,color)
     }
 }
-// Labels are UI pixels, outside the scene's 0.7x camera transform. Reserve
+// Story art uses integer camera translation, no fractional scale. Reserve
 // silhouettes first, then names before prop captions. A crowded caption may
 // be omitted rather than cover an actor, another caption, or the dialogue UI.
 story_label_screen_rect :: proc(r:rl.Rectangle) -> rl.Rectangle {
-    return {f32(pixel(96+r.x*0.7)),f32(pixel(4+r.y*0.7)),f32(pixel(r.width*0.7)),f32(pixel(r.height*0.7))}
+    return r
 }
 story_actor_bounds :: proc(a:c.Actor_Def,camera:Camera) -> rl.Rectangle {
     return {f32(a.feet[0]-pixel(camera.x)-20),f32(a.feet[1]-pixel(camera.y)-54),48,54}
@@ -167,9 +180,17 @@ story_draw :: proc(game: Game_State) {
     camera:=story_camera(game,stage)
     rl.BeginScissorMode(0,46,640,184)
     rl.DrawRectangle(0,46,640,184,rl.Color{63,79,85,255})
-    rl.BeginMode2D({offset={96,4},target={},rotation=0,zoom=0.7})
+    // Native 1:1 pixels. Crop the 640x360 set above the dialogue panel rather
+    // than resampling every sprite to 0.7x. Camera y64 puts authored feet in view.
+    rl.BeginMode2D({offset={},target={},rotation=0,zoom=1})
+    backdrop_drawn:=false
+    switch stage.set {
+    case .Willow_Platform: backdrop_drawn=art_backdrop(game.content,"bg_willow_creek_station",-camera.y)
+    case .Forest_Travel,.Carriage: backdrop_drawn=art_backdrop(game.content,"bg_forest_track",FOREST_RAIL_OFFSET-camera.y)
+    case .Forest_Obstacle,.Market_Platform,.Flower_Window: {} // Missing art retains staging.
+    }
     moving:=stage.set==.Forest_Travel || stage.set==.Carriage
-    if moving {
+    if moving && !backdrop_drawn {
         offset:=i32(game.story.travel_elapsed*28)%120
         for i in 0..<8 {
             x:=i32(i)*120-offset-80
@@ -187,14 +208,20 @@ story_draw :: proc(game: Game_State) {
         sx,sy:=winch.position[0]+socket[0]-pixel(camera.x),winch.position[1]+socket[1]-pixel(camera.y)
         rl.DrawCircleLines(sx,sy,6,CREAM)
     } else {
-        rl.DrawRectangle(0,284,640,10,CREAM)
-        if stage.set==.Forest_Travel || stage.set==.Flower_Window || stage.set==.Carriage {
-            rl.DrawRectangle(72,100,480,150,rl.Color{94,109,117,255})
-            rl.DrawRectangle(92,116,440,100,NIGHT)
+        rl.DrawRectangle(0,284-pixel(camera.y),640,10,CREAM)
+        if stage.set==.Flower_Window || stage.set==.Carriage {
+            rl.DrawRectangle(72,100-pixel(camera.y),480,150,rl.Color{94,109,117,255})
+            rl.DrawRectangle(92,116-pixel(camera.y),440,100,NIGHT)
         }
     }
-    for _,prop in stage.props { story_draw_prop(prop,camera) }
-    for id,actor in stage.actors { story_draw_actor(game,id,actor,camera) }
+    // Stable IDs make overlapping transparent props/actors deterministic.
+    prop_ids:=make([dynamic]c.ID,context.temp_allocator)
+    actor_ids:=make([dynamic]c.ID,context.temp_allocator)
+    for id in stage.props { append(&prop_ids,id) }
+    for id in stage.actors { append(&actor_ids,id) }
+    slice.sort(prop_ids[:]); slice.sort(actor_ids[:])
+    for id in prop_ids { story_draw_prop(game,stage.props[id],camera) }
+    for id in actor_ids { story_draw_actor(game,id,stage.actors[id],camera) }
     rl.EndMode2D()
     story_draw_labels(game,stage,camera)
     rl.EndScissorMode()

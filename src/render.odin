@@ -55,64 +55,52 @@ draw_world_rect :: proc(rect: rl.Rectangle, camera: Camera, color: rl.Color) {
 
 draw_scene :: proc(game: Game_State, interface:=true, draw_player:=true) {
     scene, camera := game.scene, game.camera
-    draw_world_rect(scene.solids[0], camera, rl.Color{99, 108, 116, 255})
-    for authored in scene.visuals {
-        object:=authored
-        if scene.definition!=nil {
-            if object.kind==.Handle { continue }
-            if object.kind==.Branch { object.rect=branch_rect(scene,game.puzzle) }
-        }
-        color := rl.Color{118, 131, 140, 255}
-        if object.kind == .Shed { color = {68, 77, 89, 255} }
-        if object.kind == .Branch { color = {118, 103, 147, 255} }
-        draw_world_rect(object.rect, camera, color)
-        if game.content != nil && object.asset != "" {
-            if texture, ok := game.content.textures[object.asset]; ok {
-                asset := game.content.snapshot.assets[object.asset]
-                dest := object.rect; dest.x -= camera.x; dest.y -= camera.y
-                dest.x = f32(pixel(dest.x)); dest.y = f32(pixel(dest.y))
-                rl.DrawTexturePro(texture, {0, 0, f32(asset.frame_size[0]), f32(asset.frame_size[1])}, dest, {}, 0, rl.WHITE)
-              }
-        }
+    _=art_backdrop(game.content,"bg_forest_track",FOREST_RAIL_OFFSET-camera.y)
+    // Background/world are already sorted by layer then stable ID by adapter.
+    for object in scene.visuals {
+        if object.layer==.Background { draw_scene_visual(game,object) }
+    }
+    draw_world_rect(scene.solids[0],camera,rl.Color{63,79,70,255})
+    for object in scene.visuals {
+        if object.layer==.World { draw_scene_visual(game,object) }
     }
     if scene.definition!=nil {
         d:=scene.definition
         b:=branch_rect(scene,game.puzzle)
         winch:=d.objects[d.puzzle.winch]
         a:=d.puzzle.winch_rope_anchor; z:=d.puzzle.branch_rope_anchor
-        rl.DrawLineEx({f32(pixel(f32(winch.position[0]+a[0])-camera.x)),f32(pixel(f32(winch.position[1]+a[1])-camera.y))},{f32(pixel(b.x+f32(z[0])-camera.x)),f32(pixel(b.y+f32(z[1])-camera.y))},2,CREAM)
-        draw_world_rect(handle_rect(scene,game.puzzle,game.player),camera,MINT)
+        rl.DrawLineEx({f32(pixel(f32(winch.position[0]+a[0]))-pixel(camera.x)),f32(pixel(f32(winch.position[1]+a[1]))-pixel(camera.y))},{f32(pixel(b.x+f32(z[0]))-pixel(camera.x)),f32(pixel(b.y+f32(z[1]))-pixel(camera.y))},2,CREAM)
+        if game.puzzle.handle!=.Held { draw_world_rect(handle_rect(scene,game.puzzle,game.player),camera,MINT) }
         if game.puzzle.handle==.Shelf {
             h:=handle_rect(scene,game.puzzle,game.player)
             draw_world_rect({h.x-12,h.y+h.height,40,4},camera,CREAM)
         }
     }
+    if draw_player {
+        id:=art_player_asset(PUZZLE_PLAYER_ASSET,game.player)
+        if !art_draw(game.content,id,game.player.position,camera,game.art.elapsed,game.player.facing<0) {
+            draw_world_rect(player_rect(game.player),camera,CREAM)
+        }
+        // Held prop is a separate placeholder, in front of Milo, exactly once.
+        if scene.definition!=nil && game.puzzle.handle==.Held {
+            draw_world_rect(handle_rect(scene,game.puzzle,game.player),camera,MINT)
+        }
+    }
+    for object in scene.visuals {
+        if object.layer==.Foreground { draw_scene_visual(game,object) }
+    }
+    // Focus affordance/UI are drawn after foreground, never hidden by sprites.
     for object, i in scene.objects {
         if !object.enabled { continue }
-        r := object.visual
-        x, y := pixel(r.x) - pixel(camera.x), pixel(r.y) - pixel(camera.y)
-        if x >= VIRTUAL_WIDTH || x+pixel(r.width) <= 0 || y >= VIRTUAL_HEIGHT || y+pixel(r.height) <= 0 { continue }
-        if i == game.focus {
-            rl.DrawRectangleLinesEx({f32(x - 4), f32(y - 4), f32(pixel(r.width) + 8), f32(pixel(r.height) + 8)}, 2, CREAM)
-        }
-        when DEV_TOOLS {
-            if interface {
-                zone := object.bounds
-                rl.DrawRectangleLinesEx({f32(pixel(zone.x)-pixel(camera.x)), f32(pixel(zone.y)-pixel(camera.y)), f32(pixel(zone.width)), f32(pixel(zone.height))}, 2, MINT)
-            }
-        }
-
+        if i==game.focus { r:=object.visual; r.x-=4; r.y-=4; r.width+=8; r.height+=8; art_outline(r,camera,CREAM) }
     }
-    if draw_player {
-        // Placeholder cat: body stays exactly inside the agreed collision footprint.
-        x, y := pixel(game.player.position.x) - pixel(camera.x), pixel(game.player.position.y) - pixel(camera.y)
-        rl.DrawRectangle(x - 12, y - 32, 24, 32, CREAM)
-        rl.DrawRectangle(x - 12, y - 32, 6, 6, MINT)
-        rl.DrawRectangle(x + 6, y - 32, 6, 6, MINT)
-        eye_x := x + 4
-        if game.player.facing < 0 { eye_x = x - 8 }
-        rl.DrawRectangle(eye_x, y - 20, 4, 4, NIGHT)
-        rl.DrawText("Milo", x - 18, y - 58, 20, CREAM)
+    when DEV_TOOLS {
+        if game.art.debug_boxes {
+            for solid in scene.solids { art_outline(solid,camera,CREAM) }
+            for object in scene.visuals { art_outline(object.rect,camera,rl.Color{232,185,110,255}) }
+            for object in scene.objects { if object.enabled { art_outline(object.bounds,camera,MINT) } }
+            if draw_player { art_outline(player_rect(game.player),camera,MINT) }
+        }
     }
     if !interface { return }
     rl.DrawRectangle(0, 0, 640, 88, NIGHT)
@@ -136,6 +124,27 @@ draw_scene :: proc(game: Game_State, interface:=true, draw_player:=true) {
         rl.DrawRectangle(4, 92, 632, 66, NIGHT)
         draw_content_text(game.response, 96, 16, CREAM,game.text_page)
     }
+}
+
+draw_scene_visual :: proc(game:Game_State,authored:Scene_Visual) {
+    object:=authored
+    if game.scene.definition!=nil {
+        if object.kind==.Handle { return }
+        if object.kind==.Branch { object.rect=branch_rect(game.scene,game.puzzle) }
+    }
+    if object.asset!="" {
+        anchor:=rl.Vector2{object.rect.x,object.rect.y}
+        drawn:=false
+        if object.kind==.Train {
+            anchor={object.rect.x+object.rect.width/2,object.rect.y+object.rect.height}
+            drawn=art_train(game.content,object.asset,anchor,game.camera)
+        } else { drawn=art_draw(game.content,object.asset,anchor,game.camera) }
+        if drawn { return }
+    }
+    color:=rl.Color{118,131,140,255}
+    if object.kind==.Shed { color={68,77,89,255} }
+    if object.kind==.Branch { color={118,103,147,255} }
+    draw_world_rect(object.rect,game.camera,color)
 }
 
 draw_controls :: proc() {

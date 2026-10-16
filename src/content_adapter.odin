@@ -215,7 +215,16 @@ load_runtime_content :: proc(args: []string, allocator: mem.Allocator) -> Runtim
 stage_content_resources :: proc(r: ^Runtime_Content) -> bool {
     if r.snapshot == nil { return false }
     context.allocator = c.owner_allocator(r.owner)
-    r.textures = make(map[c.ID]rl.Texture2D)
+    // Stage in a separate map. Failure releases every uploaded candidate and
+    // leaves the active texture map untouched (including explicit reloads).
+    staged:=make(map[c.ID]rl.Texture2D)
+    success:=false
+    defer {
+        if !success {
+            for _,texture in staged { rl.UnloadTexture(texture) }
+            delete(staged)
+        }
+    }
     for id, asset in r.snapshot.assets {
         bytes: []u8
         for source in r.snapshot.sources { if source.path == asset.path { bytes = source.bytes; break } }
@@ -231,9 +240,36 @@ stage_content_resources :: proc(r: ^Runtime_Content) -> bool {
         rl.UnloadImage(image)
         if !rl.IsTextureValid(texture) { content_error(r, fmt.aprintf("resource_upload %s: cannot create texture", asset.path)); return false }
         rl.SetTextureFilter(texture, .POINT)
-        r.textures[id] = texture
+        staged[id] = texture
     }
+    for _,texture in r.textures { rl.UnloadTexture(texture) }
+    delete(r.textures)
+    r.textures=staged
+    success=true
     return true
+}
+// DEV F5: validate the complete candidate plus GPU resources before publishing.
+// A rejected reload keeps the previous snapshot/resources and gameplay active.
+when DEV_TOOLS {
+reload_runtime_content :: proc(g:^Game_State,r:^Runtime_Content,args:[]string=nil) -> bool {
+    args:=args; if args==nil { args=os.args[1:] }
+    candidate:=load_runtime_content(args,context.allocator)
+    if candidate.snapshot==nil || !stage_content_resources(&candidate) || !validate_runtime_puzzle(candidate.scene) {
+        fmt.eprintln("reload rejected: retaining active content/resources")
+        unload_runtime_content(&candidate)
+        return false
+    }
+    old:=r^
+    r^=candidate
+    g.content=r; g.content_ready=true; g.scene=r.scene
+    // Clear every borrowed render label/response before destroying the old
+    // owner, including while paused. Reload restarts placement, not progress.
+    start_scene(g)
+    refresh_puzzle_objects(g)
+    g.art.asset=""; g.art.elapsed=0
+    unload_runtime_content(&old)
+    return true
+}
 }
 unload_runtime_content :: proc(r: ^Runtime_Content) {
     for _, texture in r.textures { rl.UnloadTexture(texture) }

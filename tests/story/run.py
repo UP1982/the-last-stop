@@ -86,8 +86,10 @@ class StoryTests(unittest.TestCase):
             self.assertEqual([d['beats'][i]['line'] for i in d['beat_order'] if d['beats'][i]['kind']=='line'],d['order'])
             actual.extend((i,d['lines'][i]['speaker'],d['lines'][i]['text']) for i in d['order'])
             for b in d['beats'].values():
-                # No imported sprite IDs means an intentional placeholder.
-                for a in b['stage']['actors'].values():self.assertNotIn('asset',a)
+                # Batch 1 explicitly selects the registered idle family; absent poses
+                # remain a runtime idle fallback rather than changing story state.
+                for actor_id,a in b['stage']['actors'].items():
+                    self.assertEqual(a['asset'],actor_id+'_idle_r')
                 self.assertFalse(any(x['kind'] in ('branch','winch','rope') for x in b['stage']['props'].values()))
         self.assertEqual(actual,LEDGER)
         self.assertEqual(self.read(self.paths['intro'])['lines']['intro_call_01']['delivery'],'offscreen')

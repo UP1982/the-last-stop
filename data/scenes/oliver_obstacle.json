@@ -15,6 +15,7 @@
   "kind": "scene",
   "objects": {
     "brass": {
+      "asset": "brass_locomotive",
       "interaction": [
         176,
         -16,

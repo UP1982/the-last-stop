@@ -13,6 +13,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -22,6 +23,7 @@
             "pose": "board"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -52,6 +54,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -61,6 +64,7 @@
             "pose": "board"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -91,6 +95,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -100,6 +105,7 @@
             "pose": "board"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -130,6 +136,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -139,6 +146,7 @@
             "pose": "board"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -169,6 +177,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -178,6 +187,7 @@
             "pose": "board"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [

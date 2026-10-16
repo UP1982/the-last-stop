@@ -20,6 +20,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -29,6 +30,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -83,6 +85,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -92,6 +95,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -146,6 +150,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -155,6 +160,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -209,6 +215,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -218,6 +225,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -272,6 +280,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -281,6 +290,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -335,6 +345,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -344,6 +355,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -398,6 +410,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -407,6 +420,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -460,6 +474,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -469,6 +484,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -524,6 +540,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -533,6 +550,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -587,6 +605,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -596,6 +615,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -650,6 +670,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -659,6 +680,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -713,6 +735,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -722,6 +745,7 @@
             "pose": "tap"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [

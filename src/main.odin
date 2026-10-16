@@ -9,6 +9,8 @@ main :: proc() {
         return
     }
 
+    when #config(ART3_SELF_TEST, false) { run_art3_tests(); return }
+
     when #config(M3B_SELF_TEST, false) { run_m3b_test_entry(); return }
 
     when #config(M3A_SELF_TEST, false) { run_m3a_content_test(); return }
@@ -38,6 +40,10 @@ main :: proc() {
     when DEV_TOOLS { autoplay: Autoplay }
     for !rl.WindowShouldClose() && !game.quit_requested {
         free_all(context.temp_allocator)
+        when DEV_TOOLS {
+            if rl.IsKeyPressed(.F3) { game.art.debug_boxes = !game.art.debug_boxes }
+            if rl.IsKeyPressed(.F5) { _=reload_runtime_content(&game,&content) }
+        }
         input := read_input()
         if input.fullscreen {
             rl.ToggleFullscreen()

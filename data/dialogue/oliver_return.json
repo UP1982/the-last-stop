@@ -12,6 +12,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -22,7 +23,9 @@
           }
         },
         "cue": "door_squeak",
-        "props": {},
+        "props": {
+
+        },
         "set": "forest_obstacle",
         "shot": "wide"
       }
@@ -33,6 +36,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -43,7 +47,9 @@
           }
         },
         "cue": "none",
-        "props": {},
+        "props": {
+
+        },
         "set": "forest_obstacle",
         "shot": "winch_branch"
       }
@@ -54,6 +60,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "neutral",
             "facing": "right",
             "feet": [
@@ -64,7 +71,9 @@
           }
         },
         "cue": "none",
-        "props": {},
+        "props": {
+
+        },
         "set": "forest_obstacle",
         "shot": "wide"
       }
@@ -73,10 +82,13 @@
       "duration_ms": 1400,
       "kind": "stage",
       "stage": {
-        "actors": {},
+        "actors": {
+
+        },
         "cue": "wheels",
         "props": {
           "return_train_visual": {
+            "asset": "brass_locomotive",
             "kind": "train",
             "position": [
               320,
@@ -96,7 +108,11 @@
   },
   "id": "oliver_return",
   "kind": "dialogue",
-  "lines": {},
-  "order": [],
+  "lines": {
+
+  },
+  "order": [
+
+  ],
   "schema_version": 2
 }

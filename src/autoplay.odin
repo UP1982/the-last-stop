@@ -16,6 +16,7 @@ Autoplay :: struct {
     directory, waiting_name: string,
     story_captured: map[string]bool,
     journey_started: bool,
+    art_jump_requested: bool,
 }
 autoplay_input :: proc(a:^Autoplay,g:^Game_State) -> (Input,bool) {
     route:=g.content.options.autoplay
@@ -27,7 +28,7 @@ autoplay_input :: proc(a:^Autoplay,g:^Game_State) -> (Input,bool) {
     a.frame+=1
     if a.frame>60*180 { fmt.eprintln("autoplay timeout"); g.quit_requested=true; return {},true }
     if g.transitioning { return {},true }
-    if route=="story-advance" || route=="story-skip" { return autoplay_journey(a,g,route=="story-skip"),true }
+    if route=="art3" || route=="story-advance" || route=="story-skip" { return autoplay_journey(a,g,route=="story-skip"),true }
     // Extra render rendezvous for the resolution migration's window-size gate.
     // Only the explicit res640 route pauses at Title and initial puzzle control.
     if route=="res640" {
@@ -87,7 +88,7 @@ autoplay_capture :: proc(a:^Autoplay,g:^Game_State,name:string) -> bool {
     marker:=fmt.aprintf("%s/%s.ready",a.directory,name); defer delete(marker)
     release:=fmt.aprintf("%s/%s.release",a.directory,name); defer delete(release)
     if !os.exists(marker) {
-        _=os.write_entire_file(marker,fmt.tprintf("mode=%v role=%v beat=%d page=%d elapsed=%f travel=%f story_cues=%d checkpoint=%v handle=%v phase=%v progress=%f cues=%d player=%v camera=%v canvas=%dx%d window=%dx%d\n",g.mode,g.story.role,g.story.beat_index,g.story.page_index,g.story.elapsed,g.story.travel_elapsed,g.story_cues,g.checkpoint,g.puzzle.handle,g.puzzle.phase,g.puzzle.crank_progress,g.completion_cues,g.player.position,g.camera,VIRTUAL_WIDTH,VIRTUAL_HEIGHT,rl.GetScreenWidth(),rl.GetScreenHeight()))
+        _=os.write_entire_file(marker,fmt.tprintf("mode=%v role=%v beat=%d page=%d elapsed=%f travel=%f story_cues=%d checkpoint=%v handle=%v phase=%v progress=%f cues=%d player=%v camera=%v art=%s frame=%d art_elapsed=%f facing=%d grounded=%t canvas=%dx%d window=%dx%d\n",g.mode,g.story.role,g.story.beat_index,g.story.page_index,g.story.elapsed,g.story.travel_elapsed,g.story_cues,g.checkpoint,g.puzzle.handle,g.puzzle.phase,g.puzzle.crank_progress,g.completion_cues,g.player.position,g.camera,g.art.asset,art_frame(g.art.asset,g.art.elapsed,6),g.art.elapsed,g.player.facing,g.player.grounded,VIRTUAL_WIDTH,VIRTUAL_HEIGHT,rl.GetScreenWidth(),rl.GetScreenHeight()))
         fmt.eprintln("M2_CAPTURE",name)
     }
     return os.exists(release)
@@ -155,6 +156,31 @@ autoplay_journey :: proc(a:^Autoplay,g:^Game_State,skip:bool) -> Input {
         return {}
     }
     if g.mode!=.Playing { return {} }
+    // Art evidence uses the real input/controller path; no teleports/state edits.
+    if g.content.options.autoplay=="art3" {
+        if !a.story_captured["walking_right"] {
+            if g.player.position.x>g.scene.spawn.x+48 && g.player.velocity.x>100 {
+                if !autoplay_capture(a,g,"walking_right") { return {} }
+                a.story_captured["walking_right"]=true
+            }
+            return {move=1}
+        }
+        if !a.story_captured["walking_left"] {
+            if g.player.velocity.x < -100 {
+                if !autoplay_capture(a,g,"walking_left") { return {} }
+                a.story_captured["walking_left"]=true
+            }
+            return {move=-1}
+        }
+        if !a.story_captured["jumping"] {
+            if !a.art_jump_requested { a.art_jump_requested=true; return {jump_pressed=true,jump_down=true} }
+            if g.player.position.y<g.scene.spawn.y-24 {
+                if !autoplay_capture(a,g,"jumping") { return {} }
+                a.story_captured["jumping"]=true
+            }
+            return {jump_down=true}
+        }
+    }
     if g.puzzle.phase==.Cleared { return {return_train=true} }
     if g.puzzle.phase==.Cranking { return {} }
     target:=kind_x(g,.Winch)-36

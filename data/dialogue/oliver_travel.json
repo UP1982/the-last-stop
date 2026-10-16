@@ -13,6 +13,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "curious",
             "facing": "right",
             "feet": [
@@ -22,6 +23,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -68,6 +70,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "blink",
             "facing": "right",
             "feet": [
@@ -77,6 +80,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -121,10 +125,13 @@
       "duration_ms": 1400,
       "kind": "stage",
       "stage": {
-        "actors": {},
+        "actors": {
+
+        },
         "cue": "wheels",
         "props": {
           "travel_train": {
+            "asset": "brass_locomotive",
             "kind": "train",
             "position": [
               320,
@@ -143,6 +150,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "blink",
             "facing": "right",
             "feet": [
@@ -152,6 +160,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [
@@ -198,6 +207,7 @@
       "stage": {
         "actors": {
           "milo": {
+            "asset": "milo_idle_r",
             "emote": "curious",
             "facing": "right",
             "feet": [
@@ -207,6 +217,7 @@
             "pose": "look"
           },
           "oliver": {
+            "asset": "oliver_idle_r",
             "emote": "neutral",
             "facing": "left",
             "feet": [

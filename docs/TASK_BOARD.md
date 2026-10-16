@@ -39,7 +39,7 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 **Gate:** Tests in TEST_PLAN.md all pass, no duplicate keepsakes or unreachable handle.
 
 ## M5: Presentation + playtest
-- [ ] Original pixel art replacements and cozy animations.
+- [~] Original pixel art replacements and cozy animations. (batch 1 drawn: Milo/Oliver/Rin/Brass/2 backgrounds; 51 items in docs/art/MISSING_ART_SPEC.md pending)
 - [ ] Ambient sound/music with volume settings.
 - [ ] UX polish, hints, accessibility and tutorial cues.
 - [ ] Fresh-player playtest and improvements.
