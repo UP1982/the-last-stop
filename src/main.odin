@@ -44,7 +44,7 @@ main :: proc() {
                 input,_=autoplay_input(&autoplay,&game)
                 // Capture rendezvous freezes simulation while retaining render.
                 waiting:=false
-                for name in ([6]string{"shelf","carried","installed","cranking","cleared","returned"}) {
+                for name in ([8]string{"title","start","shelf","carried","installed","cranking","cleared","returned"}) {
                     if os.exists(fmt.tprintf("%s/%s.ready",autoplay.directory,name)) && !os.exists(fmt.tprintf("%s/%s.release",autoplay.directory,name)) { waiting=true }
                 }
                 if waiting { dt=0 }

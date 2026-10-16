@@ -47,7 +47,7 @@
     }
     create(id, kind, position) {
       freshId(this.draft, id);
-      const templates = {train: [96, 32], branch: [48, 24], winch: [24, 24], shed: [72, 48], handle: [8, 8], snail: [12, 8]};
+      const templates = {train: [192, 64], branch: [96, 48], winch: [48, 48], shed: [144, 96], handle: [16, 16], snail: [24, 16]};
       if (!templates[kind]) throw Error('Choose a Chapter 1 object kind.');
       this.edit(scene => { scene.objects[id] = {kind, position: clone(position), size: templates[kind], layer: kind === 'shed' ? 'background' : 'world'}; });
     }
@@ -58,7 +58,7 @@
     }
     serialize() { return {base: this.base, draft: this.draft, revision: this.revision, past: this.past, future: this.future}; }
     static recover(value) {
-      if (!value || !value.base || !value.draft || !Array.isArray(value.past) || !Array.isArray(value.future) || typeof value.revision !== 'string') throw Error('Invalid draft');
+      if (!value || !value.base || !value.draft || !Array.isArray(value.past) || !Array.isArray(value.future) || typeof value.revision !== 'string' || value.base.schema_version !== 2 || value.draft.schema_version !== 2 || [...value.past, ...value.future].some(scene => scene.schema_version !== 2)) throw Error('Invalid draft');
       const history = new History(value.base, value.revision);
       history.draft = clone(value.draft); history.past = clone(value.past.slice(-100)); history.future = clone(value.future.slice(-100));
       return history;

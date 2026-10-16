@@ -12,17 +12,23 @@ run_self_tests :: proc() {
     defer c.destroy_owner(owner)
     context.allocator = c.owner_allocator(owner)
     v := make_viewport(1000, 700)
-    assert(v.scale == 3 && v.destination.x == 20 && v.destination.y == 80)
-    assert(v.destination.width == 960 && v.destination.height == 540)
+    assert(v.scale == 1 && v.destination.x == 180 && v.destination.y == 170)
+    assert(v.destination.width == 640 && v.destination.height == 360)
     p, inside := mouse_to_virtual({500, 350}, v)
-    assert(inside && p.x == 160 && p.y == 90)
-    _, outside := mouse_to_virtual({19, 80}, v)
+    assert(inside && p.x == 320 && p.y == 180)
+    _, outside := mouse_to_virtual({179, 170}, v)
     assert(!outside)
-    _, right_edge := mouse_to_virtual({980, 80}, v)
+    _, right_edge := mouse_to_virtual({820, 170}, v)
     assert(!right_edge)
-    assert(make_viewport(640, 360).scale == 2)
-    assert(make_viewport(1280, 720).scale == 4)
+    _, bottom_edge := mouse_to_virtual({180, 530}, v)
+    assert(!bottom_edge)
+    assert(make_viewport(640, 360).scale == 1)
+    assert(make_viewport(1280, 720).scale == 2)
     assert(make_viewport(200, 100).scale == 1)
+    letterbox := make_viewport(1400, 900)
+    assert(letterbox.scale == 2 && letterbox.destination == rl.Rectangle{60,90,1280,720})
+    mp, mi := mouse_to_virtual({700,450},letterbox)
+    assert(mi && mp == rl.Vector2{320,180})
 
     g := Game_State{scene=make_graybox_scene(), content_ready=true}
     update_game(&g, {pause = true}, 0)
@@ -60,22 +66,22 @@ test_playing_game :: proc() -> Game_State {
 
 run_m1_self_tests :: proc() {
     world := make_graybox_scene().world
-    floor := [1]rl.Rectangle{{0, 144, 640, 36}}
-    ledge := [1]rl.Rectangle{{0, 144, 80, 36}}
+    floor := [1]rl.Rectangle{{0, 288, 1280, 72}}
+    ledge := [1]rl.Rectangle{{0, 288, 160, 72}}
     // Actually walk off a ledge, then press inside the coyote window.
-    p := Player{position = {85.8, 144}, velocity = {WALK_SPEED, 0}, grounded = true}
+    p := Player{position = {171.6, 288}, velocity = {WALK_SPEED, 0}, grounded = true}
     step_player(&p, {move = 1}, ledge[:], world)
-    assert(!p.grounded && p.position.y > 144)
+    assert(!p.grounded && p.position.y > 288)
     for _ in 0..<6 { step_player(&p, {move = 1}, ledge[:], world) }
     step_player(&p, {jump_pressed = true, jump_down = true}, ledge[:], world)
     assert(p.velocity.y < 0 && p.coyote == 0 && p.jump_buffer == 0)
-    p = {position = {85.8, 144}, velocity = {WALK_SPEED, 0}, grounded = true}
+    p = {position = {171.6, 288}, velocity = {WALK_SPEED, 0}, grounded = true}
     for _ in 0..<16 { step_player(&p, {move = 1}, ledge[:], world) }
     step_player(&p, {jump_pressed = true, jump_down = true}, ledge[:], world)
     assert(p.velocity.y > 0) // late press cannot air-jump
 
     // Press before landing; jump must fire on contact without another edge.
-    p = {position = {150, 140}, velocity = {0, 65}}
+    p = {position = {300, 280}, velocity = {0, 130}}
     step_player(&p, {jump_pressed = true, jump_down = true}, floor[:], world)
     assert(p.velocity.y > 0 && p.jump_buffer > 0)
     bounced := false
@@ -84,12 +90,12 @@ run_m1_self_tests :: proc() {
         if p.velocity.y < 0 { bounced = true; break }
     }
     assert(bounced && !p.grounded && p.jump_buffer == 0)
-    p = {position = {150, 100}}
+    p = {position = {300, 200}}
     step_player(&p, {jump_pressed = true, jump_down = true}, floor[:], world)
     for _ in 0..<120 { step_player(&p, {jump_down = true}, floor[:], world) }
-    assert(p.grounded && p.position.y == 144) // expired buffer never jumps
+    assert(p.grounded && p.position.y == 288) // expired buffer never jumps
 
-    held := Player{position = {150, 144}, grounded = true}
+    held := Player{position = {300, 288}, grounded = true}
     short := held
     step_player(&held, {jump_pressed = true, jump_down = true}, floor[:], world)
     short = held
@@ -100,38 +106,38 @@ run_m1_self_tests :: proc() {
         held_apex = min(held_apex, held.position.y)
         short_apex = min(short_apex, short.position.y)
     }
-    assert(held_apex < short_apex - 10 && held.grounded && short.grounded)
+    assert(held_apex < short_apex - 20 && held.grounded && short.grounded)
 
     // A tall step blocks both directions. The tiny M1 step auto-climbs, never
     // intersects the body, and lets the entire route be walked without jumps.
-    walls := [2]rl.Rectangle{floor[0], {200, 120, 20, 24}}
-    p = {position = {170, 144}, grounded = true}
+    walls := [2]rl.Rectangle{floor[0], {400, 240, 40, 48}}
+    p = {position = {340, 288}, grounded = true}
     for _ in 0..<120 { step_player(&p, {move = 1}, walls[:], world) }
-    assert(p.position.x == 194 && !overlaps(player_rect(p), walls[1]))
-    p = {position = {240, 144}, grounded = true}
+    assert(p.position.x == 388 && !overlaps(player_rect(p), walls[1]))
+    p = {position = {480, 288}, grounded = true}
     for _ in 0..<120 { step_player(&p, {move = -1}, walls[:], world) }
-    assert(p.position.x == 226 && !overlaps(player_rect(p), walls[1]))
-    ceiling := [2]rl.Rectangle{floor[0], {120, 112, 60, 4}}
-    p = {position = {150, 144}, grounded = true}
+    assert(p.position.x == 452 && !overlaps(player_rect(p), walls[1]))
+    ceiling := [2]rl.Rectangle{floor[0], {240, 224, 120, 8}}
+    p = {position = {300, 288}, grounded = true}
     step_player(&p, {jump_pressed = true, jump_down = true}, ceiling[:], world)
     for _ in 0..<60 {
         step_player(&p, {jump_down = true}, ceiling[:], world)
         assert(!overlaps(player_rect(p), ceiling[1]))
     }
     scene := make_graybox_scene()
-    p = {position = {330, 144}, grounded = true}
+    p = {position = {660, 288}, grounded = true}
     climbed := false
     for _ in 0..<120 {
         step_player(&p, {move = 1}, scene.solids[:], world)
         assert(!overlaps(player_rect(p), scene.solids[1]))
-        if p.position.y == 140 { climbed = true }
+        if p.position.y == 280 { climbed = true }
     }
-    assert(climbed && p.position.x > 390 && p.grounded)
+    assert(climbed && p.position.x > 780 && p.grounded)
     for _ in 0..<1200 { step_player(&p, {move = 1}, floor[:], world) }
-    assert(p.position.x == 634 && p.velocity.x == 0)
+    assert(p.position.x == 1268 && p.velocity.x == 0)
     for _ in 0..<1200 { step_player(&p, {move = -1}, floor[:], world) }
-    assert(p.position.x == 6 && p.velocity.x == 0)
-    p = {position = {150, 144}, grounded = true}
+    assert(p.position.x == 12 && p.velocity.x == 0)
+    p = {position = {300, 288}, grounded = true}
     step_player(&p, {move = 1}, floor[:], world)
     assert(p.velocity.x > 0 && p.velocity.x < WALK_SPEED)
     for _ in 0..<30 { step_player(&p, {move = 1}, floor[:], world) }
@@ -140,31 +146,31 @@ run_m1_self_tests :: proc() {
     assert(p.velocity.x == 0)
 
     camera := Camera{}
-    follow_camera(&camera, 634, world)
-    assert(camera.x == 320)
-    follow_camera(&camera, 6, world)
+    follow_camera(&camera, 1268, world)
+    assert(camera.x == 640)
+    follow_camera(&camera, 12, world)
     assert(camera.x == 0)
-    follow_camera(&camera, 170, world)
+    follow_camera(&camera, 340, world)
     assert(camera.x == 0) // inside the deadzone
-    follow_camera(&camera, 200, world)
-    assert(camera.x == 22)
-    follow_camera(&camera, -100, {40, 0, 640, 180})
-    assert(camera.x == 40)
-    follow_camera(&camera, 1000, {40, 0, 640, 180})
-    assert(camera.x == 360)
+    follow_camera(&camera, 400, world)
+    assert(camera.x == 44)
+    follow_camera(&camera, -200, {80, 0, 1280, 360})
+    assert(camera.x == 80)
+    follow_camera(&camera, 2000, {80, 0, 1280, 360})
+    assert(camera.x == 720)
     assert(pixel(12.6) == 13 && pixel(-12.6) == -13)
 
     objects := [2]Interactable{
-        {{90, 120, 20, 24}, {}, "left", "left response", true},
-        {{120, 120, 20, 24}, {}, "right", "right response", true},
+        {{180, 240, 40, 48}, {}, "left", "left response", true},
+        {{240, 240, 40, 48}, {}, "right", "right response", true},
     }
-    p = {position = {118, 144}}
+    p = {position = {236, 288}}
     assert(focus_nearest(p, objects[:]) == 1)
-    p.position.x = 109
+    p.position.x = 218
     assert(focus_nearest(p, objects[:]) == 0)
     objects[0].enabled = false
     assert(focus_nearest(p, objects[:]) == 1)
-    p.position = {500, 50}
+    p.position = {1000, 100}
     assert(focus_nearest(p, objects[:]) == -1)
 
     g := test_playing_game()
@@ -204,7 +210,7 @@ run_m1_self_tests :: proc() {
     update_game(&b, {move = 1}, 0.1)
     assert(a.player == b.player)
     // A new title/start resets the player; its confirm cannot jump/interact.
-    a.player.position.x = 500
+    a.player.position.x = 1000
     enter_mode(&a, .Title)
     update_game(&a, {confirm = true, jump_pressed = true, interact = true}, 0)
     update_game(&a, {}, FADE_HALF_SECONDS)
@@ -217,14 +223,14 @@ run_m1_self_tests :: proc() {
 // Synthetic M1 regression fixture only. Runtime has no fallback authoring site.
 make_graybox_scene :: proc() -> Runtime_Scene {
     scene := Runtime_Scene{
-        world={0,0,640,180}, camera_bounds={0,0,640,180}, spawn={140,144},
+        world={0,0,1280,360}, camera_bounds={0,0,1280,360}, spawn={280,288},
         solids=make([]rl.Rectangle,2), objects=make([]Interactable,4),
     }
-    scene.solids[0]={0,144,640,36}; scene.solids[1]={344,140,32,4}
-    scene.objects[0]={{104,104,48,40},{16,112,96,32},"Brass","Brass waits patiently. (Placeholder)",true}
-    scene.objects[1]={{208,112,56,40},{224,120,24,24},"Winch","An empty axle. (Placeholder)",true}
-    scene.objects[2]={{388,120,36,32},{400,136,12,8},"Snail","A tiny neighbour waves. (Placeholder)",true}
-    scene.objects[3]={{572,120,40,32},{588,128,8,8},"Handle","A handle on a shelf. (Placeholder)",true}
+    scene.solids[0]={0,288,1280,72}; scene.solids[1]={688,280,64,8}
+    scene.objects[0]={{208,208,96,80},{32,224,192,64},"Brass","Brass waits patiently. (Placeholder)",true}
+    scene.objects[1]={{416,224,112,80},{448,240,48,48},"Winch","An empty axle. (Placeholder)",true}
+    scene.objects[2]={{776,240,72,64},{800,272,24,16},"Snail","A tiny neighbour waves. (Placeholder)",true}
+    scene.objects[3]={{1144,240,80,64},{1176,256,16,16},"Handle","A handle on a shelf. (Placeholder)",true}
     return scene
 }
 }

@@ -64,7 +64,7 @@ Escape or a confirm key closes the Controls overlay back to the pause menu.
 Release jump/interact keys after leaving menus before using them in play.
 Escape on the title does not exit. F11 or Alt+Enter toggles fullscreen.
 The window is resizable (minimum
-640x360); the 320x180 canvas uses nearest-neighbour integer scaling and black
+640x360); the 640x360 canvas uses nearest-neighbour integer scaling and black
 letterboxing. Close the window or choose Quit on the title to exit.
 
 Run the window-free foundation checks with:
@@ -104,7 +104,7 @@ walking ground. Once the branch lifts, R returns to Brass from anywhere; E/Enter
 at Brass also returns. State-derived hints appear at the top. The returned screen
 is the M2 endpoint; Chapter 1 story presentation remains for M3.
 
-Save v1 uses `~/Library/Application Support/The Last Stop/saves/chapter_01.json`,
+Save v2 uses `~/Library/Application Support/The Last Stop/saves/chapter_01.json`,
 independent of launch directory. `--save-dir /absolute/directory` overrides
 `TLS_SAVE_DIR` (which must also be absolute). Continue resumes valid progress;
 a held handle returns to the authored recovery marker. New Game asks Keep or
@@ -118,3 +118,21 @@ is also supplied. Runtime tests always require explicit temporary save profiles.
 Run `python3 -B tests/runtime/m2.py` for window-free M2 checks, or
 `python3 -B tests/runtime/m2_native.py` for three scripted native completions and
 PID-verified game-window screenshots in `build/evidence/m2/`.
+
+T-RES-640 units: scene schema v2 uses integer pixels on a 640x360 virtual canvas.
+All original scene coordinates, extents, local rectangles and anchors were doubled
+in one repository migration; IDs are unchanged. The world is 1280x360, ground y288,
+and Milo's bottom-centre collision footprint is 24x32. Movement, pickup reach,
+steps and camera deadzone use doubled units; seconds-based timings are unchanged.
+Chapter, dialogue, assets and edit protocol remain v1. Scene v1 is rejected with
+`unsupported_version`; runtime/editor never infer or rewrite old authored units.
+The historical `scene.v1.schema.json` is retained for reference; active authoring
+uses `scene.v2.schema.json`. The ±16,384 geometry bounds remain unchanged.
+
+Save v2 writes current world units. Strictly valid save v1 records load through
+explicit conversion: dropped feet are doubled in f64 before narrowing and spatial
+validation; unsafe positions recover to `handle_recovery`. Held items recover as
+before, and contradictory states remain rejected. Reading a v1 save preserves its
+bytes; the next normal checkpoint writes v2. V2 coordinates are never doubled.
+The editor uses a 640x360 backing canvas, default 16-pixel snap, doubled placement
+defaults, and a new draft-storage namespace; old-unit drafts/history are rejected.

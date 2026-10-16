@@ -61,7 +61,7 @@ class BridgeTests(unittest.TestCase):
         return {"protocol_version": 1, "request_id": "editor_test", "chapter": server_module.CHAPTER,
                 "document": server_module.SCENE, "expected_revision": "sha256:" + "a" * 64,
                 "operations": [{"op": "set_property", "collection": "objects", "id": "crank_handle",
-                                "property": "position", "value": [596, 128]}]}
+                                "property": "position", "value": [1192, 256]}]}
 
     def test_api_token_required_and_wrong_token_rejected(self):
         self.assertEqual(self.request(token=False)[0], 401)
@@ -190,7 +190,7 @@ class JavaScriptLogicTests(unittest.TestCase):
             finally:
                 library.JSStringRelease(string)
             self.assertFalse(exception.value, text)
-            self.assertEqual(text, "logic: 20 assertions passed")
+            self.assertEqual(text, "logic: 22 assertions passed")
         finally:
             library.JSStringRelease(script)
             library.JSGlobalContextRelease(context)

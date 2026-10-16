@@ -1,17 +1,18 @@
 package main
 
+import c "../shared/content"
 import rl "vendor:raylib"
 
-// E0 A1 confirmed: position is the bottom-centre of the 12x16 footprint.
-PLAYER_WIDTH :: 12
-PLAYER_HEIGHT :: 16
+// E0 A1 confirmed: position is the bottom-centre of the 24x32 footprint.
+PLAYER_WIDTH :: c.PLAYER_WIDTH
+PLAYER_HEIGHT :: c.PLAYER_HEIGHT
 FIXED_DT :: f32(1.0 / 120.0)
 COYOTE_SECONDS :: f32(0.1)
 JUMP_BUFFER_SECONDS :: f32(0.1)
-WALK_SPEED :: f32(72)
-GRAVITY :: f32(300)
-JUMP_SPEED :: f32(112)
-MAX_STEP :: f32(4)
+WALK_SPEED :: f32(144)
+GRAVITY :: f32(600)
+JUMP_SPEED :: f32(224)
+MAX_STEP :: f32(8)
 
 Player :: struct {
     position, velocity: rl.Vector2,
@@ -57,8 +58,8 @@ step_player :: proc(p: ^Player, input: Input, solids: []rl.Rectangle, world: rl.
     if !input.jump_down && p.velocity.y < -JUMP_SPEED * 0.45 {
         p.velocity.y = -JUMP_SPEED * 0.45
     }
-    acceleration: f32 = 480
-    if input.move == 0 { acceleration = 600 }
+    acceleration: f32 = 960
+    if input.move == 0 { acceleration = 1200 }
     p.velocity.x = approach(p.velocity.x, clamp(input.move, -1, 1) * WALK_SPEED, acceleration * dt)
     if input.move != 0 { p.facing = 1; if input.move < 0 { p.facing = -1 } }
 
@@ -91,7 +92,7 @@ step_player :: proc(p: ^Player, input: Input, solids: []rl.Rectangle, world: rl.
     if p.position.x != next_x { p.velocity.x = 0 }
 
     old = player_rect(p^)
-    p.velocity.y = min(p.velocity.y + GRAVITY * dt, 180)
+    p.velocity.y = min(p.velocity.y + GRAVITY * dt, 360)
     next_y := p.position.y + p.velocity.y * dt
     p.grounded = false
     for solid in solids {

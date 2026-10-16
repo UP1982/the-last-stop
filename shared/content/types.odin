@@ -136,3 +136,11 @@ CHAPTER_PATH :: "data/chapters/chapter_01.json"
 // packages never execute this entry point; runtime callers use load_chapter.
 @(private)
 main :: proc() {}
+
+// Scene v2: one authored unit is one pixel of the 640x360 virtual canvas.
+// Scene v1 used half-sized units and must never be interpreted as v2.
+SCENE_VERSION :: 2
+VIEW_WIDTH :: 640
+VIEW_HEIGHT :: 360
+PLAYER_WIDTH :: 24
+PLAYER_HEIGHT :: 32

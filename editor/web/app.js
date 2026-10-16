@@ -70,7 +70,7 @@
       const value = await api('/api/scene'), result = value.result;
       diagnostics(result);
       if (value.exit_code !== 0) { setMessage('Cannot load disk content. Existing draft is kept. Fix the diagnostics and reload.'); return; }
-      storageKey = `tls-e1:${value.project_key}:oliver_obstacle`;
+      storageKey = `tls-e1-scene-v2:${value.project_key}:oliver_obstacle`;
       model = new History(result.authored, result.graph_revision);
       external = false; $('external').hidden = true;
       let recovered = false;
@@ -187,19 +187,19 @@
     if (stroke) { ctx.strokeStyle = stroke; ctx.strokeRect(x - cameraX() + .5, y + .5, w, h); }
   }
   function draw() {
-    ctx.setTransform(3, 0, 0, 3, 0, 0); ctx.clearRect(0, 0, 320, 180);
-    ctx.fillStyle = '#34476a'; ctx.fillRect(0, 0, 320, 180);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, 640, 360);
+    ctx.fillStyle = '#34476a'; ctx.fillRect(0, 0, 640, 360);
     if (!model) return;
     const scene = model.draft;
     rect(scene.world_bounds, '#34476a', '#879bad');
     rect(scene.ground, '#627d6b');
     rect(scene.camera_bounds, null, '#7891a2');
     if ($('grid').checked) {
-      ctx.beginPath(); ctx.strokeStyle = '#b7c7dd22'; ctx.lineWidth = 1 / 3;
-      for (let x = Math.floor(cameraX() / step()) * step(); x <= cameraX() + 320; x += step()) { ctx.moveTo(x - cameraX(), 0); ctx.lineTo(x - cameraX(), 180); }
-      for (let y = 0; y <= 180; y += step()) { ctx.moveTo(0, y); ctx.lineTo(320, y); } ctx.stroke();
+      ctx.beginPath(); ctx.strokeStyle = '#b7c7dd22'; ctx.lineWidth = 1;
+      for (let x = Math.floor(cameraX() / step()) * step(); x <= cameraX() + 640; x += step()) { ctx.moveTo(x - cameraX(), 0); ctx.lineTo(x - cameraX(), 360); }
+      for (let y = 0; y <= 360; y += step()) { ctx.moveTo(0, y); ctx.lineTo(640, y); } ctx.stroke();
     }
-    ctx.lineWidth = 1; ctx.font = '5px monospace';
+    ctx.lineWidth = 2; ctx.font = '10px monospace';
     const colors = {train: '#e8b96e', branch: '#665140', winch: '#a9d1bb', shed: '#837486', handle: '#f2dcca', snail: '#b9be94'};
     for (const layer of ['background', 'world', 'foreground']) {
       if (!visible.has(layer)) continue;
@@ -210,28 +210,28 @@
         const [x, y] = record.position, chosen = selected.collection === 'objects' && selected.id === id;
         rect([x, y, ...record.size], colors[record.kind] || '#a9d1bb', chosen ? '#fff0b6' : '#1c243b');
         if (record.collision) rect([x + record.collision[0], y + record.collision[1], ...record.collision.slice(2)], null, '#f79f9a');
-        if (chosen && record.interaction) { ctx.setLineDash([2, 2]); rect([x + record.interaction[0], y + record.interaction[1], ...record.interaction.slice(2)], null, '#f6d599'); ctx.setLineDash([]); }
-        if (chosen) { ctx.fillStyle = '#fff0cd'; ctx.fillText(id, Math.min(Math.max(2, x - cameraX()), 240), Math.max(7, y - 4)); }
+        if (chosen && record.interaction) { ctx.setLineDash([4, 4]); rect([x + record.interaction[0], y + record.interaction[1], ...record.interaction.slice(2)], null, '#f6d599'); ctx.setLineDash([]); }
+        if (chosen) { ctx.fillStyle = '#fff0cd'; ctx.fillText(id, Math.min(Math.max(4, x - cameraX()), 480), Math.max(14, y - 8)); }
       }
     }
     for (const [id, record] of Object.entries(scene.spawns)) {
       const position = drag && drag.type === 'move' && drag.collection === 'spawns' && drag.id === id ? drag.position : record.position;
       const [x, y] = position, sx = x - cameraX();
       ctx.strokeStyle = selected.collection === 'spawns' && selected.id === id ? '#fff0b6' : '#a9d1bb';
-      ctx.beginPath(); ctx.moveTo(sx - 3, y); ctx.lineTo(sx, y - 4); ctx.lineTo(sx + 3, y); ctx.lineTo(sx, y + 4); ctx.closePath(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx - 6, y); ctx.lineTo(sx, y - 8); ctx.lineTo(sx + 6, y); ctx.lineTo(sx, y + 8); ctx.closePath(); ctx.stroke();
     }
-    $('coords').textContent = `x ${cameraX()}–${cameraX() + 320}`;
+    $('coords').textContent = `x ${cameraX()}–${cameraX() + 640}`;
   }
   function render() { if (!model) return; renderTree(); renderInspector(); controls(); draw(); }
   function frame() {
     if (!model) return;
     const bounds = model.draft.camera_bounds;
-    $('camera').min = bounds[0]; $('camera').max = Math.max(bounds[0], bounds[0] + bounds[2] - 320);
+    $('camera').min = bounds[0]; $('camera').max = Math.max(bounds[0], bounds[0] + bounds[2] - 640);
     const record = current();
-    if (record) $('camera').value = record.position[0] + ((record.size || [0])[0] / 2) - 160;
+    if (record) $('camera').value = record.position[0] + ((record.size || [0])[0] / 2) - 320;
     draw();
   }
-  function point(event) { const r = canvas.getBoundingClientRect(); return [(event.clientX - r.left) * 320 / r.width + cameraX(), (event.clientY - r.top) * 180 / r.height]; }
+  function point(event) { const r = canvas.getBoundingClientRect(); return [(event.clientX - r.left) * 640 / r.width + cameraX(), (event.clientY - r.top) * 360 / r.height]; }
   canvas.addEventListener('pointerdown', event => {
     if (!model || busy || (event.button !== 0 && event.button !== 1)) return;
     const p = point(event); canvas.focus();
@@ -240,8 +240,8 @@
       const hit = (collection, id) => {
         const record = model.draft[collection][id];
         if (collection === 'objects' && !visible.has(record.layer)) return false;
-        const [x, y] = record.position, size = record.size || [8, 8];
-        return p[0] >= x - 3 && p[0] <= x + size[0] + 3 && p[1] >= y - 3 && p[1] <= y + size[1] + 3;
+        const [x, y] = record.position, size = record.size || [16, 16];
+        return p[0] >= x - 6 && p[0] <= x + size[0] + 6 && p[1] >= y - 6 && p[1] <= y + size[1] + 6;
       };
       let target = current() && hit(selected.collection, selected.id) ? {...selected} : null;
       for (const collection of ['objects', 'spawns']) {
@@ -260,7 +260,7 @@
   });
   canvas.addEventListener('pointermove', event => {
     if (!drag) return;
-    if (drag.type === 'pan') $('camera').value = drag.camera - (event.clientX - drag.clientX) * 320 / canvas.getBoundingClientRect().width;
+    if (drag.type === 'pan') $('camera').value = drag.camera - (event.clientX - drag.clientX) * 640 / canvas.getBoundingClientRect().width;
     else { const p = point(event); drag.position = drag.origin.map((value, i) => snapped(value + p[i] - drag.start[i])); }
     draw();
   });
@@ -279,7 +279,7 @@
   });
   $('scene-root').onclick = () => choose(null, 'oliver_obstacle');
   $('focus').onclick = frame; $('camera').oninput = draw;
-  $('zoom').onchange = () => { canvas.style.width = `${320 * Number($('zoom').value)}px`; canvas.style.height = 'auto'; };
+  $('zoom').onchange = () => { canvas.style.width = `${640 * Number($('zoom').value)}px`; canvas.style.height = 'auto'; };
   ['grid', 'snap', 'step'].forEach(id => { $(id).onchange = draw; });
   document.querySelectorAll('[data-layer]').forEach(input => { input.onchange = () => { if (input.checked) visible.add(input.dataset.layer); else visible.delete(input.dataset.layer); draw(); }; });
   $('undo').onclick = () => { if (!busy && model) { model.undo(); changed('Undid the last edit.'); } };
@@ -297,7 +297,7 @@
     try {
       const id = $('new-id').value.trim(), collection = recordMode === 'duplicate' ? selected.collection : 'objects';
       if (recordMode === 'duplicate') model.duplicate(collection, selected.id, id, step());
-      else model.create(id, $('new-kind').value, [snapped(cameraX() + 140), 128]);
+      else model.create(id, $('new-kind').value, [snapped(cameraX() + 280), 256]);
       selected = {collection, id}; $('record-dialog').close(); changed('Created ' + id + '. Save validates references and geometry.');
     } catch (error) { $('record-error').textContent = error.message; }
   };

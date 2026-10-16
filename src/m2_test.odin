@@ -13,12 +13,12 @@ settle_transition :: proc(g:^Game_State) {
 walk_to :: proc(g:^Game_State, x:f32) {
     for _ in 0..<4000 {
         delta:=x-g.player.position.x
-        if abs(delta)<0.8 { break }
+        if abs(delta)<1.6 { break }
         move:f32=1; if delta<0 { move=-1 }
         update_game(g,{move=move},FIXED_DT)
     }
     for _ in 0..<25 { update_game(g,{},FIXED_DT) }
-    assert(abs(g.player.position.x-x)<8)
+    assert(abs(g.player.position.x-x)<16)
 }
 kind_x :: proc(g:^Game_State, kind:c.Object_Kind) -> f32 {
     refresh_puzzle_objects(g)
@@ -92,7 +92,7 @@ run_m2_test_entry :: proc() {
         if !g.save.exists || g.save.rejected { os.exit(3) }
         update_game(&g,{confirm=true},0); settle_transition(&g)
         if command=="snail" { visit(&g,.Snail); visit(&g,.Snail) }
-        else if command=="drop" { walk_to(&g,500); press_interact(&g) }
+        else if command=="drop" { walk_to(&g,1000); press_interact(&g) }
         else if command=="pause-save" { update_game(&g,{pause=true},0); assert(g.mode==.Paused) }
         else if command=="quit-save" { persist_game(&g) }
         else if g.puzzle.handle==.Shelf || g.puzzle.handle==.Dropped { visit(&g,.Handle) }
@@ -112,11 +112,11 @@ run_m2_test_entry :: proc() {
     case "write-review-drop":
         // Astra's exact dropped-handle reproducer, through movement + E.
         new_run(&g); settle_transition(&g)
-        visit(&g,.Handle); walk_to(&g,500)
+        visit(&g,.Handle); walk_to(&g,1000)
         for _ in 0..<5 { update_game(&g,{move=1},FIXED_DT) }
         for _ in 0..<25 { update_game(&g,{},FIXED_DT) }
         press_interact(&g)
-        assert(g.puzzle.handle==.Dropped && abs(g.puzzle.dropped_feet[0]-497.1536)<0.01)
+        assert(g.puzzle.handle==.Dropped && abs(g.puzzle.dropped_feet[0]-994.3072)<0.02)
     case:
         if !strings.has_prefix(command,"write-") { os.exit(2) }
         target:=strings.trim_prefix(command,"write-")
@@ -125,7 +125,7 @@ run_m2_test_entry :: proc() {
         else if target=="boarded" { g.checkpoint=.Boarded; persist_game(&g) }
         else if target!="shelf" {
             visit(&g,.Handle); assert(g.puzzle.handle==.Held)
-            if target=="dropped" { walk_to(&g,500); press_interact(&g); assert(g.puzzle.handle==.Dropped) }
+            if target=="dropped" { walk_to(&g,1000); press_interact(&g); assert(g.puzzle.handle==.Dropped) }
             else if target!="held" {
                 visit(&g,.Winch); assert(g.puzzle.handle==.Installed && g.puzzle.phase==.Blocked)
                 if target!="installed" {
@@ -216,7 +216,7 @@ run_m2_geometry_path :: proc(g:^Game_State) {
     // Find an unfocused spot using actual movement, then E to drop and recover.
     dropped:=false
     for i in 0..<32 {
-        x:=g.scene.world.x+12+(g.scene.world.width-24)*f32(i)/31
+        x:=g.scene.world.x+24+(g.scene.world.width-48)*f32(i)/31
         walk_to(g,x)
         if g.focus>=0 { continue }
         press_interact(g)
@@ -240,7 +240,7 @@ run_m2_behavior_tests :: proc(g:^Game_State) {
     visit(g,.Branch); assert(g.puzzle.phase==.Blocked)
     visit(g,.Handle)
     for _ in 0..<3 {
-        walk_to(g,500)
+        walk_to(g,1000)
         update_game(g,{jump_pressed=true,jump_down=true,interact=true,interact_down=true},FIXED_DT)
         assert(g.puzzle.handle==.Dropped && safe_handle_feet(g.scene,g.puzzle.dropped_feet))
         for _ in 0..<120 { update_game(g,{},FIXED_DT) }
@@ -258,7 +258,7 @@ run_m2_behavior_tests :: proc(g:^Game_State) {
     for _ in 0..<120 { update_game(g,{interact=true,return_train=true,move=1},FIXED_DT) }
     assert(g.puzzle==frozen && g.mode==.Paused)
     update_game(g,{pause=true},FIXED_DT); update_game(g,{},FIXED_DT)
-    walk_to(g,500) // automatic cranking proceeds away from focus
+    walk_to(g,1000) // automatic cranking proceeds away from focus
     complete_puzzle(g); assert(g.completion_cues==1)
     before:=g.checkpoint; _=puzzle_action(g,.Return); assert(g.checkpoint==before && g.completion_cues==1)
 
@@ -299,12 +299,12 @@ run_m2_behavior_tests :: proc(g:^Game_State) {
     }
     // Safe projection at both world edges / invalid and non-finite positions.
     for x in ([4]f32{g.scene.world.x,g.scene.world.x+g.scene.world.width,-10000,10000}) {
-        feet:=project_drop(g.scene,{position={x,40}})
+        feet:=project_drop(g.scene,{position={x,80}})
         assert(safe_handle_feet(g.scene,feet))
     }
     // Unfocused and out-of-range presses don't act on stale focus.
     g.puzzle={}; g.checkpoint=.Puzzle; start_scene(g); enter_mode(g,.Playing)
-    walk_to(g,500); press_interact(g); assert(g.puzzle.handle==.Shelf)
+    walk_to(g,1000); press_interact(g); assert(g.puzzle.handle==.Shelf)
     // Repeat-return and guarded M3 helpers cannot bypass uncleared puzzle.
     board_oliver(g); finish_oliver_journey(g); _=puzzle_action(g,.Return)
     assert(g.checkpoint==.Puzzle && !owns_paper_flower(g^))

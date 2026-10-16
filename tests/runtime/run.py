@@ -50,22 +50,38 @@ class RuntimeTests(unittest.TestCase):
         (self.root / 'data/dialogue/oliver_arrival.json').unlink()
         self.assertIn(b'unsafe_path', self.load(False).stderr)
 
+    def test_scene_v2_rejects_old_units_and_undersized_camera(self):
+        path = self.root / SCENE
+        current = json.loads(path.read_bytes())
+        self.assertEqual(current['schema_version'], 2)
+        # Old-unit content is rejected at the envelope before geometry can be
+        # interpreted, even when the surrounding chapter/dialogue remains v1.
+        old = dict(current, schema_version=1)
+        path.write_text(json.dumps(old))
+        self.assertIn(b'unsupported_version', self.load(False).stderr)
+        for bounds in ([0, 0, 639, 360], [0, 0, 640, 359]):
+            invalid = dict(current, camera_bounds=bounds)
+            path.write_text(json.dumps(invalid))
+            self.assertIn(b'camera', self.load(False).stderr)
+        path.write_text(json.dumps(current))
+        self.load()
+
     def test_authored_geometry_drives_runtime(self):
         path = self.root / SCENE
         scene = json.loads(path.read_bytes())
         for key in ('world_bounds', 'camera_bounds', 'ground'):
-            scene[key][0] += 40
-            scene[key][1] += 20
+            scene[key][0] += 80
+            scene[key][1] += 40
         for spawn in scene['spawns'].values():
-            spawn['position'][0] += 40
-            spawn['position'][1] += 20
+            spawn['position'][0] += 80
+            spawn['position'][1] += 40
         for obj in scene['objects'].values():
-            obj['position'][0] += 40
-            obj['position'][1] += 20
-        scene['puzzle']['branch_cleared_position'][0] += 40
-        scene['puzzle']['branch_cleared_position'][1] += 20
-        scene['objects']['brass']['collision'] = [0, 0, 8, 8]
-        scene['objects']['crank_handle']['interaction'] = [-20, -8, 48, 32]
+            obj['position'][0] += 80
+            obj['position'][1] += 40
+        scene['puzzle']['branch_cleared_position'][0] += 80
+        scene['puzzle']['branch_cleared_position'][1] += 40
+        scene['objects']['brass']['collision'] = [0, 0, 16, 16]
+        scene['objects']['crank_handle']['interaction'] = [-40, -16, 96, 64]
         path.write_text(json.dumps(scene))
         self.load()
 

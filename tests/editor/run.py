@@ -74,7 +74,7 @@ class E0(unittest.TestCase):
         return {'protocol_version': 1, 'request_id': 'test_edit', 'chapter': 'oliver_flower_market',
                 'document': document, 'expected_revision': revision or self.revision(),
                 'operations': ops or [{'op': 'set_property', 'collection': 'objects', 'id': 'crank_handle',
-                                       'property': 'position', 'value': [596, 128]}]}
+                                       'property': 'position', 'value': [1192, 256]}]}
 
     def apply(self, request, expected=0, **kwargs):
         status, body = invoke(self.root, 'apply-edit', request, **kwargs)
@@ -169,21 +169,23 @@ class E0(unittest.TestCase):
             (INTRO, lambda d: d.update(order=['intro_01'])),
             (INTRO, lambda d: d.update(order=['intro_01', 'absent'])),
             (INTRO, lambda d: d['lines']['intro_01'].update(reward='paper_flower')),
-            (SCENE, lambda d: d['objects']['crank_handle'].update(position=[17000, 0])),
-            (SCENE, lambda d: d['objects']['crank_handle'].update(position=[-10, 128])),
-            (SCENE, lambda d: d['objects']['crank_handle'].update(size=[0, 8])),
-            (SCENE, lambda d: d['objects']['crank_handle'].update(position=[588.0, 128])),
+            (SCENE, lambda d: d['objects']['crank_handle'].update(position=[34000, 0])),
+            (SCENE, lambda d: d['objects']['crank_handle'].update(position=[-20, 256])),
+            (SCENE, lambda d: d['objects']['crank_handle'].update(size=[0, 16])),
+            (SCENE, lambda d: d['objects']['crank_handle'].update(position=[1176.0, 256])),
             (SCENE, lambda d: d['objects']['crank_handle'].update(asset='missing')),
-            (SCENE, lambda d: d['objects']['crank_handle'].update(interaction=[0, -100, 8, 8])),
-            (SCENE, lambda d: d['objects']['shed'].update(collision=[0, 0, 72, 48])),
-            (SCENE, lambda d: d['objects']['winch'].update(collision=[0, 0, 24, 24])),
-            (SCENE, lambda d: d.update(camera_bounds=[0, 0, 319, 180])),
-            (SCENE, lambda d: d.update(ground=[1, 144, 639, 36])),
-            (SCENE, lambda d: d['spawns']['puzzle_entry'].update(position=[140, 143])),
+            (SCENE, lambda d: d['objects']['crank_handle'].update(interaction=[0, -200, 16, 16])),
+            (SCENE, lambda d: d['objects']['shed'].update(collision=[0, 0, 144, 96])),
+            (SCENE, lambda d: d['objects']['winch'].update(collision=[0, 0, 48, 48])),
+            (SCENE, lambda d: d.update(camera_bounds=[0, 0, 639, 360])),
+            (SCENE, lambda d: d.update(camera_bounds=[0, 0, 640, 359])),
+            (SCENE, lambda d: d.update(schema_version=1)),
+            (SCENE, lambda d: d.update(ground=[2, 288, 1278, 72])),
+            (SCENE, lambda d: d['spawns']['puzzle_entry'].update(position=[280, 286])),
             (SCENE, lambda d: d['puzzle'].update(handle='winch')),
             (SCENE, lambda d: d['puzzle'].update(player_spawn='handle_recovery')),
-            (SCENE, lambda d: d['puzzle'].update(winch_socket=[100, 0])),
-            (SCENE, lambda d: d['puzzle'].update(branch_cleared_position=[640, 0])),
+            (SCENE, lambda d: d['puzzle'].update(winch_socket=[200, 0])),
+            (SCENE, lambda d: d['puzzle'].update(branch_cleared_position=[1280, 0])),
             (SCENE, lambda d: d['objects'].update(extra_handle=copy.deepcopy(d['objects']['crank_handle']))),
         ]
         for path, mutation in mutations:
@@ -232,7 +234,7 @@ class E0(unittest.TestCase):
         current = self.read(SCENE)
         self.assertEqual(set(current['objects']), set(old_scene['objects']))
         self.assertEqual(current['puzzle'], old_scene['puzzle'])
-        self.assertEqual(current['objects']['crank_handle']['position'], [596, 128])
+        self.assertEqual(current['objects']['crank_handle']['position'], [1192, 256])
         for path, b in before.items():
             if path != SCENE: self.assertEqual((self.root / path).read_bytes(), b)
         # Deterministic normalized bytes and true no-op preserve even arbitrary whitespace.
@@ -255,7 +257,7 @@ class E0(unittest.TestCase):
         self.apply(self.request([{'op': 'delete', 'collection': 'lines', 'id': 'intro_extra'}, {'op': 'set_order', 'order': ['intro_01', 'intro_02']}], document='intro'))
         self.assertEqual(self.read(INTRO)['id'], 'intro')
         # Create a fresh spawn, relink, and delete it after relinking back.
-        self.apply(self.request([{'op': 'create', 'collection': 'spawns', 'id': 'entry_two', 'value': {'kind': 'player_feet', 'position': [148, 144]}}, {'op': 'link_object', 'role': 'player_spawn', 'target': 'entry_two'}]))
+        self.apply(self.request([{'op': 'create', 'collection': 'spawns', 'id': 'entry_two', 'value': {'kind': 'player_feet', 'position': [296, 288]}}, {'op': 'link_object', 'role': 'player_spawn', 'target': 'entry_two'}]))
         self.apply(self.request([{'op': 'link_object', 'role': 'player_spawn', 'target': 'puzzle_entry'}, {'op': 'delete', 'collection': 'spawns', 'id': 'entry_two'}]))
 
     def test_05_atomic_batches_and_allowlists(self):
@@ -266,7 +268,7 @@ class E0(unittest.TestCase):
             {'op': 'set_property', 'collection': 'objects', 'id': 'crank_handle', 'property': 'id', 'value': 'renamed'},
             {'op': 'set_property', 'collection': 'objects', 'id': 'crank_handle', 'property': 'path', 'value': '../bad'},
             {'op': 'create', 'collection': 'objects', 'id': 'crank_handle', 'value': {}},
-            {'op': 'set_property', 'collection': 'objects', 'id': 'missing', 'property': 'position', 'value': [1, 1]},
+            {'op': 'set_property', 'collection': 'objects', 'id': 'missing', 'property': 'position', 'value': [2, 2]},
             {'op': 'set_property', 'collection': 'spawns', 'id': 'puzzle_entry', 'property': 'kind', 'value': 'oops'},
             {'op': 'link_object', 'role': 'handle', 'target': 'winch'},
             {'op': 'restore_document', 'value': dict(self.read(SCENE), id='new_identity')},
@@ -314,7 +316,7 @@ class E0(unittest.TestCase):
         self.apply(r, 3)
         # Unmanaged change immediately before commit is detected without overwrite.
         marker.unlink(); Path(str(marker) + '.release').unlink()
-        r = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':[588,128]}]); process, marker = self.paused_writer(r, 'before_recheck')
+        r = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':[1176,256]}]); process, marker = self.paused_writer(r, 'before_recheck')
         (self.root / ARRIVAL).write_bytes((self.root / ARRIVAL).read_bytes() + b' ')
         external = self.disk(); Path(str(marker) + '.release').touch()
         out, err = process.communicate(timeout=10)
@@ -335,20 +337,20 @@ class E0(unittest.TestCase):
         self.assertEqual(self.disk(), before)
         drafts=list((self.root/'data/scenes').glob('.tls-content-*'))
         self.assertTrue(drafts, 'termination before rename retains a recoverable candidate')
-        self.assertEqual(json.loads(drafts[-1].read_bytes())['objects']['crank_handle']['position'], [596,128])
+        self.assertEqual(json.loads(drafts[-1].read_bytes())['objects']['crank_handle']['position'], [1192,256])
         records = list((self.root / '.studio/history').glob('txn-*/prepared.json'))
         self.assertTrue(records)
         # Kernel releases F_SETLK on SIGKILL; a new transaction succeeds.
         self.apply(request)
         marker.unlink()
-        request = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':[588,128]}])
+        request = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':[1176,256]}])
         before = self.disk(); process, marker = self.paused_writer(request, 'after_rename')
         after = self.disk(); self.assertNotEqual(after[SCENE], before[SCENE])
         process.kill(); process.communicate(timeout=5)
         self.assertEqual(self.revision(), self.revision())
         matched = [p for p in (self.root / '.studio/history').glob('txn-*') if (p / 'before.json').read_bytes() == before[SCENE] and (p / 'after.json').read_bytes() == after[SCENE]]
         self.assertTrue(matched, 'both complete images must survive termination after rename')
-        for fault, position in [('directory_sync',[596,128]), ('finalize_history',[588,128])]:
+        for fault, position in [('directory_sync',[1192,256]), ('finalize_history',[1176,256])]:
             request = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':position}])
             result = self.apply(request, 5, env=dict(os.environ,TLS_E0_FAULT=fault),binary=FAULT_CLI)
             self.assertEqual(result['commit_state'],'committed_durability_uncertain')
@@ -383,6 +385,28 @@ class E0(unittest.TestCase):
         shutil.rmtree(self.root/'.studio/history'); (self.root/'.studio/history').write_text('blocked')
         before=self.disk(); result=self.apply(self.request(),4); self.assertEqual(result['commit_state'],'not_committed'); self.assertEqual(self.disk(),before)
 
+    def test_14_scene_v2_restore_preserves_envelope(self):
+        original = self.read(SCENE)
+        self.assertEqual(original['schema_version'], 2)
+        moved = copy.deepcopy(original)
+        moved['objects']['crank_handle']['position'][0] += 16
+        self.apply(self.request([{'op': 'restore_document', 'value': moved}]))
+        self.assertEqual(self.read(SCENE), moved)
+        self.apply(self.request([{'op': 'restore_document', 'value': original}]))
+        self.assertEqual(self.read(SCENE), original)
+        for version in (1, 3, 2.0, True):
+            bad = dict(original, schema_version=version)
+            before = self.disk()
+            result = self.apply(self.request([{'op': 'restore_document', 'value': bad}]), 2)
+            self.assertTrue(result['diagnostics'])
+            self.assertEqual(self.disk(), before)
+        # Neither a version change in the first operation nor a later restore
+        # can turn one transactional batch into an implicit schema migration.
+        self.apply(self.request([{'op': 'restore_document', 'value': dict(original, schema_version=1)},
+                                 {'op': 'restore_document', 'value': original}]), 2)
+        for version in (1, 3):
+            self.invalid_graph(SCENE, lambda d: d.update(schema_version=version))
+
     def test_09_revisions_assets_and_inspection(self):
         status, body = invoke(self.root, 'inspect-scene')
         self.assertEqual(status,0,body)
@@ -416,7 +440,7 @@ class E0(unittest.TestCase):
 
     def test_10_hardlinked_lock_two_writers(self):
         first = self.request()
-        second = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':[592,128]}], revision=first['expected_revision'])
+        second = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':[1184,256]}], revision=first['expected_revision'])
         studio = self.root / '.studio'; studio.mkdir()
         lock = studio / 'content.lock'
         os.link(self.root / INTRO, lock)

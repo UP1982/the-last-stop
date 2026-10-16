@@ -5,7 +5,7 @@ import "core:fmt"
 scene_validate :: proc(v: ^Validator, s: ^Scene_Def, assets: map[ID]Asset_Def) {
     w,g:=s.world_bounds,s.ground
     if !inside(g,w) || g.x!=w.x || g.w!=w.w { fail(v,"corridor","/ground","Ground must form one continuous world-width corridor") }
-    if !inside(s.camera_bounds,w) || s.camera_bounds.w<320 || s.camera_bounds.h<180 { fail(v,"camera","/camera_bounds","Camera must fit inside world and contain a 320x180 view") }
+    if !inside(s.camera_bounds,w) || s.camera_bounds.w<VIEW_WIDTH || s.camera_bounds.h<VIEW_HEIGHT { fail(v,"camera","/camera_bounds","Camera must fit inside world and contain a 640x360 view") }
     counts: [Object_Kind]int
     for id,o in s.objects {
         p:=ptr("/objects",string(id)); counts[o.kind]+=1
@@ -13,14 +13,14 @@ scene_validate :: proc(v: ^Validator, s: ^Scene_Def, assets: map[ID]Asset_Def) {
         if o.has_asset { if _,ok:=assets[o.asset]; !ok { fail(v,"missing_asset",ptr(p,"asset"),"Asset ID not found") } }
         if o.has_collision {
             r:=o.collision; r.x+=o.position[0]; r.y+=o.position[1]
-            if !inside(r,w) || intersects(r,{g.x,g.y-16,g.w,16}) { fail(v,"corridor",ptr(p,"collision"),"Collision obstructs walking corridor or escapes world") }
+            if !inside(r,w) || intersects(r,{g.x,g.y-PLAYER_HEIGHT,g.w,PLAYER_HEIGHT}) { fail(v,"corridor",ptr(p,"collision"),"Collision obstructs walking corridor or escapes world") }
             if o.kind==.Shed { fail(v,"corridor",ptr(p,"collision"),"Shed must be non-solid") }
         }
         if o.has_interaction {
             r:=o.interaction; r.x+=o.position[0]; r.y+=o.position[1]
             // There must be a player position on the continuous ground corridor
-            // intersecting the interaction. Player footprint is provisional A1.
-            if !intersects(r,{g.x,g.y-16,g.w,16}) { fail(v,"unreachable",ptr(p,"interaction"),"Interaction does not reach walking corridor") }
+            // intersecting the interaction. Player footprint matches scene-v2 movement.
+            if !intersects(r,{g.x,g.y-PLAYER_HEIGHT,g.w,PLAYER_HEIGHT}) { fail(v,"unreachable",ptr(p,"interaction"),"Interaction does not reach walking corridor") }
         } else if o.kind!=.Shed { fail(v,"missing_interaction",ptr(p,"interaction"),"Interactive object requires bounds") }
     }
     for k in Object_Kind { if k!=.Snail && counts[k]!=1 || k==.Snail && counts[k]>1 { fail(v,"puzzle_cardinality","/objects","Exactly one of each required object kind; at most one snail") } }
@@ -32,7 +32,7 @@ scene_validate :: proc(v: ^Validator, s: ^Scene_Def, assets: map[ID]Asset_Def) {
     if p.snail!="" { if o,ok:=s.objects[p.snail]; !ok || o.kind!=.Snail { fail(v,"object_link","/puzzle/snail","Invalid optional snail link") } }
     if counts[.Snail]==1 && p.snail=="" { fail(v,"object_link","/puzzle/snail","Present snail requires its optional interaction link") }
     for id,spawn in s.spawns {
-        width,height:i32=12,16
+        width,height:i32=PLAYER_WIDTH,PLAYER_HEIGHT
         if spawn.kind==.Handle_Bottom_Center {
             if h,ok:=s.objects[p.handle]; ok { width,height=h.size[0],h.size[1] }
         }
@@ -58,7 +58,7 @@ scene_validate :: proc(v: ^Validator, s: ^Scene_Def, assets: map[ID]Asset_Def) {
     }
     if branch.has_collision {
         cleared:=branch.collision; cleared.x+=p.branch_cleared_position[0]; cleared.y+=p.branch_cleared_position[1]
-        if !inside(cleared,w) || intersects(cleared,{g.x,g.y-16,g.w,16}) { fail(v,"corridor","/puzzle/branch_cleared_position","Cleared branch collision obstructs corridor or escapes world") }
+        if !inside(cleared,w) || intersects(cleared,{g.x,g.y-PLAYER_HEIGHT,g.w,PLAYER_HEIGHT}) { fail(v,"corridor","/puzzle/branch_cleared_position","Cleared branch collision obstructs corridor or escapes world") }
     }
     if !inside({p.branch_cleared_position[0],p.branch_cleared_position[1],branch.size[0],branch.size[1]},w) { fail(v,"geometry","/puzzle/branch_cleared_position","Cleared branch outside world") }
 }

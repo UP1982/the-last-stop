@@ -35,7 +35,7 @@ handle_rect :: proc(scene: Runtime_Scene, p: Puzzle_State, player: Player) -> rl
     switch p.handle {
     case .Shelf: return {f32(h.position[0]), f32(h.position[1]), w, height}
     case .Dropped: return {p.dropped_feet[0]-w/2, p.dropped_feet[1]-height, w, height}
-    case .Held: return {player.position.x+f32(player.facing)*8-w/2, player.position.y-14, w, height}
+    case .Held: return {player.position.x+f32(player.facing)*16-w/2, player.position.y-28, w, height}
     case .Installed:
         winch := d.objects[d.puzzle.winch]
         return {f32(winch.position[0]+d.puzzle.winch_socket[0])-w/2,
@@ -96,7 +96,7 @@ safe_handle_feet :: proc(scene: Runtime_Scene, feet: [2]f32) -> bool {
     }
     supported := false
     for s in scene.solids {
-        if abs(feet[1]-s.y)<0.01 && body.x>=s.x && body.x+body.width<=s.x+s.width && h.x>=s.x && h.x+h.width<=s.x+s.width { supported=true }
+        if abs(feet[1]-s.y)<0.02 && body.x>=s.x && body.x+body.width<=s.x+s.width && h.x>=s.x && h.x+h.width<=s.x+s.width { supported=true }
     }
     if !supported { return false }
     handle_index := -1
@@ -107,7 +107,7 @@ safe_handle_feet :: proc(scene: Runtime_Scene, feet: [2]f32) -> bool {
     walker := Player{position=scene.spawn, grounded=true, facing=1}
     for _ in 0..<20000 {
         delta := feet[0]-walker.position.x
-        if abs(delta)<1 && abs(walker.position.y-feet[1])<0.1 {
+        if abs(delta)<2 && abs(walker.position.y-feet[1])<0.2 {
             // Test the real competing-target resolver at the reachable player
             // position, rather than testing a handle in isolation.
             return focus_puzzle(walker,scene,{handle=.Dropped,dropped_feet=feet}) == handle_index

@@ -133,7 +133,7 @@ apply_operations :: proc(value:json.Value,r:Edit_Request,v:^c.Validator) -> json
             fields:=c.object(root); fields["order"]=json.clone_value(c.get(op,"order")); root=fields
         case "restore_document":
             replacement:=c.get(op,"value")
-            if c.text(c.get(replacement,"kind"))!=kind || c.text(c.get(replacement,"id"))!=id || c.integer(c.get(replacement,"schema_version"))!=1 { c.fail(v,"identity",p,"Restore must preserve kind, ID and version"); break }
+            if c.text(c.get(replacement,"kind"))!=kind || c.text(c.get(replacement,"id"))!=id || c.integer(c.get(replacement,"schema_version"))!=c.integer(c.get(value,"schema_version")) { c.fail(v,"identity",p,"Restore must preserve kind, ID and version"); break }
             root=json.clone_value(replacement)
         case: c.fail(v,"operation",p,"Unsupported operation")
         }

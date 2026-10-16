@@ -94,30 +94,30 @@ class M2Tests(unittest.TestCase):
         call('write-dropped', self.save)
         record = self.inspect()
         self.assertEqual(record['puzzle']['dropped_feet'], json.loads(self.path.read_bytes())['puzzle']['dropped_feet'])
-        for feet in ([-1000, 144], [640, 144], [0, 144], [500, -999], [500, 140], [1e30, 1e30], [1e300, 144]):
+        for feet in ([-2000, 288], [1280, 288], [0, 288], [1000, -1998], [1000, 280], [1e30, 1e30], [1e300, 288]):
             bad = copy.deepcopy(record)
             bad['puzzle']['dropped_feet'] = feet
             self.path.write_text(json.dumps(bad))
-            self.assertEqual(self.inspect()['puzzle']['dropped_feet'], [592, 144])
+            self.assertEqual(self.inspect()['puzzle']['dropped_feet'], [1184, 288])
             call('resume', self.save)
         fixture = self.dir / 'moved'
         shutil.copytree(ROOT / 'data', fixture / 'data')
         scene = json.loads((fixture / SCENE).read_bytes())
         for key in ('world_bounds', 'camera_bounds', 'ground'):
-            scene[key][0] += 40
-            scene[key][1] += 20
+            scene[key][0] += 80
+            scene[key][1] += 40
         for spawn in scene['spawns'].values():
-            spawn['position'][0] += 40
-            spawn['position'][1] += 20
+            spawn['position'][0] += 80
+            spawn['position'][1] += 40
         for obj in scene['objects'].values():
-            obj['position'][0] += 40
-            obj['position'][1] += 20
-        scene['puzzle']['branch_cleared_position'][0] += 40
-        scene['puzzle']['branch_cleared_position'][1] += 20
+            obj['position'][0] += 80
+            obj['position'][1] += 40
+        scene['puzzle']['branch_cleared_position'][0] += 80
+        scene['puzzle']['branch_cleared_position'][1] += 40
         (fixture / SCENE).write_text(json.dumps(scene))
         self.path.write_text(json.dumps(record))
         state = json.loads(call('inspect', self.save, root=fixture).stdout)
-        self.assertEqual(state['puzzle']['dropped_feet'], [632, 164])
+        self.assertEqual(state['puzzle']['dropped_feet'], [1264, 328])
         call('resume', self.save, root=fixture)
         # Invalid authored content blocks before any save access/write.
         before = self.path.read_bytes()
@@ -129,16 +129,16 @@ class M2Tests(unittest.TestCase):
         call('write-shelf', self.save)
         good = self.inspect()
         invalid = [b'{', b'{}', self.path.read_bytes()[:-7],
-                   self.path.read_bytes().replace(b'"save_version": 1', b'"save_version": 99'),
-                   self.path.read_bytes().replace(b'"save_version": 1', b'"save_version": 1, "save_version": 1'),
+                   self.path.read_bytes().replace(b'"save_version": 2', b'"save_version": 99'),
+                   self.path.read_bytes().replace(b'"save_version": 2', b'"save_version": 2, "save_version": 2'),
                    self.path.read_bytes() + b' false']
         for key, value in [('chapter_id', 'other'), ('scene_id', 'other'), ('checkpoint', 'other'),
                            ('player_spawn', 'train_return'), ('save_version', True), ('extra', 1)]:
             bad = copy.deepcopy(good); bad[key] = value; invalid.append(json.dumps(bad).encode())
         for key, value in [('handle_location', 'other'), ('phase', 'other'), ('phase', 'cleared'),
-                           ('dropped_feet', [500, 144]), ('snail_seen', 1)]:
+                           ('dropped_feet', [1000, 288]), ('snail_seen', 1)]:
             bad = copy.deepcopy(good); bad['puzzle'][key] = value; invalid.append(json.dumps(bad).encode())
-        for feet in ([float('nan'), 144], [float('inf'), 144], ['500', 144], [500], None):
+        for feet in ([float('nan'), 288], [float('inf'), 288], ['1000', 288], [500], None):
             bad = copy.deepcopy(good); bad['puzzle'].update(handle_location='dropped', dropped_feet=feet)
             invalid.append(json.dumps(bad).encode())
         for payload in invalid:
@@ -150,6 +150,47 @@ class M2Tests(unittest.TestCase):
                 self.assertEqual(self.path.read_bytes(), payload)
         call('reset', self.save)
         self.assertEqual(self.inspect()['puzzle']['handle_location'], 'shelf')
+
+    def test_08_save_v1_to_v2_unit_migration(self):
+        # v1 has the identical durable state model, with half-sized coordinates.
+        # Check every boundary, normalization idempotence, and completion after
+        # conversion; merely reading a legacy save must not rewrite its bytes.
+        for checkpoint in ('chapter_start', 'boarded', 'shelf', 'held', 'dropped',
+                           'installed', 'cranking', 'cleared', 'returned', 'arrival', 'complete'):
+            with self.subTest(checkpoint=checkpoint):
+                call('write-' + checkpoint, self.save)
+                legacy = json.loads(self.path.read_bytes())
+                legacy['save_version'] = 1
+                feet = legacy['puzzle']['dropped_feet']
+                if feet is not None:
+                    legacy['puzzle']['dropped_feet'] = [n / 2 for n in feet]
+                self.path.write_text(json.dumps(legacy))
+                original = self.path.read_bytes()
+                upgraded = self.inspect()
+                self.assertEqual(upgraded['save_version'], 2)
+                self.assertEqual(self.path.read_bytes(), original)
+                if checkpoint == 'dropped':
+                    self.assertEqual(upgraded['puzzle']['dropped_feet'], [n * 2 for n in legacy['puzzle']['dropped_feet']])
+                    self.assertNotEqual(upgraded['puzzle']['dropped_feet'], legacy['puzzle']['dropped_feet'])
+                elif checkpoint == 'held':
+                    self.assertEqual(upgraded['puzzle']['dropped_feet'], [1184, 288])
+                self.path.write_text(json.dumps(upgraded))
+                self.assertEqual(self.inspect(), upgraded)  # v2 never doubles again
+                call('resume', self.save)
+        call('write-dropped', self.save)
+        legacy = self.inspect()
+        legacy['save_version'] = 1
+        for feet in ([1e300, 144], [-1000, 144], [500, 140]):
+            legacy['puzzle']['dropped_feet'] = feet
+            self.path.write_text(json.dumps(legacy))
+            self.assertEqual(self.inspect()['puzzle']['dropped_feet'], [1184, 288])
+            call('resume', self.save)
+        # Unit migration never repairs a contradictory phase/checkpoint.
+        legacy['puzzle'].update(handle_location='dropped', phase='cleared', dropped_feet=[500, 144])
+        self.path.write_text(json.dumps(legacy))
+        original = self.path.read_bytes()
+        call('inspect', self.save, expected=3)
+        self.assertEqual(self.path.read_bytes(), original)
 
     def test_06_atomic_faults_and_crash_commit_boundary(self):
         call('write-returned', self.save)

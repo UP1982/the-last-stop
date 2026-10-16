@@ -56,9 +56,9 @@ class ReviewRegressions(unittest.TestCase):
     def test_01_astra_recovery_under_snail(self):
         self.call('write-held')
         scene = self.scene()
-        scene['spawns']['handle_recovery']['position'] = [406, 144]
+        scene['spawns']['handle_recovery']['position'] = [812, 288]
         root = self.fixture('recovery-under-snail', scene)
-        self.assertEqual(self.inspect(root)['puzzle']['dropped_feet'], [406, 144])
+        self.assertEqual(self.inspect(root)['puzzle']['dropped_feet'], [812, 288])
         self.call('resume', root)
         self.assertEqual(self.inspect(root)['checkpoint'], 'returned')
         self.assertFalse(self.inspect(root)['puzzle']['snail_seen'])
@@ -66,9 +66,9 @@ class ReviewRegressions(unittest.TestCase):
     def test_02_astra_snail_moved_onto_real_drop(self):
         self.call('write-review-drop')
         original = json.loads((self.save / 'chapter_01.json').read_bytes())
-        self.assertAlmostEqual(original['puzzle']['dropped_feet'][0], 497.1536, places=3)
+        self.assertAlmostEqual(original['puzzle']['dropped_feet'][0], 994.3072, places=3)
         scene = self.scene()
-        scene['objects']['snail']['position'] = [491, 136]
+        scene['objects']['snail']['position'] = [982, 272]
         root = self.fixture('snail-over-drop', scene)
         self.assertEqual(self.inspect(root)['puzzle']['dropped_feet'], original['puzzle']['dropped_feet'])
         self.call('resume', root)
@@ -85,22 +85,22 @@ class ReviewRegressions(unittest.TestCase):
             with self.subTest(seed=i):
                 scene = copy.deepcopy(original)
                 for obj in scene['objects'].values():
-                    obj['position'][0] = rng.randint(24, 640 - obj['size'][0] - 24)
-                recovery = rng.randint(12, 628)
+                    obj['position'][0] = 2 * rng.randint(24, 640 - obj['size'][0] // 2 - 24)
+                recovery = 2 * rng.randint(12, 628)
                 if i % 4 == 0:
-                    recovery = scene['objects']['snail']['position'][0] + 6
+                    recovery = scene['objects']['snail']['position'][0] + 12
                 elif i % 4 == 1:
-                    scene['objects']['crank_handle']['position'][0] = scene['objects']['snail']['position'][0] + 2
+                    scene['objects']['crank_handle']['position'][0] = scene['objects']['snail']['position'][0] + 4
                 elif i % 4 == 2:
-                    recovery = scene['objects']['winch']['position'][0] + 12
-                    scene['objects']['fallen_branch']['position'][0] = recovery - 24
+                    recovery = scene['objects']['winch']['position'][0] + 24
+                    scene['objects']['fallen_branch']['position'][0] = recovery - 48
                 else:
-                    recovery = 12 if i % 8 == 3 else 628
-                scene['spawns']['handle_recovery']['position'] = [recovery, 144]
+                    recovery = 24 if i % 8 == 3 else 1256
+                scene['spawns']['handle_recovery']['position'] = [recovery, 288]
                 scene['puzzle']['branch_cleared_position'][0] = scene['objects']['fallen_branch']['position'][0]
                 # Also move the full corridor vertically; prop x motion above
                 # stays independent rather than translating one fixed layout.
-                dy = rng.randint(0, 32)
+                dy = 2 * rng.randint(0, 32)
                 for key in ('world_bounds', 'camera_bounds', 'ground'):
                     scene[key][1] += dy
                 for obj in scene['objects'].values():
@@ -111,7 +111,7 @@ class ReviewRegressions(unittest.TestCase):
                 root = self.fixture('perturbed', scene)
                 self.call('geometry-path', root)
                 self.call('write-held', root)
-                self.assertEqual(self.inspect(root)['puzzle']['dropped_feet'], [recovery, 144 + dy])
+                self.assertEqual(self.inspect(root)['puzzle']['dropped_feet'], [recovery, 288 + dy])
                 self.call('resume', root)
                 self.assertEqual(self.inspect(root)['checkpoint'], 'returned')
 
@@ -120,9 +120,9 @@ class ReviewRegressions(unittest.TestCase):
 
     def test_05_unusable_authored_recovery_blocks_before_save_access(self):
         scene = self.scene()
-        # Shared geometry fits the 8px handle here, but the M1 player footprint
+        # Shared geometry fits the 16px handle here, but the M1 player footprint
         # escapes the world. Reject authoring before accessing any save profile.
-        scene['spawns']['handle_recovery']['position'] = [4, 144]
+        scene['spawns']['handle_recovery']['position'] = [8, 288]
         root = self.fixture('unusable-pickup', scene)
         p = self.call('path', root, expected=2)
         self.assertIn(b'chapter blocked', p.stderr)

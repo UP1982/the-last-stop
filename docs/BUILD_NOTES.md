@@ -34,6 +34,9 @@ macOS 27.2 arm64; Odin `dev-2026-10:84bc3fc21`; bundled vendor:raylib 6.0. No ex
 - Release/dev builds, M0/M1, 7 E0b + 7 M2 + 13 editor groups, check.sh exit 0. 3 scripted native completions with PID-verified screenshots, 5 kill/relaunch checkpoints. data/ and real saves untouched (no ~/Library save dir created). See build/evidence/m2/HANDOFF.md.
 - Saves: `~/Library/Application Support/The Last Stop/saves/chapter_01.json`; override `--save-dir` / `TLS_SAVE_DIR`.
 
+## 640x360 migration (T-RES-640, Sol)
+- Canvas 640x360, window 1280x720 default / 640x360 min. Physics/collision/world doubled (footprint 24x32). Scene schema v2 (v1 old-unit scenes rejected). Save v2: v1 dropped_feet doubled then safety-checked. All suites + check.sh exit 0; 3,000-tick normalized trace matches pre-migration baseline; native captures at both sizes (build/evidence/res640/).
+
 ## Open issues
 - Multiple simultaneous game instances aren't coordinated on the save file (out of contract scope).
 - B2: hint/response strings live in one marked table in src/hints.odin pending a content-schema extension (fold into story schema v2).

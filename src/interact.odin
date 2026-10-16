@@ -18,7 +18,7 @@ focus_nearest :: proc(player: Player, objects: []Interactable) -> int {
         r := object.bounds
         dx := centre.x - clamp(centre.x, r.x, r.x + r.width)
         dy := centre.y - clamp(centre.y, r.y, r.y + r.height)
-        if !overlaps(body, r) && dx * dx + dy * dy > 20 * 20 { continue }
+        if !overlaps(body, r) && dx * dx + dy * dy > 40 * 40 { continue }
         // Rank by interaction-zone centre; stable array order resolves ties.
         dx = centre.x - (r.x + r.width / 2)
         dy = centre.y - (r.y + r.height / 2)

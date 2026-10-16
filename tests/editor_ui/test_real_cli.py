@@ -42,14 +42,14 @@ class RealContentTests(unittest.TestCase):
                 scene = before["result"]
                 request = {"protocol_version": 1, "request_id": "http_roundtrip", "chapter": scene["chapter"],
                            "document": scene["document"], "expected_revision": scene["graph_revision"], "operations": [
-                               {"op": "set_property", "collection": "objects", "id": "crank_handle", "property": "position", "value": [596, 128]},
-                               {"op": "set_property", "collection": "objects", "id": "crank_handle", "property": "interaction", "value": [-20, -8, 48, 32]}]}
+                               {"op": "set_property", "collection": "objects", "id": "crank_handle", "property": "position", "value": [1192, 256]},
+                               {"op": "set_property", "collection": "objects", "id": "crank_handle", "property": "interaction", "value": [-40, -16, 96, 64]}]}
                 saved = api("apply-edit", request)
                 self.assertEqual(saved["exit_code"], 0)
                 inspection = api("inspect-scene")["result"]
                 handle = inspection["authored"]["objects"]["crank_handle"]
-                self.assertEqual(handle["position"], [596, 128])
-                self.assertEqual(handle["interaction"], [-20, -8, 48, 32])
+                self.assertEqual(handle["position"], [1192, 256])
+                self.assertEqual(handle["interaction"], [-40, -16, 96, 64])
                 path = root / "data/scenes/oliver_obstacle.json"
                 saved_bytes = path.read_bytes()
                 self.assertEqual(api("apply-edit", request)["exit_code"], 3)

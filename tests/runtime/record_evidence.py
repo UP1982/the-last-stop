@@ -102,7 +102,7 @@ original = (ROOT / SCENE).read_bytes()
 validation = cli('10-validate-original', 'validate-content')
 request = json.loads((ROOT / 'tests/editor/fixtures/move-handle.json').read_bytes())
 request.update(request_id='e0b_native_move', expected_revision=validation['graph_revision'])
-request['operations'][0]['value'] = [264, 128]  # visible from deterministic initial camera
+request['operations'][0]['value'] = [528, 256]  # visible from deterministic initial camera
 normal_save_root = Path.home() / 'Library/Application Support/The Last Stop/saves'
 
 def saves():
@@ -121,9 +121,9 @@ try:
     log = native('12-native-moved', [ROOT / 'build/the-last-stop-dev', '--project-root', ROOT,
                  '--preview-scene', 'oliver_obstacle', '--preview-session', 'e0b-native-gate', '--dump-scene'])
     handle = next(line for line in log.splitlines() if line.startswith('E0B object=crank_handle '))
-    assert 'position=[264, 128]' in handle, handle
-    assert 'interaction_local=Recti{x = -20, y = -8, w = 48, h = 32}' in handle, handle
-    assert 'interaction_world=Rectangle{x = 244, y = 120, width = 48, height = 32}' in handle, handle
+    assert 'position=[528, 256]' in handle, handle
+    assert 'interaction_local=Recti{x = -40, y = -16, w = 96, h = 64}' in handle, handle
+    assert 'interaction_world=Rectangle{x = 488, y = 240, width = 96, height = 64}' in handle, handle
     assert str(Path.home() / 'Library/Caches/The Last Stop/preview/e0b-native-gate') in log
 finally:
     current = cli('13-current-revision', 'validate-content')
@@ -133,7 +133,7 @@ finally:
         result = cli('14-restore-document', 'apply-edit', restore)
         assert result['commit_state'] == 'committed'
 assert data_hashes() == initial
-run('15-data-identical', ['git', 'diff', '--exit-code', 'dacc96b', '--', 'data/'])
+run('15-data-identical', ['git', 'diff', '--exit-code', 'HEAD', '--', 'data/chapters', 'data/dialogue', 'data/legacy', 'data/assets'])
 # The release binary uses its build/ parent from /tmp with Studio closed.
 log = native('16-release-from-tmp', [ROOT / 'build/the-last-stop'])
 assert 'Content root:' not in log

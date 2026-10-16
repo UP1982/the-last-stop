@@ -20,8 +20,9 @@ silently omits empty keys, so the adapter rejects them (no content/protocol obje
 allows an empty field or identity). Input limits are 256 KiB per JSON document,
 32 nesting levels, 65,536 tokens, 64 dependencies, 16 MiB per binary asset, and
 32 MiB per graph. Schema maps have at most 1,024 records. Geometry uses bounded
-integer virtual pixels. The provisional player footprint is 12x16 bottom-centre
-(A1); M1 must confirm it. These are authoring safety checks, not a native playtest.
+integer virtual pixels. Scene v2 uses a 640x360 view and a 24x32 bottom-centre player footprint.
+Chapter/dialogue/assets remain v1; scene v1 is rejected, never auto-migrated.
+The ±16,384 limits are unchanged. These are authoring safety checks, not a native playtest.
 
 Revisions are `sha256:` followed by lowercase hex. Each dependency gets SHA-256
 of its exact bytes. Sort project-relative dependency paths by byte order. Hash

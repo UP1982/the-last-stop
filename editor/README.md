@@ -60,3 +60,9 @@ locates a single visible game window by its owned preview PID for window-only
 `screencapture -l` evidence; it does not capture the desktop.
 
 See `HANDOFF.md` for actual E1 verification, limitations and integration notes.
+
+T-RES-640: scene v2 uses 640x360 virtual pixels, a 16-unit default snap and doubled
+object defaults. The backing canvas is 640x360, displayed at 2× by default; camera
+and pointer conversion use these same units. Old schema-v1 browser drafts and
+undo histories are rejected and use a separate storage namespace. Save/Undo
+preserves the loaded kind, ID and schema version; it cannot migrate a document.

@@ -12,3 +12,4 @@ odin run src -define:M1_SELF_TEST=true -out:build/m1-selftest
 python3 -B tests/runtime/run.py
 python3 -B tests/runtime/m2.py
 python3 -B tests/runtime/m2_fix.py
+python3 -B -m unittest discover -s tests/editor_ui -v

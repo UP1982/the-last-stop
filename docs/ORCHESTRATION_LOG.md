@@ -52,7 +52,9 @@
 | T-M2-2 | gpt-6.1-sol (high) | fix P1+P3 + regressions | Game @ 1c943b5 | delivered; Opus re-ran check.sh; committed; R2 next |
 
 | T-M2-R2 | gpt-6-astra (high) | M2 review r2 | Game @ 39f52ac | ACCEPT (automated/contract scope) |
-| T-RES-640 | gpt-6.1-sol (high) | 640x360 migration | Game @ HEAD | running |
+| T-RES-640 | gpt-6.1-sol (high) | 640x360 migration (sole writer) | Game @ cbbd996 | delivered; Opus re-ran check.sh, legacy bytes ok, screenshots ok; committed; Astra review T-RES-R1 |
+
+- T-RES-640: Sol chose scene schema v2 for the unit change; Opus allowed one scoped change in shared/content_edit/edit.odin (restore_document preserves loaded version, rejects version-changing restores) + tests.
 
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 

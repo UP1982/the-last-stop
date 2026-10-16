@@ -89,7 +89,9 @@ reference :: proc(v: ^Validator, x: json.Value, p, prefix: string) -> Reference 
 envelope :: proc(v: ^Validator, x: json.Value, kind: string) -> ID {
     if !has(x,"schema_version") { fail(v,"migration_required","/schema_version","Versionless content requires explicit migration"); return "" }
     n, ok := get(x,"schema_version").(i64)
-    if !ok || n != 1 { fail(v,"unsupported_version","/schema_version","Only schema_version 1 is supported") }
+    expected := i64(1)
+    if kind == "scene" { expected = SCENE_VERSION }
+    if !ok || n != expected { fail(v,"unsupported_version","/schema_version",fmt.aprintf("%s requires schema_version %d",kind,expected)) }
     if text(get(x,"kind")) != kind { fail(v,"wrong_kind","/kind","Wrong document kind") }
     return id_value(v,get(x,"id"),"/id")
 }

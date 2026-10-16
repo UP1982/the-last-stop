@@ -50,7 +50,7 @@ save_decode :: proc(bytes: []u8, scene: Runtime_Scene) -> (Save_Record,bool) {
     version,vi:=o["save_version"].(i64)
     chapter,ci:=o["chapter_id"].(string); scene_id,si:=o["scene_id"].(string)
     checkpoint,ki:=o["checkpoint"].(string); spawn,spi:=o["player_spawn"].(string)
-    if !vi || version!=1 || !ci || chapter!="oliver_flower_market" || !si || scene_id!="oliver_obstacle" || !ki || !spi { return {},false }
+    if !vi || (version!=1 && version!=2) || !ci || chapter!="oliver_flower_market" || !si || scene_id!="oliver_obstacle" || !ki || !spi { return {},false }
     r:Save_Record
     found:=false
     for name,k in CHECKPOINT_NAMES { if checkpoint==name { r.checkpoint=k; found=true; break } }
@@ -76,6 +76,9 @@ save_decode :: proc(bytes: []u8, scene: Runtime_Scene) -> (Save_Record,bool) {
             f:f64
              #partial switch val in n { case i64: f=f64(val); case f64: f=val; case: return {},false }
             if math.is_nan(f) || math.is_inf(f) { return {},false }
+            // v1 stored half-scale world units. Convert in f64 before
+            // narrowing, then let normal spatial validation recover unsafe data.
+            if version==1 { f *= 2 }
             if abs(f)>f64(max(f32)) { r.puzzle.dropped_feet[i]=max(f32) }
             else { r.puzzle.dropped_feet[i]=f32(f) }
         }
@@ -96,7 +99,7 @@ save_encode :: proc(r: Save_Record) -> []u8 {
     if r.puzzle.handle==.Dropped { feet=json.Array{f64(r.puzzle.dropped_feet[0]),f64(r.puzzle.dropped_feet[1])} }
     spawn:="puzzle_entry"; if r.checkpoint>=.Returned { spawn="train_return" }
     v:=json.Object{
-        "save_version"=i64(1),"chapter_id"="oliver_flower_market","scene_id"="oliver_obstacle",
+        "save_version"=i64(2),"chapter_id"="oliver_flower_market","scene_id"="oliver_obstacle",
         "checkpoint"=CHECKPOINT_NAMES[r.checkpoint],"player_spawn"=spawn,
         "puzzle"=json.Object{"handle_location"=HANDLE_NAMES[r.puzzle.handle],"dropped_feet"=feet,
             "phase"=PHASE_NAMES[r.puzzle.phase],"snail_seen"=r.puzzle.snail_seen},

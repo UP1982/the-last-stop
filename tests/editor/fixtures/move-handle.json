@@ -10,14 +10,22 @@
       "collection": "objects",
       "id": "crank_handle",
       "property": "position",
-      "value": [596, 128]
+      "value": [
+        1192,
+        256
+      ]
     },
     {
       "op": "set_property",
       "collection": "objects",
       "id": "crank_handle",
       "property": "interaction",
-      "value": [-20, -8, 48, 32]
+      "value": [
+        -40,
+        -16,
+        96,
+        64
+      ]
     }
   ]
 }

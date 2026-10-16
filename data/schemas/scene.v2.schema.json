@@ -1,0 +1,426 @@
+{
+  "$comment": "Supplementary authoring schema. Odin additionally checks exact integer token types, UTF-8 byte lengths, graph references, geometry, confined filesystem paths, dependency bytes and transaction invariants. Scene v2 uses 640x360 virtual pixels; scene v1 is historical and rejected by the runtime.",
+  "$id": "https://the-last-stop.local/schemas/scene.v2.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "camera_bounds": {
+      "items": false,
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "maximum": 16384,
+          "minimum": -16384,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": -16384,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": 640,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": 360,
+          "type": "integer"
+        }
+      ],
+      "type": "array"
+    },
+    "ground": {
+      "items": false,
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "maximum": 16384,
+          "minimum": -16384,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": -16384,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": 1,
+          "type": "integer"
+        }
+      ],
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "kind": {
+      "const": "scene"
+    },
+    "objects": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "asset": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "collision": {
+            "items": false,
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "interaction": {
+            "items": false,
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "train",
+              "branch",
+              "winch",
+              "shed",
+              "handle",
+              "snail"
+            ]
+          },
+          "layer": {
+            "enum": [
+              "background",
+              "world",
+              "foreground"
+            ]
+          },
+          "position": {
+            "items": false,
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "size": {
+            "items": false,
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "position",
+          "size",
+          "layer"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "puzzle": {
+      "additionalProperties": false,
+      "properties": {
+        "branch": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "branch_cleared_position": {
+          "items": false,
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            },
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        "branch_rope_anchor": {
+          "items": false,
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            },
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        "handle": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "handle_recovery_spawn": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "kind": {
+          "const": "install_crank_handle"
+        },
+        "player_spawn": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "return_spawn": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "shed": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "snail": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "train": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "winch": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "winch_rope_anchor": {
+          "items": false,
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            },
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        "winch_socket": {
+          "items": false,
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            },
+            {
+              "maximum": 16384,
+              "minimum": -16384,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "train",
+        "branch",
+        "winch",
+        "shed",
+        "handle",
+        "player_spawn",
+        "return_spawn",
+        "handle_recovery_spawn",
+        "winch_socket",
+        "winch_rope_anchor",
+        "branch_rope_anchor",
+        "branch_cleared_position"
+      ],
+      "type": "object"
+    },
+    "scene_type": {
+      "const": "oliver_puzzle"
+    },
+    "schema_version": {
+      "const": 2,
+      "type": "integer"
+    },
+    "spawns": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "player_feet",
+              "handle_bottom_center"
+            ]
+          },
+          "position": {
+            "items": false,
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "position"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "world_bounds": {
+      "items": false,
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "maximum": 16384,
+          "minimum": -16384,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": -16384,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": 640,
+          "type": "integer"
+        },
+        {
+          "maximum": 16384,
+          "minimum": 360,
+          "type": "integer"
+        }
+      ],
+      "type": "array"
+    }
+  },
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "scene_type",
+    "world_bounds",
+    "camera_bounds",
+    "ground",
+    "spawns",
+    "objects",
+    "puzzle"
+  ],
+  "type": "object"
+}
