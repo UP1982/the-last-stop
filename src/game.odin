@@ -1,6 +1,6 @@
 package main
 
-GameMode :: enum { Title, Playing, Paused, Content_Error, Confirm_New,
+GameMode :: enum { Title, Save_Failed, Playing, Paused, Content_Error, Confirm_New,
     Station_Intro, Train_Travel, Obstacle_Arrival, Train_Travel_Resume, Station_Outro, Chapter_Complete }
 Action_Key :: enum { Advance, Skip, Pause, Confirm }
 Action_Keys :: bit_set[Action_Key]
@@ -20,6 +20,11 @@ Game_State :: struct {
     interact_latched: bool,
     selection: int,
     quit_requested: bool,
+    save_exit_process: bool,
+    save_return_mode: GameMode,
+    save_return_transitioning: bool,
+    save_return_fade: f32,
+    save_return_next_mode: GameMode,
     transitioning: bool,
     next_mode: GameMode,
     fade_elapsed: f32,
@@ -110,6 +115,7 @@ begin_transition :: proc(game: ^Game_State, next: GameMode) {
     game.action_latched = {.Advance,.Skip,.Pause,.Confirm}
     game.next_mode = next
     game.fade_elapsed = 0
+    m4_event(game,"fade_start")
 }
 
 update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
@@ -130,6 +136,7 @@ update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
         before := game.fade_elapsed
         game.fade_elapsed += dt
         if before < FADE_HALF_SECONDS && game.fade_elapsed >= FADE_HALF_SECONDS {
+            m4_event(game,"fade_mid_before")
             enter_mode(game, game.next_mode)
             if game.story.finished {
                 for mode,role in STORY_MODES {
@@ -138,18 +145,34 @@ update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
             }
         }
         if game.fade_elapsed >= 2 * FADE_HALF_SECONDS {
+            m4_event(game,"fade_end")
             game.transitioning = false
         }
         return // Discard input during fades; never activate the destination menu.
     }
 
     switch game.mode {
+    case .Save_Failed:
+        game.selection=(game.selection+input.menu_move+2)%2
+        if input.pause || input.confirm && game.selection==1 {
+            enter_mode(game,game.save_return_mode)
+            game.transitioning=game.save_return_transitioning
+            game.fade_elapsed=game.save_return_fade
+            game.next_mode=game.save_return_next_mode
+            if game.mode==.Chapter_Complete && !game.transitioning { game.story.finished=false }
+        } else if input.confirm { request_save_exit(game,game.save_exit_process) }
     case .Title:
+        if game.save.busy {
+            game.selection=0
+            if input.confirm { game.quit_requested=true }
+            return
+        }
         count:=2
         if game.save.exists && !game.save.rejected { count=3 }
         game.selection = (game.selection + input.menu_move + count) % count
         if input.confirm {
             if game.selection==count-1 { game.quit_requested=true }
+            else if !save_run_allowed(game.save) && game.content_ready { return }
             else if !game.content_ready { enter_mode(game,.Content_Error) }
             else if count==3 && game.selection==0 { continue_run(game) }
             else if game.save.exists { enter_mode(game,.Confirm_New) }
@@ -186,7 +209,7 @@ update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
         if input.confirm {
             if game.selection == 0 { enter_mode(game, game.pause_return_mode) }
             else if game.selection == 1 { game.controls_open = true }
-            else { persist_game(game); begin_transition(game, .Title) }
+            else { request_save_exit(game,false) }
         }
     }
 }
@@ -201,4 +224,23 @@ pause_game :: proc(g: ^Game_State) {
     g.pause_return_mode=g.mode
     persist_game(g)
     enter_mode(g,.Paused)
+}
+
+// Both close requests and menu navigation retain the live run on failure.
+request_save_exit :: proc(g:^Game_State,process:bool) {
+    if persist_game(g) {
+        if process { g.quit_requested=true }
+        else { g.save.active=false; begin_transition(g,.Title) }
+        return
+    }
+    if g.mode!=.Save_Failed {
+        g.save_return_mode=g.mode
+        g.save_return_transitioning=g.transitioning
+        g.save_return_fade=g.fade_elapsed
+        g.save_return_next_mode=g.next_mode
+        if g.mode==.Paused { g.save_return_mode=g.pause_return_mode }
+    }
+    g.save_exit_process=process
+    g.transitioning=false
+    enter_mode(g,.Save_Failed)
 }

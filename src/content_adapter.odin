@@ -218,10 +218,11 @@ stage_content_resources :: proc(r: ^Runtime_Content) -> bool {
     // Stage in a separate map. Failure releases every uploaded candidate and
     // leaves the active texture map untouched (including explicit reloads).
     staged:=make(map[c.ID]rl.Texture2D)
+    m4_resource_balance(0)
     success:=false
     defer {
         if !success {
-            for _,texture in staged { rl.UnloadTexture(texture) }
+            for _,texture in staged { rl.UnloadTexture(texture); m4_resource_balance(-1) }
             delete(staged)
         }
     }
@@ -236,13 +237,19 @@ stage_content_resources :: proc(r: ^Runtime_Content) -> bool {
             rl.UnloadImage(image)
             content_error(r, fmt.aprintf("resource_size %s: image differs from declared sprite strip", asset.path)); return false
         }
+        when #config(M4_TEST_HOOKS,false) {
+            if os.get_env("TLS_M4_UPLOAD_FAIL",context.temp_allocator)=="1" && len(staged)>=3 {
+                rl.UnloadImage(image); content_error(r,"resource_upload: injected after three uploads"); return false
+            }
+        }
         texture := rl.LoadTextureFromImage(image)
         rl.UnloadImage(image)
         if !rl.IsTextureValid(texture) { content_error(r, fmt.aprintf("resource_upload %s: cannot create texture", asset.path)); return false }
         rl.SetTextureFilter(texture, .POINT)
         staged[id] = texture
+        m4_resource_balance(1)
     }
-    for _,texture in r.textures { rl.UnloadTexture(texture) }
+    for _,texture in r.textures { rl.UnloadTexture(texture); m4_resource_balance(-1) }
     delete(r.textures)
     r.textures=staged
     success=true
@@ -259,20 +266,27 @@ reload_runtime_content :: proc(g:^Game_State,r:^Runtime_Content,args:[]string=ni
         unload_runtime_content(&candidate)
         return false
     }
+    puzzle:=g.puzzle
+    if puzzle.handle==.Dropped && !safe_handle_feet(candidate.scene,puzzle.dropped_feet) { puzzle.dropped_feet=recovery_feet(candidate.scene) }
+    if !puzzle_invariant(puzzle,g.checkpoint,candidate.scene) {
+        unload_runtime_content(&candidate); return false
+    }
     old:=r^
     r^=candidate
-    g.content=r; g.content_ready=true; g.scene=r.scene
+    changed:=puzzle!=g.puzzle
+    g.content=r; g.content_ready=true; g.scene=r.scene; g.puzzle=puzzle
     // Clear every borrowed render label/response before destroying the old
     // owner, including while paused. Reload restarts placement, not progress.
     start_scene(g)
     refresh_puzzle_objects(g)
     g.art.asset=""; g.art.elapsed=0
     unload_runtime_content(&old)
+    if changed && g.save.active { _=persist_game(g) }
     return true
 }
 }
 unload_runtime_content :: proc(r: ^Runtime_Content) {
-    for _, texture in r.textures { rl.UnloadTexture(texture) }
+    for _, texture in r.textures { rl.UnloadTexture(texture); m4_resource_balance(-1) }
     c.destroy_snapshot(r.snapshot)
     c.destroy_owner(r.owner)
     r^ = {}

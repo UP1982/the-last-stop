@@ -15,6 +15,9 @@ Save_Record :: struct { checkpoint: Journey_Checkpoint, puzzle: Puzzle_State }
 Save_Profile :: struct {
     directory, path: string,
     enabled, exists, rejected, dirty, active: bool,
+    owner, anchored, busy: bool,
+    directory_fd, lock_fd: posix.FD,
+    directory_identity, lock_identity: posix.stat_t,
     message: cstring,
     loaded: Save_Record,
 }
@@ -119,55 +122,124 @@ save_rendezvous :: proc(name:string) {
         }
     }
 }
-save_sync_directory :: proc(dir:string) -> bool {
-    path:=strings.clone_to_cstring(dir); defer delete(path)
-    fd:=posix.open(path,{.DIRECTORY},{})
-    if fd<0 { return false }
-    synced:=posix.fsync(fd)==nil; closed:=posix.close(fd)==nil
-    return synced && closed
+// Keep both descriptors open for the entire profile lifetime. Static directory
+// symlinks are supported; retargeting or replacing either identity invalidates it.
+save_profile_identity :: proc(p:^Save_Profile) -> bool {
+    if !p.anchored || !p.owner { return false }
+    dir,lock,held:posix.stat_t
+    return posix.fstat(p.directory_fd,&held)==nil && held.st_dev==p.directory_identity.st_dev && held.st_ino==p.directory_identity.st_ino &&
+        posix.stat(strings.clone_to_cstring(p.directory,context.temp_allocator),&dir)==nil && dir.st_dev==held.st_dev && dir.st_ino==held.st_ino &&
+        posix.fstat(p.lock_fd,&held)==nil && held.st_nlink==1 && posix.S_ISREG(held.st_mode) &&
+        held.st_dev==p.lock_identity.st_dev && held.st_ino==p.lock_identity.st_ino &&
+        posix.lstat(strings.clone_to_cstring(fmt.tprintf("%s/.write-owner.lock",p.directory),context.temp_allocator),&lock)==nil &&
+        lock.st_dev==held.st_dev && lock.st_ino==held.st_ino
+}
+acquire_save_profile :: proc(p:^Save_Profile) {
+    if e:=os.mkdir_all(p.directory,{.Read_User,.Write_User,.Execute_User}); e!=nil && e!=.Exist { return }
+    p.directory_fd=posix.open(strings.clone_to_cstring(p.directory,context.temp_allocator),{.DIRECTORY},{})
+    if p.directory_fd<0 { return }
+    p.anchored=true
+    if posix.fstat(p.directory_fd,&p.directory_identity)!=nil { return }
+    p.lock_fd=posix.open(strings.clone_to_cstring(fmt.tprintf("%s/.write-owner.lock",p.directory),context.temp_allocator),{.RDWR,.CREAT,.NOFOLLOW},{.IRUSR,.IWUSR})
+    if p.lock_fd<0 { return }
+    if posix.fstat(p.lock_fd,&p.lock_identity)!=nil || !posix.S_ISREG(p.lock_identity.st_mode) || p.lock_identity.st_nlink!=1 { return }
+    lock:=posix.flock{l_type=.WRLCK,l_whence=0}
+    if posix.fcntl(p.lock_fd,.SETLK,&lock)<0 { p.busy=true; return }
+    p.owner=true
+    if !save_profile_identity(p) { p.owner=false }
 }
 save_atomic :: proc(profile: ^Save_Profile, r: Save_Record, scene: Runtime_Scene) -> Save_Commit {
-    if !profile.enabled || profile.rejected { return .Failed }
+    if !profile.enabled || profile.rejected || !save_profile_identity(profile) { return .Failed }
     if !puzzle_invariant(r.puzzle,r.checkpoint,scene) { return .Failed }
     bytes:=save_encode(r); defer delete(bytes)
     // Serialize -> strict decode/validate before touching destination.
     if _,ok:=save_decode(bytes,scene); !ok { return .Failed }
-    if e:=os.mkdir_all(profile.directory,{.Read_User,.Write_User,.Execute_User}); e!=nil && e!=.Exist { return .Failed }
+    m4_save_event(r,"before_temp")
+    if !save_profile_identity(profile) { return .Failed }
     if save_hook("temp") { return .Failed }
-    f,e:=os.create_temp_file(profile.directory,".tls-save-*")
-    if e!=nil { return .Failed }
-    temporary:=strings.clone(os.name(f)); defer delete(temporary); defer os.remove(temporary)
+    fd:posix.FD=-1
+    temporary:cstring
+    for attempt in 0..<100 {
+        temporary=strings.clone_to_cstring(fmt.tprintf(".tls-save-%d-%d",posix.getpid(),attempt),context.temp_allocator)
+        fd=posix.openat(profile.directory_fd,temporary,{.WRONLY,.CREAT,.EXCL,.NOFOLLOW},{.IRUSR,.IWUSR})
+        if fd>=0 || posix.errno()!=.EEXIST { break }
+    }
+    if fd<0 { return .Failed }
+    defer posix.unlinkat(profile.directory_fd,temporary,{})
+    m4_save_event(r,"temp_created")
+    m4_save_event(r,"before_write")
+    if !save_profile_identity(profile) { _=posix.close(fd); return .Failed }
     offset:=0; wrote:=true
     for offset<len(bytes) {
         payload:=bytes[offset:]
         if save_hook("write") { payload=payload[:len(payload)/2] }
-        n,we:=os.write(f,payload)
-        if we!=nil || n<=0 || save_hook("write") { wrote=false; break }
-        offset+=n
+        n:=posix.write(fd,raw_data(payload),len(payload))
+        if n<=0 || save_hook("write") { wrote=false; break }
+        offset+=int(n)
     }
-    synced:=wrote && os.sync(f)==nil && !save_hook("sync")
-    closed:=os.close(f)==nil && !save_hook("close")
+    m4_save_event(r,"after_write")
+    m4_save_event(r,"before_sync")
+    synced:=wrote && posix.fsync(fd)==nil && !save_hook("sync")
+    m4_save_event(r,"after_sync")
+    closed:=posix.close(fd)==nil && !save_hook("close")
+    m4_save_event(r,"after_close")
     if !wrote || !synced || !closed { return .Failed }
+    m4_save_event(r,"before_rename")
     save_rendezvous("before_rename")
-    if save_hook("rename") || os.rename(temporary,profile.path)!=nil { return .Failed }
+    if !save_profile_identity(profile) { return .Failed }
+    if save_hook("rename") || posix.renameat(profile.directory_fd,temporary,profile.directory_fd,"chapter_01.json")!=nil { return .Failed }
+    m4_save_event(r,"after_rename")
     save_rendezvous("after_rename")
-    if save_hook("directory_sync") || !save_sync_directory(profile.directory) { return .Durability_Uncertain }
+    if save_hook("directory_sync") || !save_profile_identity(profile) || posix.fsync(profile.directory_fd)!=nil || !save_profile_identity(profile) { return .Durability_Uncertain }
     return .Committed
 }
-load_save_profile :: proc(profile: ^Save_Profile, scene: Runtime_Scene) {
-    if !profile.enabled { return }
-    profile.exists=os.exists(profile.path)
-    if !profile.exists { return }
-    bytes,e:=os.read_entire_file(profile.path,context.allocator)
+Save_Load :: enum { Loaded, Missing, Rejected, Unavailable }
+load_save_profile :: proc(profile: ^Save_Profile, scene: Runtime_Scene) -> Save_Load {
+    profile.loaded={}; profile.exists=false; profile.rejected=false
+    if !profile.enabled || !save_profile_identity(profile) { return .Unavailable }
+    // Read through one descriptor and reject aliases of the permanent lock.
+    // Closing any alias would release this process's POSIX record lock.
+    named:posix.stat_t
+    cpath:=strings.clone_to_cstring(profile.path,context.temp_allocator)
+    if posix.stat(cpath,&named)!=nil {
+        if posix.errno()==.ENOENT { profile.message="No saved journey found."; return .Missing }
+        profile.rejected=true; profile.message="Save unavailable. Bytes kept. Retry Continue."
+        return .Rejected
+    }
+    profile.exists=true
+    if named.st_dev==profile.lock_identity.st_dev && named.st_ino==profile.lock_identity.st_ino {
+        profile.rejected=true; profile.message="Save rejected. Bytes kept. New Game to reset."; return .Rejected
+    }
+    fd:=posix.open(cpath,{.NONBLOCK},{})
+    if fd<0 { profile.rejected=true; profile.message="Save unavailable. Bytes kept. New Game to reset."; return .Rejected }
+    opened:posix.stat_t
+    stat_ok:=posix.fstat(fd,&opened)==nil
+    alias:=stat_ok && opened.st_dev==profile.lock_identity.st_dev && opened.st_ino==profile.lock_identity.st_ino
+    if alias { profile.owner=false } // closing an alias releases F_SETLK
+    valid:=stat_ok && posix.S_ISREG(opened.st_mode) && opened.st_size>0 && opened.st_size<=256*1024 && !alias
+    bytes:[]u8
+    if valid {
+        bytes=make([]u8,int(opened.st_size))
+        offset:=0
+        for offset<len(bytes) {
+            remaining:int=len(bytes)-offset
+            n:=posix.read(fd,raw_data(bytes[offset:]),uint(remaining))
+            if n<=0 { valid=false; break }; offset+=int(n)
+        }
+        extra:[1]u8
+        if posix.read(fd,&extra[0],1)!=0 { valid=false }
+    }
+    _=posix.close(fd)
     defer delete(bytes)
     r,ok:=save_decode(bytes,scene)
-    if e!=nil || !ok {
+    if !valid || !ok || !save_profile_identity(profile) {
         profile.rejected=true
         profile.message="Save rejected. Bytes kept. New Game to reset."
         fmt.eprintln("SAVE: rejected; original bytes preserved; auto-overwrite disabled:",profile.path)
-        return
+        return .Rejected
     }
-    profile.loaded=r
+    profile.loaded=r; profile.message=nil
+    return .Loaded
 }
 configure_save_profile :: proc(g: ^Game_State, test_mode:=false) {
     if !g.content_ready { return }
@@ -180,25 +252,44 @@ configure_save_profile :: proc(g: ^Game_State, test_mode:=false) {
     if !ok { g.save.message="Save path invalid. Use an absolute --save-dir."; return }
     g.save.path=fmt.aprintf("%s/chapter_01.json",directory)
     g.save.enabled=true
+    g.save.directory_fd=-1; g.save.lock_fd=-1
+    acquire_save_profile(&g.save)
+    if !g.save.owner {
+        if g.save.busy { g.save.message="Another copy of The Last Stop is open." }
+        else { g.save.message="Save location unavailable. Restart to retry." }
+        return
+    }
     if o.preview_scene!="" {
         // Deterministic fresh preview, no read of any previous session's run.
         g.checkpoint=.Puzzle; g.save.active=true; g.save.dirty=true; persist_game(g)
-    } else { load_save_profile(&g.save,g.scene) }
+    } else { _=load_save_profile(&g.save,g.scene) }
 }
-destroy_save_profile :: proc(p: ^Save_Profile) { delete(p.directory); delete(p.path); p^={} }
-persist_game :: proc(g: ^Game_State) {
-    if !g.save.enabled || g.save.rejected || !g.save.active { return }
+destroy_save_profile :: proc(p: ^Save_Profile) {
+    if p.anchored { _=posix.close(p.directory_fd) }
+    if p.lock_fd>=0 && p.enabled { _=posix.close(p.lock_fd) }
+    delete(p.directory); delete(p.path); p^={}
+}
+persist_game :: proc(g: ^Game_State) -> bool {
+    when #config(M0_SELF_TEST,false) || #config(M1_SELF_TEST,false) { if !g.save.enabled { return true } }
+    if !g.save.active { return true }
+    g.save.dirty=true
+    if !g.save.enabled || g.save.rejected || !g.save.owner { return false }
     g.save.dirty=true
     r:=Save_Record{g.checkpoint,g.puzzle}
+    m4_event(g,"before_save")
     status:=save_atomic(&g.save,r,g.scene)
+    m4_event(g,"after_save")
+    if !save_profile_identity(&g.save) { g.save.message="Save location changed. Progress needs retry."; return false }
     if status==.Failed { g.save.message="Save failed. Progress needs retry."; fmt.eprintln("SAVE: write failed; dirty:",g.save.path) }
     else {
         g.save.exists=true; g.save.loaded=r
         if status==.Durability_Uncertain { g.save.message="Saved; disk sync uncertain. Retry pending."; fmt.eprintln("SAVE: committed; durability uncertain:",g.save.path) }
         else { g.save.dirty=false; g.save.message=nil }
     }
+    return !g.save.dirty
 }
 new_run :: proc(g: ^Game_State) {
+    if !save_run_allowed(g.save) { return }
     g.save.active=true
     g.save.rejected=false
     g.puzzle={}; g.checkpoint=.Chapter_Start; g.completion_cues=0; g.story_cues=0
@@ -208,13 +299,17 @@ new_run :: proc(g: ^Game_State) {
     begin_transition(g,.Station_Intro)
 }
 continue_run :: proc(g: ^Game_State) {
-    if !g.save.exists || g.save.rejected { return }
-    // Re-read disk (never continue the in-memory Held state).
-    load_save_profile(&g.save,g.scene)
-    if g.save.rejected { return }
+    if !g.save.owner || g.save.active && g.save.dirty { return }
+    // Re-read at the actual press, and require an explicit successful load.
+    if load_save_profile(&g.save,g.scene)!=.Loaded { return }
     g.save.active=true
     g.checkpoint=g.save.loaded.checkpoint; g.puzzle=g.save.loaded.puzzle; g.completion_cues=0
     start_scene(g)
     resume_checkpoint(g)
     begin_transition(g,g.mode)
+}
+
+save_run_allowed :: proc(p:Save_Profile) -> bool {
+    when #config(M0_SELF_TEST,false) || #config(M1_SELF_TEST,false) { return true }
+    return p.owner
 }

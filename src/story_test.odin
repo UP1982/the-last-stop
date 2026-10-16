@@ -4,7 +4,7 @@ import "core:fmt"
 import "core:os"
 import "core:strings"
 
-when #config(M3B_SELF_TEST,false) {
+when #config(M3B_SELF_TEST,false) || #config(M4_SELF_TEST,false) {
 // Test fixtures contain durable state only; all playback after restoration uses
 // the actual update/input/handler/save path. No graphical initialization needed.
 story_test_role :: proc(g:^Game_State, role:Story_Role) {

@@ -166,3 +166,44 @@ use an explicit temporary `--save-dir` and `TLS_M2_EVIDENCE` rendezvous director
 The native runner verifies each game PID/window ID before window-only captures,
 checks minimum-size text, and kills/relaunches at intro, crank and farewell.
 Evidence and the M3b handoff are under `build/evidence/m3b/` (generated, untracked).
+
+## M4 save resilience
+
+A save profile has one write owner for the process lifetime. Another window
+shows “Another copy of The Last Stop is open” and cannot start or continue a run;
+use the first window so progress never accumulates in an unsavable second run.
+The permanent `.write-owner.lock` uses POSIX `F_SETLK`; do not remove it while
+playing. Static directory symlinks are supported. Replacing/retargeting the
+profile directory or its lock reports a visible failure and keeps progress dirty.
+The directory is anchored by device/inode and a held descriptor; temporary write,
+rename and fsync use that descriptor. This detects changes during saving, and
+cannot prevent an external program deleting a successfully saved file later.
+
+Quit to Title, the end card and native window close retry the current checkpoint.
+A failed/uncertain save keeps the run open with **Retry save / Return to game**.
+Return preserves the current scene and any pending fade. Continue reads the
+file again when pressed; a missing or rejected file never resumes a cached run.
+The schema remains `save_version: 2` (including the existing v1 unit migration).
+
+SIGTERM and SIGKILL deliberately remain abrupt: restart restores the **last
+successfully saved checkpoint**, with held handles safely recovered and no reward
+or completion cue replay. Unsaved progress cannot survive an abrupt kill. No
+filesystem or rendering work runs inside a signal handler.
+
+Maintained resilience checks (all profiles and probes under `/tmp`):
+
+```sh
+python3 -B tests/resilience/run.py --quick       # also in scripts/check.sh
+python3 -B tests/resilience/run.py --disk-full   # full crash/reload/assets + real ENOSPC
+python3 -B tests/resilience/native.py            # macOS; Pillow, Swift, Accessibility
+```
+
+The native runner drives logical Input through release-disabled hooks and uses
+PID-scoped Accessibility for actual close/minimize/restore/focus and resize.
+It verifies the exact game PID/title/window ID before window-only screenshots;
+invalid captures are deleted. It does not establish physical keyboard feel or
+subjective readability. Results, seeds, process exits and handoff are retained
+under `build/evidence/m4/`; verbose probe logs and temporary profiles are retained
+at the `/tmp` paths recorded there. `M4_TEST_HOOKS` and `M4_SELF_TEST` are absent
+from ordinary release builds. Live content reload recovers unsafe dropped-handle
+placement transactionally while preserving Held state, crank progress and story.

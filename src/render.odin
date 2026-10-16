@@ -190,6 +190,11 @@ draw_controls :: proc() {
 draw_game :: proc(game: Game_State) {
     rl.ClearBackground(NIGHT)
     switch game.mode {
+    case .Save_Failed:
+        center_text("Progress could not be saved",70,30,CREAM)
+        center_text("Your journey is still open in this window.",126,20,MINT)
+        menu_item("Retry save",0,game.selection,196)
+        menu_item("Return to game",1,game.selection,238)
     case .Title:
         center_text("THE LAST STOP", 70, 40, CREAM)
         center_text("A little further down the line", 126, 20, MINT)
@@ -201,7 +206,13 @@ draw_game :: proc(game: Game_State) {
             menu_item("New Game",0,game.selection,198)
             menu_item("Quit",1,game.selection,236)
         }
-        if game.save.message!=nil { center_text(game.save.message,342,20,CREAM) }
+        if game.save.busy {
+            rl.DrawRectangle(0,150,640,142,NIGHT)
+            center_text("Another copy of The Last Stop is open",170,20,CREAM)
+            center_text("Progress in this window won't be saved.",202,20,CREAM)
+            center_text("Close this window and use the first copy.",234,20,MINT)
+            menu_item("Quit",0,game.selection,270)
+        } else if game.save.message!=nil { center_text(game.save.message,342,20,CREAM) }
         center_text("Arrows / W S  -  Enter / Space / Z", 302, 20, MINT)
     case .Confirm_New:
         center_text("Replace existing run?",80,40,CREAM)

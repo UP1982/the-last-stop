@@ -9,6 +9,8 @@ main :: proc() {
         return
     }
 
+    when #config(M4_SELF_TEST,false) { run_m4_tests(); return }
+
     when #config(ART3_SELF_TEST, false) { run_art3_tests(); return }
 
     when #config(M3B_SELF_TEST, false) { run_m3b_test_entry(); return }
@@ -38,7 +40,8 @@ main :: proc() {
     configure_save_profile(&game)
     defer destroy_save_profile(&game.save)
     when DEV_TOOLS { autoplay: Autoplay }
-    for !rl.WindowShouldClose() && !game.quit_requested {
+    for !game.quit_requested {
+        if rl.WindowShouldClose() { request_save_exit(&game,true); if game.quit_requested { break } }
         free_all(context.temp_allocator)
         when DEV_TOOLS {
             if rl.IsKeyPressed(.F3) { game.art.debug_boxes = !game.art.debug_boxes }
@@ -56,6 +59,7 @@ main :: proc() {
                 if autoplay_waiting(&autoplay) { dt=0 }
             }
         }
+        m4_native_input(&game,&input,&dt)
         update_game(&game, input, dt)
 
         // Recompute every frame, including immediately after fullscreen changes.
@@ -71,6 +75,7 @@ main :: proc() {
             {0, 0, VIRTUAL_WIDTH, -VIRTUAL_HEIGHT}, viewport.destination,
             {}, 0, rl.WHITE)
         rl.EndDrawing()
+        m4_native_status(&game)
     }
-    if game.save.active && !game.save.rejected { persist_game(&game) }
+
 }

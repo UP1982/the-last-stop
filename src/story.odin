@@ -81,6 +81,7 @@ story_finish :: proc(g: ^Game_State, reason: Story_Finish_Reason) {
         g.checkpoint!=STORY_CHECKPOINTS[g.story.role] || !puzzle_invariant(g.puzzle,g.checkpoint,g.scene) { return }
     // Validation determines the only allowed handler; never execute content as
     // commands. Skip invokes exactly this handler, without visiting future beats.
+    m4_event(g,"before_story_finish")
     g.story.finished=true
     switch g.story.role {
     case .Intro: board_oliver(g); begin_transition(g,.Train_Travel)
@@ -90,6 +91,7 @@ story_finish :: proc(g: ^Game_State, reason: Story_Finish_Reason) {
     case .Arrival: finish_oliver_journey(g); begin_transition(g,.Chapter_Complete)
     case .End_Card: show_title(g)
     }
+    m4_event(g,"after_story_finish")
 }
 resume_checkpoint :: proc(g: ^Game_State) {
     // Deliberately restore the checkpoint, never a page, timer, cue or fade.

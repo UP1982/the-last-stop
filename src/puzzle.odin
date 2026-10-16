@@ -270,7 +270,7 @@ finish_oliver_journey :: proc(g: ^Game_State) {
 }
 show_title :: proc(g: ^Game_State) {
     if g.checkpoint==.Complete && g.mode!=.Title && puzzle_invariant(g.puzzle,g.checkpoint,g.scene) {
-        persist_game(g); enter_mode(g,.Title)
+        request_save_exit(g,false)
     }
 }
 owns_paper_flower :: proc(g: Game_State) -> bool { return g.checkpoint==.Complete }

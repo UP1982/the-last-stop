@@ -17,3 +17,5 @@ python3 -B tests/story/run.py
 python3 -B tests/story/runtime.py
 python3 -B tests/assets/test_manifest.py
 python3 -B tests/assets/runtime.py
+
+python3 -B tests/resilience/run.py --quick
