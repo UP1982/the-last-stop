@@ -53,6 +53,20 @@ draw_world_rect :: proc(rect: rl.Rectangle, camera: Camera, color: rl.Color) {
         pixel(rect.width), pixel(rect.height), color)
 }
 
+// Missing art keeps authored geometry but uses the foreground palette. The
+// focus prompt below owns labels; fallback shapes never carry permanent text.
+draw_placeholder :: proc(rect:rl.Rectangle,camera:Camera,fill:rl.Color) {
+    draw_world_rect(rect,camera,NIGHT)
+    if rect.width>2 && rect.height>2 {
+        draw_world_rect({rect.x+1,rect.y+1,rect.width-2,rect.height-2},camera,fill)
+    }
+}
+draw_placeholder_handle :: proc(rect:rl.Rectangle,camera:Camera) {
+    // A small brass L silhouette reads as a handle even before its art arrives.
+    draw_placeholder({rect.x,rect.y,4,rect.height},camera,rl.Color{232,185,110,255})
+    draw_placeholder({rect.x,rect.y,rect.width,4},camera,rl.Color{232,185,110,255})
+}
+
 draw_scene :: proc(game: Game_State, interface:=true, draw_player:=true) {
     scene, camera := game.scene, game.camera
     _=art_backdrop(game.content,"bg_forest_track",FOREST_RAIL_OFFSET-camera.y)
@@ -70,10 +84,10 @@ draw_scene :: proc(game: Game_State, interface:=true, draw_player:=true) {
         winch:=d.objects[d.puzzle.winch]
         a:=d.puzzle.winch_rope_anchor; z:=d.puzzle.branch_rope_anchor
         rl.DrawLineEx({f32(pixel(f32(winch.position[0]+a[0]))-pixel(camera.x)),f32(pixel(f32(winch.position[1]+a[1]))-pixel(camera.y))},{f32(pixel(b.x+f32(z[0]))-pixel(camera.x)),f32(pixel(b.y+f32(z[1]))-pixel(camera.y))},2,CREAM)
-        if game.puzzle.handle!=.Held { draw_world_rect(handle_rect(scene,game.puzzle,game.player),camera,MINT) }
+        if game.puzzle.handle!=.Held { draw_placeholder_handle(handle_rect(scene,game.puzzle,game.player),camera) }
         if game.puzzle.handle==.Shelf {
             h:=handle_rect(scene,game.puzzle,game.player)
-            draw_world_rect({h.x-12,h.y+h.height,40,4},camera,CREAM)
+            draw_placeholder({h.x-12,h.y+h.height,40,4},camera,rl.Color{110,67,48,255})
         }
     }
     if draw_player {
@@ -83,7 +97,7 @@ draw_scene :: proc(game: Game_State, interface:=true, draw_player:=true) {
         }
         // Held prop is a separate placeholder, in front of Milo, exactly once.
         if scene.definition!=nil && game.puzzle.handle==.Held {
-            draw_world_rect(handle_rect(scene,game.puzzle,game.player),camera,MINT)
+            draw_placeholder_handle(handle_rect(scene,game.puzzle,game.player),camera)
         }
     }
     for object in scene.visuals {
@@ -141,10 +155,24 @@ draw_scene_visual :: proc(game:Game_State,authored:Scene_Visual) {
         } else { drawn=art_draw(game.content,object.asset,anchor,game.camera) }
         if drawn { return }
     }
-    color:=rl.Color{118,131,140,255}
-    if object.kind==.Shed { color={68,77,89,255} }
-    if object.kind==.Branch { color={118,103,147,255} }
-    draw_world_rect(object.rect,game.camera,color)
+    color:=rl.Color{88,103,141,255}
+    if object.kind==.Shed { color={40,69,75,255} }
+    if object.kind==.Branch { color={110,67,48,255} }
+    if object.kind==.Winch { color={119,130,107,255} }
+    draw_placeholder(object.rect,game.camera,color)
+    if object.kind==.Shed {
+        // Suggest boards and a doorway within the existing fallback footprint.
+        r:=object.rect
+        for i in 1..<6 {
+            x:=r.x+r.width*f32(i)/6
+            draw_world_rect({x,r.y+2,1,r.height-4},game.camera,NIGHT)
+        }
+        draw_placeholder({r.x+r.width/3,r.y+r.height/3,r.width/3,r.height*2/3},game.camera,rl.Color{20,42,54,255})
+    }
+    if object.kind==.Winch {
+        r:=object.rect
+        rl.DrawCircleLines(pixel(r.x+r.width/2)-pixel(game.camera.x),pixel(r.y+r.height/2)-pixel(game.camera.y),r.width/3,NIGHT)
+    }
 }
 
 draw_controls :: proc() {

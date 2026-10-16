@@ -36,8 +36,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              340,
-              264
+              374,
+              224
             ],
             "pose": "look"
           },
@@ -47,7 +47,7 @@
             "facing": "left",
             "feet": [
               520,
-              264
+              224
             ],
             "pose": "carry"
           },
@@ -56,8 +56,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -67,15 +67,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -84,7 +84,7 @@
             "kind": "bag",
             "position": [
               510,
-              246
+              198
             ],
             "state": "ear_caught"
           },
@@ -92,15 +92,15 @@
             "kind": "flowerpot",
             "position": [
               510,
-              216
+              184
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -108,24 +108,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -144,8 +144,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              476,
-              264
+              270,
+              224
             ],
             "pose": "reach"
           },
@@ -155,7 +155,7 @@
             "facing": "left",
             "feet": [
               520,
-              264
+              224
             ],
             "pose": "carry"
           },
@@ -164,8 +164,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -175,15 +175,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -192,7 +192,7 @@
             "kind": "bag",
             "position": [
               510,
-              246
+              198
             ],
             "state": "free"
           },
@@ -200,15 +200,15 @@
             "kind": "flowerpot",
             "position": [
               510,
-              216
+              184
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -216,24 +216,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -252,8 +252,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              476,
-              264
+              270,
+              224
             ],
             "pose": "reach"
           },
@@ -262,8 +262,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              408,
-              264
+              60,
+              244
             ],
             "pose": "board"
           },
@@ -272,8 +272,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -283,15 +283,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -299,24 +299,24 @@
           "oliver_bag": {
             "kind": "bag",
             "position": [
-              410,
-              248
+              36,
+              222
             ],
             "state": "aboard"
           },
           "oliver_pot": {
             "kind": "flowerpot",
             "position": [
-              510,
-              216
+              64,
+              202
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -324,24 +324,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -360,8 +360,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              476,
-              264
+              270,
+              224
             ],
             "pose": "reach"
           },
@@ -370,8 +370,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              408,
-              264
+              60,
+              244
             ],
             "pose": "board"
           },
@@ -380,8 +380,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -391,15 +391,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -407,24 +407,24 @@
           "oliver_bag": {
             "kind": "bag",
             "position": [
-              510,
-              246
+              80,
+              218
             ],
             "state": "free"
           },
           "oliver_pot": {
             "kind": "flowerpot",
             "position": [
-              510,
-              216
+              64,
+              202
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -432,24 +432,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -468,8 +468,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "look"
           },
@@ -478,8 +478,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "carry"
           }
@@ -489,15 +489,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -505,8 +505,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -514,24 +514,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -550,8 +550,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              340,
-              264
+              374,
+              224
             ],
             "pose": "look"
           },
@@ -560,8 +560,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -571,15 +571,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -587,8 +587,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -596,24 +596,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -632,8 +632,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              476,
-              264
+              270,
+              224
             ],
             "pose": "wave"
           },
@@ -642,8 +642,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "wave"
           }
@@ -653,15 +653,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -669,24 +669,24 @@
           "oliver_bag": {
             "kind": "bag",
             "position": [
-              410,
-              248
+              36,
+              222
             ],
             "state": "aboard"
           },
           "oliver_pot": {
             "kind": "flowerpot",
             "position": [
-              510,
-              216
+              64,
+              202
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -694,24 +694,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "moving"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -730,8 +730,8 @@
             "emote": "curious",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "look"
           },
@@ -740,8 +740,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "carry"
           }
@@ -751,15 +751,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -767,8 +767,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -776,24 +776,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -812,8 +812,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              476,
-              264
+              270,
+              224
             ],
             "pose": "reach"
           },
@@ -823,7 +823,7 @@
             "facing": "left",
             "feet": [
               520,
-              264
+              224
             ],
             "pose": "carry"
           },
@@ -832,8 +832,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -843,15 +843,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -860,7 +860,7 @@
             "kind": "bag",
             "position": [
               510,
-              246
+              198
             ],
             "state": "free"
           },
@@ -868,15 +868,15 @@
             "kind": "flowerpot",
             "position": [
               510,
-              216
+              184
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -884,24 +884,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -920,8 +920,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              340,
-              264
+              374,
+              224
             ],
             "pose": "look"
           },
@@ -930,8 +930,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -941,15 +941,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -957,8 +957,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -966,24 +966,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1002,8 +1002,8 @@
             "emote": "curious",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "nod"
           },
@@ -1012,8 +1012,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "carry"
           }
@@ -1023,15 +1023,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1039,8 +1039,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1048,24 +1048,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1084,8 +1084,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              476,
-              264
+              270,
+              224
             ],
             "pose": "nod"
           },
@@ -1095,7 +1095,7 @@
             "facing": "left",
             "feet": [
               520,
-              264
+              224
             ],
             "pose": "carry"
           },
@@ -1104,8 +1104,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -1115,15 +1115,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1132,7 +1132,7 @@
             "kind": "bag",
             "position": [
               510,
-              246
+              198
             ],
             "state": "ear_caught"
           },
@@ -1140,15 +1140,15 @@
             "kind": "flowerpot",
             "position": [
               510,
-              216
+              184
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1156,24 +1156,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1192,8 +1192,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "point"
           },
@@ -1202,8 +1202,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "carry"
           }
@@ -1213,15 +1213,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1229,8 +1229,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1238,24 +1238,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1274,8 +1274,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "reach"
           },
@@ -1284,8 +1284,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -1295,15 +1295,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "caught"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1311,8 +1311,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1320,24 +1320,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1356,8 +1356,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "reach"
           },
@@ -1366,8 +1366,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -1377,15 +1377,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1393,8 +1393,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1402,24 +1402,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1438,8 +1438,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "reach"
           },
@@ -1448,8 +1448,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -1459,15 +1459,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "slipping"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1475,8 +1475,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1484,24 +1484,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1520,8 +1520,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "point"
           },
@@ -1530,8 +1530,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -1541,15 +1541,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1557,8 +1557,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1566,24 +1566,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1602,8 +1602,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              340,
-              264
+              374,
+              224
             ],
             "pose": "walk"
           },
@@ -1612,8 +1612,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -1623,15 +1623,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1639,8 +1639,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1648,24 +1648,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1684,8 +1684,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              476,
-              264
+              270,
+              224
             ],
             "pose": "wave"
           },
@@ -1694,8 +1694,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "wave"
           }
@@ -1705,15 +1705,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1721,24 +1721,24 @@
           "oliver_bag": {
             "kind": "bag",
             "position": [
-              410,
-              248
+              36,
+              222
             ],
             "state": "aboard"
           },
           "oliver_pot": {
             "kind": "flowerpot",
             "position": [
-              510,
-              216
+              64,
+              202
             ],
             "state": "bud"
           },
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1746,24 +1746,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1782,8 +1782,8 @@
             "emote": "curious",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "look"
           },
@@ -1792,8 +1792,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "carry"
           }
@@ -1803,15 +1803,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1819,8 +1819,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1828,24 +1828,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1864,8 +1864,8 @@
             "emote": "curious",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "nod"
           },
@@ -1874,8 +1874,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "carry"
           }
@@ -1885,15 +1885,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1901,8 +1901,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1910,24 +1910,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -1946,8 +1946,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "point"
           },
@@ -1956,8 +1956,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "carry"
           }
@@ -1967,15 +1967,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -1983,8 +1983,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -1992,24 +1992,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -2028,8 +2028,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "point"
           },
@@ -2038,8 +2038,8 @@
             "emote": "neutral",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -2049,15 +2049,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "loose"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -2065,8 +2065,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -2074,24 +2074,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "unrepaired"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }
@@ -2110,8 +2110,8 @@
             "emote": "ears_up",
             "facing": "right",
             "feet": [
-              280,
-              264
+              350,
+              224
             ],
             "pose": "reach"
           },
@@ -2120,8 +2120,8 @@
             "emote": "smile",
             "facing": "left",
             "feet": [
-              172,
-              264
+              302,
+              224
             ],
             "pose": "reach"
           }
@@ -2131,15 +2131,15 @@
           "bench_slat": {
             "kind": "slat",
             "position": [
-              150,
-              230
+              204,
+              208
             ],
             "state": "resting"
           },
           "old_platform_sign": {
             "kind": "sign",
             "position": [
-              50,
+              194,
               120
             ],
             "state": "faded"
@@ -2147,8 +2147,8 @@
           "platform_door": {
             "kind": "door",
             "position": [
-              392,
-              212
+              16,
+              210
             ],
             "state": "open"
           },
@@ -2156,24 +2156,24 @@
             "asset": "brass_locomotive",
             "kind": "train",
             "position": [
-              360,
-              180
+              0,
+              190
             ],
             "state": "waiting"
           },
           "rin_bench": {
             "kind": "bench",
             "position": [
-              118,
-              250
+              180,
+              208
             ],
             "state": "supported"
           },
           "station_timetable": {
             "kind": "timetable",
             "position": [
-              286,
-              166
+              74,
+              132
             ],
             "state": "unhelpful"
           }

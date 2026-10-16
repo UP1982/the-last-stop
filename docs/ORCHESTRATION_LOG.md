@@ -69,7 +69,8 @@
 
 | T-M3-R2 | gpt-6-astra (high) | M3 review r2 (worktree @ adb69a6) | /tmp | R1 findings resolved; 1 new P2 wrap (leading space + wide word → empty row + 578px row) → fixed by Opus with regressions. **M3 automated scope ACCEPTED** |
 | T-ART-3 | gpt-6.1-sol (high) | draw batch-1 sprites at runtime | Game @ adb69a6 | delivered; Opus re-ran check.sh (0), reviewed screenshots; committed. Polish notes: story placeholder labels (Slat/Door) visible in normal play; Rin stands on bench placeholder; puzzle shed/handle/winch still grey boxes |
-| T-M4-A | gpt-6-astra (high) | M4 resilience audit vs TEST_PLAN (read-only) | worktree | running |
+| T-M4-A | gpt-6-astra (high) | M4 resilience audit vs TEST_PLAN (read-only) | worktree @ 17fe2a2 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M4-A-astra-r1 |
+| T-POL-1 | gpt-6.1-sol (medium) | story staging/label polish | Game @ 17fe2a2 | delivered; Opus verified only stage numbers changed, check.sh 0, screenshots; committed |
 
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 

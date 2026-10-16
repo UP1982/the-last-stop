@@ -58,11 +58,19 @@ story_prop_bounds :: proc(prop:c.Prop_Def,camera:Camera) -> rl.Rectangle {
     return {f32(prop.position[0]-pixel(camera.x)),f32(prop.position[1]-pixel(camera.y)),f32(w),f32(h)}
 }
 story_draw_prop :: proc(g:Game_State,prop: c.Prop_Def, camera: Camera) {
+    // The station matte already paints the bench; Brass paints its own door.
+    // Retain authored placeholders when those images are unavailable.
+    staged:=g
+    b:=story_beat(&staged)
+    if b!=nil && b.stage.set==.Willow_Platform {
+        if prop.kind==.Bench && "bg_willow_creek_station" in g.content.textures { return }
+        if prop.kind==.Door && "brass_locomotive" in g.content.textures { return }
+    }
     if prop.asset!="" {
         drawn:=false
         if prop.kind==.Train {
             r:=story_prop_bounds(prop,{})
-            drawn=art_train(g.content,prop.asset,{r.x+r.width/2,min(r.y+r.height,284)},camera)
+            drawn=art_train(g.content,prop.asset,{r.x+r.width/2,r.y+r.height},camera)
         } else { drawn=art_draw(g.content,prop.asset,{f32(prop.position[0]),f32(prop.position[1])},camera,g.story.elapsed) }
         if drawn { return }
     }
@@ -78,10 +86,10 @@ story_draw_prop :: proc(g:Game_State,prop: c.Prop_Def, camera: Camera) {
     case .Slat: color={193,157,119,255}
     case .Bench: color={153,126,100,255}
     case .Market_Dressing: color={141,120,95,255}
-    case .Timetable,.Sign,.Notice: color=MINT
+    case .Timetable,.Sign: color={69,98,83,255}
+    case .Notice: color=MINT
     }
-    rl.DrawRectangle(x,y,w,h,color)
-    rl.DrawRectangleLines(x,y,w,h,CREAM)
+    draw_placeholder(rect,{},color)
     if prop.kind==.Notice {
         // Rin's portrait on the fixed supper notice, using the same gray
         // placeholder and eye mask as her prologue actor. No collectible flag.
@@ -208,7 +216,7 @@ story_draw :: proc(game: Game_State) {
         sx,sy:=winch.position[0]+socket[0]-pixel(camera.x),winch.position[1]+socket[1]-pixel(camera.y)
         rl.DrawCircleLines(sx,sy,6,CREAM)
     } else {
-        rl.DrawRectangle(0,284-pixel(camera.y),640,10,CREAM)
+        if !backdrop_drawn { rl.DrawRectangle(0,284-pixel(camera.y),640,10,rl.Color{69,98,83,255}) }
         if stage.set==.Flower_Window || stage.set==.Carriage {
             rl.DrawRectangle(72,100-pixel(camera.y),480,150,rl.Color{94,109,117,255})
             rl.DrawRectangle(92,116-pixel(camera.y),440,100,NIGHT)
@@ -223,7 +231,7 @@ story_draw :: proc(game: Game_State) {
     for id in prop_ids { story_draw_prop(game,stage.props[id],camera) }
     for id in actor_ids { story_draw_actor(game,id,stage.actors[id],camera) }
     rl.EndMode2D()
-    story_draw_labels(game,stage,camera)
+    when DEV_TOOLS { if game.art.debug_boxes { story_draw_labels(game,stage,camera) } }
     rl.EndScissorMode()
     if game.story.cue_seconds>0 {
         rl.DrawRectangle(8,44,624,22,NIGHT)
