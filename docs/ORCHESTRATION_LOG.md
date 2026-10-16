@@ -42,7 +42,7 @@
 | T-E1-1 | gpt-6.1-sol (high) | E1 visual editor (editor/, tests/editor_ui only) | Game @ b18ecfd | delivered; Opus re-ran 12 tests, checked bridge security, data/ unchanged; committed |
 
 | T-ART-1 | gpt-6.1-sol (high) | art audit + pipeline proposal (writes build/art/ only) | Game @ 977efc4 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-ART-1-sol-r1 |
-| T-STORY-1 | gpt-6-astra (high) | screenplay → implementation design (read-only) | Game @ 977efc4 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-STORY-1-astra-r1 |
+| T-STORY-1 | gpt-6-astra (high) | screenplay → implementation design (read-only) | Game @ 977efc4 | done; accepted w/ S1–S4 → docs/STORY_CONTRACT.md |
 
 - 2026-10-16 user supplied story: docs/THE_LAST_STOP_SCREENPLAY.fountain + docs/STORY_GAMEPLAY_PLAN.md (committed 977efc4) and art at ../the-last-stop-assets-sprits-images-Updated (AI-generated via image_gen; 96x96 chars, 640x360 bgs — scale mismatch with 320x180 canvas to resolve). Provenance must be confirmed by user before release.
 
