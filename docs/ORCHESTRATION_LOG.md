@@ -2,6 +2,7 @@
 
 ## State
 - **Project root is now `/Users/finngilbert/Documents/The Last Stop/Game`** (moved 2026-10-16 at c3a9f8d; history kept). The kit folder was restored to baseline eac98e2 as read-only reference — never edit it.
+- **Status 2026-10-16: all M0–M4 and E0–E4 implemented with automated/native-synthetic acceptance. Remaining gates are HUMAN-ONLY + missing art (M5).**
 - Active milestone: **M0** implemented, awaiting human keyboard check. E0a **accepted** (Astra R1+R2 findings resolved). E0b waits for M0.
 - Baseline: `eac98e2` (local repo initialized 2026-10-16, author Hayden; no remote).
 - Env: macOS 27.2 arm64, Odin `dev-2026-10:84bc3fc21`; `odin check src` exit 0 on baseline (static starter only).
@@ -78,6 +79,9 @@
 | T-M4-R2 | gpt-6-astra (high) | M4 review r2 (worktree @ c8fd7de) | /tmp | **M4 automated scope MET**; P3 ENOLCK message queued; evidence build/evidence/m4-r2/ |
 | T-E2-1 | gpt-6.1-sol (high) | E2 in-game edit mode (src/, tests/dev_editor) | Game @ c8fd7de | delivered; Opus: check.sh 0, save.odin/data unchanged, release strings clean; committed |
 | T-E4-1 | gpt-6.1-sol (high) | run-journey wiring, P3 ENOLCK msg, E4 automatable reliability | Game @ 0b45ffd | delivered; Opus check.sh 0, reviewed save.odin P3 diff; committed; Astra final review T-FIN-R1 next |
+
+| T-FIN-R1 | gpt-6-astra (high) | final E2–E4 + integrated review (worktree @ a6c7651) | /tmp | E2 ACCEPT; E3/E4 REQUEST CHANGES: P2 reservation bypass via APFS case/Unicode aliases (workspace.py:120); P2 stale build fingerprints miss imports/#load (workspace.py:372). Evidence build/evidence/fin-r1/ |
+| T-E4-2 | gpt-6.1-sol (high) | fix FIN-R1 P2s | Game @ a6c7651 | delivered; Opus re-ran editor suites (OK), reviewed identity/casefold checks; committed. E3/E4 automated scope accepted (Astra reproducers included as passing regressions) |
 
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 

@@ -119,6 +119,16 @@ builds cannot fall back to it. `build-content` publishes its verified private CL
 for this bridge session. Restarting Studio requires a new development build.
 No API accepts arbitrary shell commands, flags, executables or working directories.
 
+Build fingerprints conservatively include every regular file (including binary and
+hidden files) in `src/`, `shared/`, `tools/`, `data/` and `assets/`, plus local
+imports, foreign libraries and literal `#load`/`#load_directory`/`#load_hash` inputs
+discovered recursively in Odin sources. They include the live Odin version and
+exact build argument array. Any input addition, deletion or byte change requires
+a rebuild, including data/asset edits after **Build content tool**. Compiler-owned
+`core:`, `vendor:` and `base:` packages and `system:` linker libraries use the
+pinned toolchain. External paths, symlinks, unknown collections and computed load
+paths are refused before compiling; use literal project-relative dependencies.
+
 The source boundary supports existing UTF-8 regular files up to 200,000 bytes on
 save (1 MiB on read), in `src/*.odin`, `shared/*.odin`, `tools/*.{odin,py}`,
 `editor/*.{py,js,css,html}`, and `tests/*.{odin,py,js,json,swift}` recursively.
@@ -132,6 +142,11 @@ prepared records retain the old bytes and candidate hash. A prepared record alon
 does not prove whether replacement occurred. Inspect disk hashes before retrying
 an unknown outcome. Post-rename failures report `committed_durability_uncertain`.
 Unmanaged writers can race the final recheck/rename; POSIX has no file compare-and-swap.
+Root, extension and reservation checks use Unicode NFC and casefolding. Existing
+reservations also protect filesystem identities and directory ancestry, including
+APFS case/normalization aliases. A prospective name cannot collide canonically
+with a different existing directory entry. The source API still edits existing
+files only; it exposes no source-create or rename command.
 
 Configure ownership reservations at bridge startup; clients cannot override them:
 

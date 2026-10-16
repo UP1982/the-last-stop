@@ -288,19 +288,26 @@ class RealProjectTests(unittest.TestCase):
         finally: path.write_bytes(good)
 
     def test_fixed_commands_and_verified_content_artifact(self):
-        check = self.client.job('check-game'); self.assertEqual(check['exit_code'], 0)
-        self.assertEqual(check['argv'][1:], ['check', 'src'])
-        cli = self.client.job('build-content'); self.assertEqual(cli['exit_code'], 0)
-        validated = self.client.api('validate-content'); self.assertEqual(validated['exit_code'], 0)
-        self.assertEqual(validated['executable'], cli['artifact'])
-        path = self.root / 'tools/content/main.odin'; original = path.read_bytes()
+        # A verified CLI conservatively goes stale after later data/asset edits.
+        # Keep this build session independent of the content-edit test session.
+        client = Client(self.root)
         try:
-            path.write_bytes(original + b'\n// stale CLI input\n')
-            self.assertEqual(self.client.raw(dict(command='validate-content'))[0], 409)
-        finally: path.write_bytes(original)
-        release = self.client.job('build-release'); self.assertEqual(release['exit_code'], 0)
-        self.assertTrue(Path(release['artifact']).is_file())
-        self.assertNotIn('-define:DEV_TOOLS=true', release['argv'])
+            check = client.job('check-game'); self.assertEqual(check['exit_code'], 0)
+            self.assertEqual(check['argv'][1:], ['check', 'src'])
+            cli = client.job('build-content'); self.assertEqual(cli['exit_code'], 0)
+            validated = client.api('validate-content'); self.assertEqual(validated['exit_code'], 0)
+            self.assertEqual(validated['executable'], cli['artifact'])
+            for relative in ('tools/content/main.odin', 'data/chapters/chapter_01.json'):
+                path = self.root / relative; original = path.read_bytes()
+                try:
+                    path.write_bytes(original + b'\n')
+                    self.assertEqual(client.raw(dict(command='validate-content'))[0], 409)
+                finally: path.write_bytes(original)
+            release = client.job('build-release'); self.assertEqual(release['exit_code'], 0)
+            self.assertTrue(Path(release['artifact']).is_file())
+            self.assertNotIn('-define:DEV_TOOLS=true', release['argv'])
+        finally:
+            client.close()
 
     def test_real_compiler_errors_saved_bytes_fix_build_and_stale_guard(self):
         path = 'src/e3_diagnostic.odin'; target = self.root / path; target.write_text('package main\ne3_bad :: proc() { missing_e3_identifier() }\n')

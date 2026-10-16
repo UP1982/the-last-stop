@@ -4,6 +4,7 @@ from contextlib import contextmanager
 import fcntl
 import difflib
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,7 @@ import subprocess
 import tempfile
 import threading
 import time
+import unicodedata
 
 MAX_FILE = 1024 * 1024
 READ_ROOTS = {'src', 'shared', 'tools', 'editor', 'tests', 'data', 'docs', 'prompts', 'scripts', 'assets'}
@@ -27,11 +29,21 @@ COMMANDS = {'check-game': ['check', 'src'], 'check-dev': ['check', 'src', '-defi
             'build-content': ['build', 'tools/content'], 'build-dev': ['build', 'src', '-define:DEV_TOOLS=true'],
             'build-release': ['build', 'src']}
 
+_input_spec = importlib.util.spec_from_file_location('tls_compiler_inputs', Path(__file__).with_name('compiler_inputs.py'))
+_inputs = importlib.util.module_from_spec(_input_spec)
+_input_spec.loader.exec_module(_inputs)
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 def now():
     return time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+
+def canonical(component):
+    return unicodedata.normalize('NFC', unicodedata.normalize('NFC', component).casefold())
+
+def path_key(path):
+    return tuple(canonical(p) for p in path.split('/'))
 
 class Workspace:
     def __init__(self, bridge, error, reservations=()):
@@ -66,7 +78,7 @@ class Workspace:
             # Only private bridge code may pass hidden internal roots.
             if not (unrestricted and parts[0] == '.studio' and all(p and p not in ('.', '..') for p in parts)):
                 raise self.Error(400, 'Hidden, absolute or non-normalized path rejected')
-        if not unrestricted and path not in READ_FILES and (parts[0] not in READ_ROOTS or Path(path).suffix not in READ_EXTS):
+        if not unrestricted and canonical(path) not in {canonical(p) for p in READ_FILES} and (canonical(parts[0]) not in READ_ROOTS or canonical(Path(path).suffix) not in READ_EXTS):
             raise self.Error(403, 'File is outside the readable allowlist')
         return parts
 
@@ -119,8 +131,46 @@ class Workspace:
 
     def writable(self, path):
         parts = self.parts(path)
-        return (Path(path).suffix in WRITE_EXTS.get(parts[0], set()) and
-                not any(path == r or path.startswith(r + '/') for r in self.reservations))
+        if canonical(Path(path).suffix) not in WRITE_EXTS.get(canonical(parts[0]), set()):
+            return False
+        key = path_key(path)
+        if any(key[:len(path_key(r))] == path_key(r) for r in self.reservations):
+            return False
+        # Resolve reservations on every check: files can be atomically replaced after startup.
+        reserved = set()
+        for reservation in self.reservations:
+            try:
+                fd, name = self.parent(reservation, internal=True)
+                try:
+                    info = os.stat(name, dir_fd=fd, follow_symlinks=False)
+                    reserved.add((info.st_dev, info.st_ino))
+                finally:
+                    os.close(fd)
+            except self.Error:
+                # A missing reservation is still protected by its canonical key above.
+                continue
+            except FileNotFoundError:
+                continue
+        fd = os.dup(self.root_fd)
+        try:
+            for index, component in enumerate(parts):
+                try:
+                    info = os.stat(component, dir_fd=fd, follow_symlinks=False)
+                except FileNotFoundError:
+                    # On a case-sensitive filesystem, do not create a second spelling of
+                    # an existing entry. On APFS, stat already resolved its identity.
+                    return not any(canonical(n) == canonical(component) for n in os.listdir(fd))
+                if stat.S_ISLNK(info.st_mode) or (info.st_dev, info.st_ino) in reserved:
+                    return False
+                if index < len(parts) - 1:
+                    nxt = os.open(component, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
+                    os.close(fd)
+                    fd = nxt
+            return True
+        except OSError:
+            return False
+        finally:
+            os.close(fd)
 
     def read(self, path):
         data, info = self.bytes(path)
@@ -142,7 +192,7 @@ class Workspace:
                 dirs[:] = sorted(d for d in dirs if not d.startswith('.') and d != '__pycache__' and not (Path(parent) / d).is_symlink())
                 for name in sorted(names):
                     path = Path(parent) / name
-                    if name.startswith('.') or path.suffix not in READ_EXTS or path.is_symlink() or not path.is_file():
+                    if name.startswith('.') or canonical(path.suffix) not in READ_EXTS or path.is_symlink() or not path.is_file():
                         continue
                     relative = path.relative_to(self.root).as_posix()
                     files.append({'path': relative, 'writable': self.writable(relative) and path.stat().st_nlink == 1})
@@ -272,6 +322,8 @@ class Workspace:
         if len(data) > 200000 or '\x00' in text:
             raise self.Error(413, 'Source text exceeds 200000 bytes or contains NUL')
         with self.write_lock, self.managed_lock():
+            if not self.writable(path):
+                raise self.Error(403, 'Read-only root, extension or ownership reservation')
             old, info = self.bytes(path)
             try:
                 old.decode('utf-8')
@@ -303,6 +355,8 @@ class Workspace:
                 check, final = self.bytes(path)
                 if digest(check) != expected or final.st_nlink != 1 or (info.st_dev, info.st_ino) != (final.st_dev, final.st_ino):
                     raise self.Error(409, 'External source change; replacement cancelled')
+                if not self.writable(path):
+                    raise self.Error(403, 'Read-only root, extension or ownership reservation')
                 os.replace(temp, name, src_dir_fd=parent, dst_dir_fd=parent)
                 renamed = True
                 os.fsync(parent)
@@ -369,28 +423,26 @@ class Workspace:
                         return {'matches': results, 'truncated': True}
         return {'matches': results, 'truncated': False}
 
-    def fingerprint(self, command):
-        roots = ('shared/', 'tools/content/') if command == 'build-content' else ('src/', 'shared/')
+    def fingerprint(self, command, argv=None):
         hashed = hashlib.sha256()
-        # Includes additions/deletions and exact bytes, never mtime alone.
-        tree = self.tree()
-        if tree['truncated']:
-            raise self.Error(400, 'Source tree exceeds fingerprint limit')
-        for root in roots:
-            base = self.root / root.rstrip('/')
-            if base.is_symlink():
-                raise self.Error(403, 'Symlinked compiler input root rejected')
-            for parent, dirs, names in os.walk(str(base), followlinks=False):
-                if any((Path(parent) / name).is_symlink() for name in dirs + [n for n in names if n.endswith('.odin')]):
-                    raise self.Error(403, 'Symlinked compiler inputs rejected')
-        for item in tree['files']:
-            path = item['path']
-            if path.startswith(roots) and path.endswith('.odin'):
-                data, _ = self.bytes(path)
-                hashed.update(path.encode() + b'\0' + bytes.fromhex(digest(data)))
+        try:
+            inputs = _inputs.collect(self)
+        except ValueError as error:
+            raise self.Error(403, 'Build refused: ' + str(error))
+        # Includes additions/deletions, non-Odin inputs and exact bytes, never mtime alone.
+        for path, data in sorted(inputs.items()):
+            hashed.update(os.fsencode(path) + b'\0' + bytes.fromhex(digest(data)))
+        if argv is None:
+            job = self.jobs.get(self.latest.get(command))
+            argv = job['argv'] if job else [self.compiler] + COMMANDS[command][:]
+        hashed.update(json.dumps(argv, ensure_ascii=True, separators=(',', ':')).encode())
         if self.compiler:
             info = os.stat(self.compiler)
-            hashed.update((self.compiler + self.compiler_version + str((info.st_size, info.st_mtime_ns))).encode())
+            try:
+                version = subprocess.run([self.compiler, 'version'], check=True, capture_output=True, timeout=5).stdout
+            except (OSError, subprocess.SubprocessError) as error:
+                raise self.Error(503, 'Cannot verify Odin version: ' + str(error))
+            hashed.update(version + self.compiler.encode() + str((info.st_size, info.st_mtime_ns)).encode())
         return hashed.hexdigest()
 
     def start_job(self, command):
@@ -408,7 +460,7 @@ class Workspace:
                 argv += ['-out:' + str(output)]
             job = {'job_id': job_id, 'command': command, 'state': 'starting', 'argv': argv, 'cwd': str(self.root),
                    'started_at': now(), 'finished_at': None, 'pid': None, 'exit_code': None,
-                   'compiler_version': self.compiler_version, 'source_before': self.fingerprint(command),
+                   'compiler_version': self.compiler_version, 'source_before': self.fingerprint(command, argv),
                    'source_after': None, 'current_source': False, 'artifact': str(output) if command.startswith('build-') else None,
                    '_log': tempfile.TemporaryFile(), '_process': None, '_stopped': False}
             self.jobs[job_id] = job
@@ -436,7 +488,7 @@ class Workspace:
                 self.stop_job(job['job_id'])
                 code = process.returncode
                 job['error'] = 'Compiler timed out after 120 seconds'
-            after = self.fingerprint(job['command'])
+            after = self.fingerprint(job['command'], job['argv'])
             with self.jobs_lock:
                 job.update(exit_code=code, source_after=after, current_source=after == job['source_before'], finished_at=now(),
                            state='stopped' if job['_stopped'] else 'exited')
@@ -505,7 +557,7 @@ class Workspace:
             job = self.jobs.get(job_id)
             if not job or self.latest.get(command) != job_id or job['state'] != 'exited' or job['exit_code'] != 0 or not job['current_source']:
                 raise self.Error(409, 'Build successfully before using artifact: ' + command)
-            if job['source_before'] != self.fingerprint(command):
+            if job['source_before'] != self.fingerprint(command, job['argv']):
                 raise self.Error(409, 'Artifact is stale; rebuild saved source: ' + command)
             data, info = self.bytes(Path(job['artifact']).relative_to(self.root).as_posix(), internal=True, limit=128 * MAX_FILE)
             if digest(data) != job.get('artifact_sha256') or info.st_nlink != 1 or not info.st_mode & 0o111:

@@ -86,4 +86,4 @@ Hazel/waterwheel; Felix/mirror signal; Bea/sleepy bear; Lumi/turntable; cozy und
 - [x] Verify undo/revert, restart persistence, preview isolation and release independence. (automated; build/evidence/e4/TRACEABILITY.md)
 - [ ] Fresh-user editor-to-game walkthrough with recorded evidence.
 **Gate:** Visual authoring, agent editing, in-game editing and code/build workflow all work on the same project without data loss; release game runs with editor closed.
-**Status:** automated scope delivered (T-E4-1); Astra final review pending; HUMAN-ONLY: fresh-user walkthrough, physical pointer, physical keyboard/focus, min-size readability, assistive tech.
+**Status:** automated scope accepted (Astra T-FIN-R1 findings fixed in T-E4-2); HUMAN-ONLY: fresh-user walkthrough, physical pointer, physical keyboard/focus, min-size readability, assistive tech.
