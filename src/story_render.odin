@@ -39,22 +39,37 @@ story_cue_label :: proc(cue:c.Story_Cue) -> cstring {
     }
     return ""
 }
-story_draw_prop :: proc(prop: c.Prop_Def, camera: Camera) {
-    x,y:=prop.position[0]-pixel(camera.x),prop.position[1]-pixel(camera.y)
+story_prop_bounds :: proc(prop:c.Prop_Def,camera:Camera) -> rl.Rectangle {
     w,h:=i32(30),i32(24)
-    color:=MINT
     switch prop.kind {
-    case .Train: w=210;h=86;color={78,101,109,255}
-    case .Door: w=32;h=66;color={180,143,105,255}
-    case .Bag: w=36;h=26;color={155,118,88,255}
-    case .Flowerpot: w=26;h=30;color={181,126,99,255}
-    case .Paper_Flower: w=24;h=20;color=CREAM
-    case .Slat: w=64;h=6;color={193,157,119,255}
-    case .Bench: w=100;h=20;color={153,126,100,255}
+    case .Train: w=210;h=86
+    case .Door: w=32;h=66
+    case .Bag: w=36;h=26
+    case .Flowerpot: w=26;h=30
+    case .Paper_Flower: w=24;h=20
+    case .Slat: w=64;h=6
+    case .Bench: w=100;h=20
     case .Timetable: w=38;h=48
     case .Sign: w=90;h=28
     case .Notice: w=52;h=36
-    case .Market_Dressing: w=110;h=64;color={141,120,95,255}
+    case .Market_Dressing: w=110;h=64
+    }
+    return {f32(prop.position[0]-pixel(camera.x)),f32(prop.position[1]-pixel(camera.y)),f32(w),f32(h)}
+}
+story_draw_prop :: proc(prop: c.Prop_Def, camera: Camera) {
+    rect:=story_prop_bounds(prop,camera)
+    x,y,w,h:=pixel(rect.x),pixel(rect.y),pixel(rect.width),pixel(rect.height)
+    color:=MINT
+    switch prop.kind {
+    case .Train: color={78,101,109,255}
+    case .Door: color={180,143,105,255}
+    case .Bag: color={155,118,88,255}
+    case .Flowerpot: color={181,126,99,255}
+    case .Paper_Flower: color=CREAM
+    case .Slat: color={193,157,119,255}
+    case .Bench: color={153,126,100,255}
+    case .Market_Dressing: color={141,120,95,255}
+    case .Timetable,.Sign,.Notice: color=MINT
     }
     rl.DrawRectangle(x,y,w,h,color)
     rl.DrawRectangleLines(x,y,w,h,CREAM)
@@ -78,8 +93,6 @@ story_draw_prop :: proc(prop: c.Prop_Def, camera: Camera) {
         rl.DrawRectangle(x+6,y-4,12,12,CREAM)
         rl.DrawRectangle(x+2,y,20,4,CREAM)
     }
-    label:=fmt.ctprintf("%v: %s",prop.kind,prop.state)
-    rl.DrawText(label,x,y+h+3,12,CREAM)
 }
 story_draw_actor :: proc(g: Game_State,id:c.ID,a:c.Actor_Def,camera:Camera) {
     x,y:=a.feet[0]-pixel(camera.x),a.feet[1]-pixel(camera.y)
@@ -95,11 +108,53 @@ story_draw_actor :: proc(g: Game_State,id:c.ID,a:c.Actor_Def,camera:Camera) {
     }
     eye:=x+5; if a.facing=="left" { eye=x-8 }
     rl.DrawRectangle(eye,y-29,3,3,NIGHT)
-    rl.DrawText(fmt.ctprintf("%s",g.content.snapshot.chapter.speakers[id].name),x-20,y+4,16,CREAM)
-    rl.DrawText(fmt.ctprintf("%v / %v",a.pose,a.emote),x-32,y+22,12,MINT)
     if a.pose==.Point || a.pose==.Reach || a.pose==.Wave || a.pose==.Tap {
         end:=x+28; if a.facing=="left" { end=x-28 }
         rl.DrawLineEx({f32(x),f32(y-19)},{f32(end),f32(y-25)},4,color)
+    }
+}
+// Labels are UI pixels, outside the scene's 0.7x camera transform. Reserve
+// silhouettes first, then names before prop captions. A crowded caption may
+// be omitted rather than cover an actor, another caption, or the dialogue UI.
+story_label_screen_rect :: proc(r:rl.Rectangle) -> rl.Rectangle {
+    return {f32(pixel(96+r.x*0.7)),f32(pixel(4+r.y*0.7)),f32(pixel(r.width*0.7)),f32(pixel(r.height*0.7))}
+}
+story_actor_bounds :: proc(a:c.Actor_Def,camera:Camera) -> rl.Rectangle {
+    return {f32(a.feet[0]-pixel(camera.x)-20),f32(a.feet[1]-pixel(camera.y)-54),48,54}
+}
+story_place_label :: proc(label:cstring,object:rl.Rectangle,occupied:^[dynamic]rl.Rectangle) {
+    width:=rl.MeasureText(label,20)+8
+    if width>624 { return }
+    x:=clamp(pixel(object.x+object.width/2)-width/2,8,632-width)
+    for attempt in 0..<7 {
+        y:=pixel(object.y)-26-i32(attempt)*24
+        if y<68 { break } // keep cue/header and notice bands clear
+        if y+24>228 { continue }
+        box:=rl.Rectangle{f32(x),f32(y),f32(width),24}
+        clear:=true
+        for other in occupied^ {
+            if rl.CheckCollisionRecs(box,other) { clear=false; break }
+        }
+        if !clear { continue }
+        rl.DrawRectangleRec(box,NIGHT)
+        rl.DrawText(label,x+4,y+2,20,CREAM)
+        append(occupied,box)
+        return
+    }
+}
+story_draw_labels :: proc(g:Game_State,stage:c.Story_Stage_Def,camera:Camera) {
+    occupied:=make([dynamic]rl.Rectangle,context.temp_allocator)
+    for _,prop in stage.props { append(&occupied,story_label_screen_rect(story_prop_bounds(prop,camera))) }
+    for _,actor in stage.actors { append(&occupied,story_label_screen_rect(story_actor_bounds(actor,camera))) }
+    if stage.set==.Carriage { append(&occupied,rl.Rectangle{8,68,624,42}) }
+    if stage.shot==.Supper_Card { append(&occupied,rl.Rectangle{8,154,624,76}) }
+    for id,actor in stage.actors {
+        name:=fmt.ctprintf("%s",g.content.snapshot.chapter.speakers[id].name)
+        story_place_label(name,story_label_screen_rect(story_actor_bounds(actor,camera)),&occupied)
+    }
+    for _,prop in stage.props {
+        label:=fmt.ctprintf("%v: %s",prop.kind,prop.state)
+        story_place_label(label,story_label_screen_rect(story_prop_bounds(prop,camera)),&occupied)
     }
 }
 story_draw :: proc(game: Game_State) {
@@ -131,9 +186,6 @@ story_draw :: proc(game: Game_State) {
         socket:=d.puzzle.winch_socket
         sx,sy:=winch.position[0]+socket[0]-pixel(camera.x),winch.position[1]+socket[1]-pixel(camera.y)
         rl.DrawCircleLines(sx,sy,6,CREAM)
-        rl.DrawText("Branch",pixel(branch.x)-pixel(camera.x),pixel(branch.y)-pixel(camera.y)-18,16,CREAM)
-        label:cstring="Handle fitted"; if game.puzzle.handle!=.Installed { label="Empty socket" }
-        rl.DrawText(label,sx-34,sy-28,16,CREAM)
     } else {
         rl.DrawRectangle(0,284,640,10,CREAM)
         if stage.set==.Forest_Travel || stage.set==.Flower_Window || stage.set==.Carriage {
@@ -144,6 +196,7 @@ story_draw :: proc(game: Game_State) {
     for _,prop in stage.props { story_draw_prop(prop,camera) }
     for id,actor in stage.actors { story_draw_actor(game,id,actor,camera) }
     rl.EndMode2D()
+    story_draw_labels(game,stage,camera)
     rl.EndScissorMode()
     if game.story.cue_seconds>0 {
         rl.DrawRectangle(8,44,624,22,NIGHT)
@@ -154,7 +207,7 @@ story_draw :: proc(game: Game_State) {
     if stage.set==.Carriage {
         rl.DrawRectangle(8,68,624,42,NIGHT)
         center_text("WILLOW CREEK PLATFORM SUPPER",70,16,CREAM)
-        draw_story_glyphs("— ALL WELCOME",216,90,MINT)
+        draw_story_glyphs("— ALL WELCOME",(640-story_text_width("— ALL WELCOME"))/2,90,MINT)
     }
     rl.DrawRectangle(8,232,624,124,NIGHT)
     rl.DrawRectangleLines(8,232,624,124,MINT)
@@ -176,8 +229,8 @@ story_draw :: proc(game: Game_State) {
     if pages>1 { rl.DrawText(fmt.ctprintf("%d/%d",game.story.page_index+1,pages),566,240,16,MINT) }
     // Supper shot also accompanies arrival_04; its dialogue retains its own pages.
     if stage.shot==.Supper_Card && b.kind!=.Card {
-        rl.DrawRectangle(8,160,624,64,NIGHT)
-        draw_story_page(g.content.snapshot.chapter.strings["supper_card"],0,166,CREAM)
+        rl.DrawRectangle(8,154,624,76,NIGHT)
+        draw_story_page(g.content.snapshot.chapter.strings["supper_card"],0,158,CREAM)
     }
     if game.checkpoint==.Complete {
         rl.DrawText("Keepsake: paper flower",24,208,16,CREAM)

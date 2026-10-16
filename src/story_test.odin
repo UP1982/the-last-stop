@@ -161,16 +161,16 @@ story_test_text :: proc() {
     for s in ([]string{"A little further down the line…","WILLOW CREEK PLATFORM SUPPER — ALL WELCOME",strings.repeat("word ",820),strings.repeat("猫",4096),"line one\nline two",strings.repeat("W",4096)}) {
         ends,count:=story_line_ends(s)
         start:=0
-        for end in ends[:count] {
+        for end,index in ends[:count] {
             assert(end>=start && end<=len(s))
             if end<len(s) { assert(s[end]&0xc0!=0x80) }
-            columns:=0; for ch in s[start:end] { if ch!='\n' { columns+=1 } }
-            assert(columns<=STORY_COLUMNS)
+            assert(story_text_width(story_line(s,ends[:count],index))<=STORY_TEXT_WIDTH)
+            assert(264+i32(index%STORY_ROWS)*STORY_LINE_HEIGHT+STORY_FONT_SIZE<=336)
             start=end
         }
         assert(start==len(s) && story_page_count(s)==(count+STORY_ROWS-1)/STORY_ROWS)
     }
-    fmt.println("PASS text: bounded columns, UTF-8 boundaries, newline/long words, all pages, em dash and ellipsis preserved")
+    fmt.println("PASS text: bounded pixel widths, UTF-8 boundaries, newline/long words, all pages, em dash and ellipsis preserved")
 }
 run_m3b_test_entry :: proc() {
     assert(len(os.args)>=2)

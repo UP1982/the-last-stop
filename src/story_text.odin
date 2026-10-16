@@ -2,23 +2,63 @@ package main
 
 import rl "vendor:raylib"
 
-// A conservative fixed-cell layout is independent of GPU/font initialization,
-// so tests use exactly the renderer's pagination. Content is never rewritten.
-STORY_COLUMNS :: 36
 STORY_ROWS :: 3
-STORY_CELL :: 16
+STORY_FONT_SIZE :: 20 // 2x the bundled 10px bitmap: integral glyph pixels.
+STORY_SPACING :: 2   // Same proportional spacing as raylib DrawText at 20px.
+STORY_LINE_HEIGHT :: 22
+STORY_TEXT_WIDTH :: 576 // x32..608, inside both story panels.
+// raylib 6.0 rtext.c LoadFontDefault's bitmap widths (codepoints 32..255).
+// Kept available without a graphics context for playback/pagination tests.
+// tests/story/typography.py checks every entry against the live bundled font.
+STORY_GLYPH_WIDTHS := [?]i32{ 3, 1, 4, 6, 5, 7, 6, 2, 3, 3, 5, 5, 2, 4, 1, 7, 5, 2, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 3, 4, 3, 6,
+                            7, 6, 6, 6, 6, 6, 6, 6, 6, 3, 5, 6, 5, 7, 6, 6, 6, 6, 6, 6, 7, 6, 7, 7, 6, 6, 6, 2, 7, 2, 3, 5,
+                            2, 5, 5, 5, 5, 5, 4, 5, 5, 1, 2, 5, 2, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 5, 5, 5, 3, 1, 3, 4, 4,
+                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                            1, 1, 5, 5, 5, 7, 1, 5, 3, 7, 3, 5, 4, 1, 7, 4, 3, 5, 3, 3, 2, 5, 6, 1, 2, 2, 3, 5, 6, 6, 6, 6,
+                            6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 3, 3, 3, 3, 7, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6, 4, 6,
+                            5, 5, 5, 5, 5, 5, 9, 5, 5, 5, 5, 5, 2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 3, 5 }
+
+story_glyph_width :: proc(ch:rune) -> i32 {
+    switch ch {
+    case '…': return 14
+    case '—': return 16
+    case '\n','\r': return 0
+    case '\t': return 6
+    }
+    index:=int(ch)-32
+    if index<0 || index>=len(STORY_GLYPH_WIDTHS) { index=int('?')-32 }
+    return STORY_GLYPH_WIDTHS[index]*2
+}
+story_text_width :: proc(s:string) -> i32 {
+    width:=i32(0)
+    for ch in s {
+        if ch=='\n' || ch=='\r' { continue }
+        width+=story_glyph_width(ch)+STORY_SPACING
+    }
+    return max(0,width-STORY_SPACING)
+}
 story_line_ends :: proc(s: string) -> (ends: [4097]int, count: int) {
-    start,columns,space:=0,0,-1
-    i:=0
-    for i<len(s) {
-        if s[i]=='\n' { ends[count]=i+1; count+=1; start=i+1; columns=0; space=-1; i+=1; continue }
-        if s[i]==' ' || s[i]=='\t' { space=i }
-        if s[i]&0xc0!=0x80 { columns+=1 }
-        if columns>STORY_COLUMNS {
-            end:=i; if space>=start { end=space+1 }
-            ends[count]=end; count+=1; start=end; i=end; columns=0; space=-1; continue
+    start,space:=0,-1
+    width:=i32(0)
+    // Range supplies UTF-8 byte offsets; a long word can only break at a rune.
+    for ch,i in s {
+        if ch=='\n' {
+            ends[count]=i+1; count+=1; start=i+1; width=0; space=-1; continue
         }
-        i+=1
+        if ch=='\r' { continue }
+        if ch==' ' || ch=='\t' { space=i }
+        next:=width+story_glyph_width(ch)+STORY_SPACING
+        if next-STORY_SPACING>STORY_TEXT_WIDTH {
+            end:=i
+            if space>=start { end=space+1 }
+            ends[count]=end; count+=1; start=end; space=-1
+            // Include the partial word after the chosen space, including ch.
+            width=0
+            if end<=i {
+                for tail in s[start:i] { width+=story_glyph_width(tail)+STORY_SPACING }
+                width+=story_glyph_width(ch)+STORY_SPACING
+            }
+        } else { width=next }
     }
     if start<len(s) || count==0 { ends[count]=len(s); count+=1 }
     return
@@ -27,32 +67,35 @@ story_page_count :: proc(s: string) -> int {
     _,count:=story_line_ends(s)
     return (count+STORY_ROWS-1)/STORY_ROWS
 }
-// raylib's bundled default font does not include U+2026/U+2014. Draw those
-// two glyphs as pixel strokes in the SAME cell/scale as the bundled font.
-// No OS font lookup, new font asset, ASCII substitution or stored-string edit.
-draw_story_glyphs :: proc(s: string, x,y:i32, color:rl.Color) {
-    col:=i32(0)
+// The bundled font lacks these two glyphs; retain authored Unicode and draw
+// integer pixel strokes. All other glyphs use that font's proportional width.
+// Return the drawn extent so native tests can compare drawing with wrapping.
+draw_story_glyphs :: proc(s: string, x,y:i32, color:rl.Color) -> i32 {
+    px:=x
     for ch in s {
-        px:=x+col*STORY_CELL
         switch ch {
         case '…':
-            for dot in 0..<3 { rl.DrawRectangle(px+i32(dot)*5,y+12,2,2,color) }
-        case '—': rl.DrawRectangle(px,y+7,15,2,color)
-        case '\n','\r':
+            for dot in 0..<3 { rl.DrawRectangle(px+i32(dot)*6,y+14,2,2,color) }
+        case '—': rl.DrawRectangle(px,y+8,16,2,color)
+        case '\n','\r': continue
         case '\t':
-        case: rl.DrawTextCodepoint(rl.GetFontDefault(),ch,{f32(px),f32(y)},16,color)
+        case: rl.DrawTextCodepoint(rl.GetFontDefault(),ch,{f32(px),f32(y)},STORY_FONT_SIZE,color)
         }
-        col+=1
+        px+=story_glyph_width(ch)+STORY_SPACING
     }
+    return max(0,px-x-STORY_SPACING)
+}
+story_line :: proc(s:string,ends:[]int,index:int) -> string {
+    start:=0
+    if index>0 { start=ends[index-1] }
+    end:=ends[index]
+    for end>start && (s[end-1]=='\n' || s[end-1]=='\r' || s[end-1]==' ' || s[end-1]=='\t') { end-=1 }
+    return s[start:end]
 }
 draw_story_page :: proc(s:string,page:int,y:i32,color:rl.Color) {
     ends,count:=story_line_ends(s)
     first:=page*STORY_ROWS
     for row:=0;row<STORY_ROWS && first+row<count;row+=1 {
-        index:=first+row; start:=0
-        if index>0 { start=ends[index-1] }
-        end:=ends[index]
-        for end>start && (s[end-1]=='\n' || s[end-1]==' ' || s[end-1]=='\t') { end-=1 }
-        draw_story_glyphs(s[start:end],32,y+i32(row)*20,color)
+        draw_story_glyphs(story_line(s,ends[:count],first+row),32,y+i32(row)*STORY_LINE_HEIGHT,color)
     }
 }
