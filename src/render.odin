@@ -55,7 +55,12 @@ draw_world_rect :: proc(rect: rl.Rectangle, camera: Camera, color: rl.Color) {
 draw_scene :: proc(game: Game_State) {
     scene, camera := game.scene, game.camera
     draw_world_rect(scene.solids[0], camera, rl.Color{99, 108, 116, 255})
-    for object in scene.visuals {
+    for authored in scene.visuals {
+        object:=authored
+        if scene.definition!=nil {
+            if object.kind==.Handle { continue }
+            if object.kind==.Branch { object.rect=branch_rect(scene,game.puzzle) }
+        }
         color := rl.Color{118, 131, 140, 255}
         if object.kind == .Shed { color = {68, 77, 89, 255} }
         if object.kind == .Branch { color = {118, 103, 147, 255} }
@@ -69,7 +74,20 @@ draw_scene :: proc(game: Game_State) {
             }
         }
     }
+    if scene.definition!=nil {
+        d:=scene.definition
+        b:=branch_rect(scene,game.puzzle)
+        winch:=d.objects[d.puzzle.winch]
+        a:=d.puzzle.winch_rope_anchor; z:=d.puzzle.branch_rope_anchor
+        rl.DrawLine(pixel(f32(winch.position[0]+a[0])-camera.x),pixel(f32(winch.position[1]+a[1])-camera.y),pixel(b.x+f32(z[0])-camera.x),pixel(b.y+f32(z[1])-camera.y),CREAM)
+        draw_world_rect(handle_rect(scene,game.puzzle,game.player),camera,MINT)
+        if game.puzzle.handle==.Shelf {
+            h:=handle_rect(scene,game.puzzle,game.player)
+            draw_world_rect({h.x-6,h.y+h.height,20,2},camera,CREAM)
+        }
+    }
     for object, i in scene.objects {
+        if !object.enabled { continue }
         r := object.visual
         x, y := pixel(r.x) - pixel(camera.x), pixel(r.y) - pixel(camera.y)
         if x >= VIRTUAL_WIDTH || x+pixel(r.width) <= 0 || y >= VIRTUAL_HEIGHT || y+pixel(r.height) <= 0 { continue }
@@ -80,8 +98,7 @@ draw_scene :: proc(game: Game_State) {
             zone := object.bounds
             rl.DrawRectangleLines(pixel(zone.x)-pixel(camera.x), pixel(zone.y)-pixel(camera.y), pixel(zone.width), pixel(zone.height), MINT)
         }
-        label_x := clamp(x, 2, max(2, VIRTUAL_WIDTH - rl.MeasureText(object.label, 10) - 2))
-        rl.DrawText(object.label, label_x, y - 12, 10, CREAM)
+
     }
     // Placeholder cat: body stays exactly inside the agreed collision footprint.
     x, y := pixel(game.player.position.x) - pixel(camera.x), pixel(game.player.position.y) - pixel(camera.y)
@@ -94,11 +111,17 @@ draw_scene :: proc(game: Game_State) {
     rl.DrawText("Milo", x - 9, y - 29, 10, CREAM)
     rl.DrawRectangle(0, 0, 320, 28, NIGHT)
     center_text("A D / arrows: walk   Esc: pause", 6, 10, MINT)
-    center_text("Space / Z / W / Up: jump", 17, 10, CREAM)
+    if scene.definition!=nil { center_text(puzzle_hint(game.puzzle),17,10,CREAM) }
+    else { center_text("Space / Z / W / Up: jump", 17, 10, CREAM) }
     if game.focus >= 0 {
         rl.DrawRectangle(2, 151, 316, 27, NIGHT)
         center_text("[E / Enter] Interact", 153, 10, CREAM)
         center_text(scene.objects[game.focus].label, 166, 10, MINT)
+    }
+    if game.focus<0 && game.puzzle.handle==.Held { center_text("[E / Enter] Drop handle",166,10,CREAM) }
+    if game.save.message!=nil {
+        rl.DrawRectangle(0,137,320,12,NIGHT)
+        center_text(game.save.message,138,8,CREAM)
     }
     if game.response_seconds > 0 {
         rl.DrawRectangle(2, 33, 316, 23, NIGHT)
@@ -123,9 +146,27 @@ draw_game :: proc(game: Game_State) {
     case .Title:
         center_text("THE LAST STOP", 35, 20, CREAM)
         center_text("A little further down the line", 63, 10, MINT)
-        menu_item("Start", 0, game.selection, 99)
-        menu_item("Quit", 1, game.selection, 118)
+        if game.save.exists && !game.save.rejected {
+            menu_item("Continue",0,game.selection,90)
+            menu_item("New Game",1,game.selection,109)
+            menu_item("Quit",2,game.selection,128)
+        } else {
+            menu_item("New Game",0,game.selection,99)
+            menu_item("Quit",1,game.selection,118)
+        }
+        if game.save.message!=nil { center_text(game.save.message,171,8,CREAM) }
         center_text("Arrows / W S  -  Enter / Space / Z", 151, 10, MINT)
+    case .Confirm_New:
+        center_text("Replace existing run?",40,20,CREAM)
+        center_text("New Game replaces the saved progress.",70,10,MINT)
+        menu_item("Keep run",0,game.selection,104)
+        menu_item("Replace / reset",1,game.selection,123)
+    case .Returned:
+        center_text("Back aboard Brass",48,20,CREAM)
+        center_text("The track is clear. Thank you, Milo.",84,10,MINT)
+        center_text("M2 complete - story continues in M3",104,10,CREAM)
+        center_text("Enter / Esc: title",148,10,MINT)
+        if game.save.message!=nil { center_text(game.save.message,171,8,CREAM) }
     case .Content_Error:
         center_text("Content could not load", 10, 20, CREAM)
         center_text("Chapter blocked - diagnostics below", 36, 10, MINT)

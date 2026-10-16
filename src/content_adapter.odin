@@ -12,7 +12,7 @@ import rl "vendor:raylib"
 DEV_TOOLS :: #config(DEV_TOOLS, false)
 
 Launch_Options :: struct {
-    project_root, preview_scene, preview_session: string,
+    project_root, preview_scene, preview_session, save_directory, autoplay: string,
     dump_scene: bool,
     error: string,
 }
@@ -63,18 +63,22 @@ parse_launch_options :: proc(args: []string) -> Launch_Options {
         if flag == "--dump-scene" {
             when DEV_TOOLS { o.dump_scene = true; continue }
         }
-        if flag == "--project-root" || DEV_TOOLS && (flag == "--preview-scene" || flag == "--preview-session") {
+        if flag == "--project-root" || flag == "--save-dir" || DEV_TOOLS && (flag == "--preview-scene" || flag == "--preview-session" || flag == "--autoplay") {
             if i+1 >= len(args) || args[i+1] == "" || strings.has_prefix(args[i+1], "--") {
                 o.error = fmt.aprintf("argument: %s requires a value", flag); return o
             }
             i += 1
             switch flag {
             case "--project-root": o.project_root = strings.clone(args[i])
+            case "--save-dir": o.save_directory = strings.clone(args[i])
+            case "--autoplay": o.autoplay = strings.clone(args[i])
             case "--preview-scene": o.preview_scene = strings.clone(args[i])
             case "--preview-session": o.preview_session = strings.clone(args[i])
             }
         } else { o.error = fmt.aprintf("argument: unsupported option %s", flag); return o }
     }
+    if o.save_directory != "" && !filepath.is_abs(o.save_directory) { o.error="save: --save-dir requires an absolute path" }
+    if o.autoplay != "" && o.save_directory == "" && o.preview_scene == "" { o.error="autoplay: requires explicit --save-dir or preview profile" }
     if o.preview_scene != "" || o.preview_session != "" {
         if o.preview_scene != "oliver_obstacle" || !valid_preview_session(o.preview_session) {
             o.error = "preview: requires --preview-scene oliver_obstacle and --preview-session [a-z0-9_-]{1,64}"
@@ -227,6 +231,10 @@ configure_content :: proc(game: ^Game_State, r: ^Runtime_Content, ready: bool) {
     game.content_ready = ready
     if !ready { enter_mode(game, .Content_Error); return }
     game.scene = r.scene
+    if !validate_runtime_puzzle(game.scene) {
+        content_error(r,"M2 unreachable recovery marker for M1 player footprint; chapter blocked")
+        game.content_ready=false; enter_mode(game,.Content_Error); return
+    }
     when DEV_TOOLS {
         if r.options.preview_scene != "" { start_scene(game); enter_mode(game, .Playing) }
         if r.options.dump_scene { dump_runtime_scene(r) }

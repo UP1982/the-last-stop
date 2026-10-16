@@ -38,7 +38,7 @@
 - Decision 2026-10-16: don't idle on the M0 human keyboard check; M1 proceeds on top, and the human check covers M0+M1 together. M0/M1 acceptance still requires it. E0b serialized after M1 (both touch src/).
 
 | T-E0b-1 | gpt-6.1-sol (high) | E0b runtime content + preview | Game @ dacc96b | committed b18ecfd; E0 gate met |
-| T-M2-1 | gpt-6.1-sol (high) | M2 puzzle + save v1 (src/, tests/runtime, check.sh, README) | Game @ b18ecfd | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M2-1-sol-r1 |
+| T-M2-1 | gpt-6.1-sol (high) | M2 puzzle + save v1 (src/, tests/runtime, check.sh, README) | Game @ b18ecfd | delivered; Opus re-ran check.sh, verified data/shared/real saves untouched; committed; Astra review T-M2-R1 next |
 | T-E1-1 | gpt-6.1-sol (high) | E1 visual editor (editor/, tests/editor_ui only) | Game @ b18ecfd | delivered; Opus re-ran 12 tests, checked bridge security, data/ unchanged; committed |
 
 | T-ART-1 | gpt-6.1-sol (high) | art audit + pipeline proposal (writes build/art/ only) | Game @ 977efc4 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-ART-1-sol-r1 |

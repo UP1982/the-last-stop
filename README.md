@@ -49,11 +49,10 @@ odin build src -define:DEV_TOOLS=true -out:build/the-last-stop-dev
 
 Preview starts directly in the loaded scene with reset player/camera state.
 Session IDs must match `[a-z0-9_-]{1,64}` and map only to
-`~/Library/Caches/The Last Stop/preview/<session-id>/`. E0b reserves this path;
-it creates no saves or session files and never accesses normal saves. `--dump-scene`
+`~/Library/Caches/The Last Stop/preview/<session-id>/`. M2 saves only in this isolated preview path; it never accesses normal saves. `--dump-scene`
 prints loaded geometry to stderr, and development builds outline interaction
 rectangles. Release builds reject preview/debug flags and have no content-edit
-imports or authored-content write path. Interactions are placeholders until M2.
+imports or authored-content write path. M2 interactions use the loaded scene.
 
 Controls: use Up/Down or W/S in menus, and Enter/Space/Z to confirm. In the loaded Chapter 1
 scene, A/D or Left/Right walks Milo; Space/Z/W/Up jumps (hold for a higher hop).
@@ -97,3 +96,25 @@ Title → Oliver station cutscene → automatic scenic travel → blocked tracks
 - Prioritize original placeholder shapes over finding assets.
 - No combat, timers, health, economy, complex inventory, or procedural level generation.
 - Do not hand-build a fully generic engine before demonstrating the first puzzle.
+
+M2 puzzle: find the handle on the shed shelf, E/Enter to pick it up, then
+E/Enter at the winch to install it. Release and press again to start the automatic
+crank. Away from a focused object, E/Enter drops a carried handle safely onto the
+walking ground. Once the branch lifts, R returns to Brass from anywhere; E/Enter
+at Brass also returns. State-derived hints appear at the top. The returned screen
+is the M2 endpoint; Chapter 1 story presentation remains for M3.
+
+Save v1 uses `~/Library/Application Support/The Last Stop/saves/chapter_01.json`,
+independent of launch directory. `--save-dir /absolute/directory` overrides
+`TLS_SAVE_DIR` (which must also be absolute). Continue resumes valid progress;
+a held handle returns to the authored recovery marker. New Game asks Keep or
+Replace when a run exists. Malformed/unknown saves are kept in place, Continue
+is disabled, and only an explicitly confirmed reset replaces them. Write errors
+remain visible; pause or quit retries dirty progress.
+
+DEV_TOOLS preview always starts fresh and writes only to
+`~/Library/Caches/The Last Stop/preview/<session-id>/`, even when a save override
+is also supplied. Runtime tests always require explicit temporary save profiles.
+Run `python3 -B tests/runtime/m2.py` for window-free M2 checks, or
+`python3 -B tests/runtime/m2_native.py` for three scripted native completions and
+PID-verified game-window screenshots in `build/evidence/m2/`.

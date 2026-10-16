@@ -30,6 +30,12 @@ macOS 27.2 arm64; Odin `dev-2026-10:84bc3fc21`; bundled vendor:raylib 6.0. No ex
 - Native: CLI-moved crank_handle visible in game + `--dump-scene` (build/evidence/e0b/).
 - Run dev preview: `odin build src -define:DEV_TOOLS=true -out:build/the-last-stop-dev && build/the-last-stop-dev --project-root "$PWD" --preview-scene oliver_obstacle --preview-session test`.
 
+## M2 evidence (T-M2-1, Sol; check.sh re-run by Opus)
+- Release/dev builds, M0/M1, 7 E0b + 7 M2 + 13 editor groups, check.sh exit 0. 3 scripted native completions with PID-verified screenshots, 5 kill/relaunch checkpoints. data/ and real saves untouched (no ~/Library save dir created). See build/evidence/m2/HANDOFF.md.
+- Saves: `~/Library/Application Support/The Last Stop/saves/chapter_01.json`; override `--save-dir` / `TLS_SAVE_DIR`.
+
 ## Open issues
+- Multiple simultaneous game instances aren't coordinated on the save file (out of contract scope).
+- B2: hint/response strings live in one marked table in src/hints.odin pending a content-schema extension (fold into story schema v2).
 - Debug labels overlap at puzzle entry (branch/Milo/brass) — dev overlay readability, revisit in M5.
 - None confirmed.

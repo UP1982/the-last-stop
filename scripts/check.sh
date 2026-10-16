@@ -10,3 +10,4 @@ python3 -B tests/editor/run.py
 odin run src -define:M0_SELF_TEST=true -out:build/m0-selftest
 odin run src -define:M1_SELF_TEST=true -out:build/m1-selftest
 python3 -B tests/runtime/run.py
+python3 -B tests/runtime/m2.py

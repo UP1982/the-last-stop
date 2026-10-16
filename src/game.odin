@@ -1,10 +1,15 @@
 package main
 
-GameMode :: enum { Title, Playing, Paused, Content_Error }
+GameMode :: enum { Title, Playing, Paused, Content_Error, Confirm_New, Returned }
 FADE_HALF_SECONDS :: 0.18
 
 Game_State :: struct {
     mode: GameMode,
+    puzzle: Puzzle_State,
+    checkpoint: Journey_Checkpoint,
+    save: Save_Profile,
+    completion_cues: int,
+    interact_latched: bool,
     selection: int,
     quit_requested: bool,
     transitioning: bool,
@@ -53,22 +58,27 @@ update_playing :: proc(game: ^Game_State, frame_input: Input, dt: f32) {
         input.interact = false
     }
     game.pending_jump = game.pending_jump || input.jump_pressed
-    game.pending_interact = game.pending_interact || input.interact
+    // Defensive edge latch also protects scripted/simultaneous/held aliases.
+    edge := input.interact && !game.interact_latched
+    game.interact_latched = input.interact_down || input.interact
+    game.pending_interact = game.pending_interact || edge
     game.accumulator += clamp(dt, 0, 0.1)
     for game.accumulator >= FIXED_DT {
         tick_input := input
         tick_input.jump_pressed = game.pending_jump
         step_player(&game.player, tick_input, game.scene.solids[:], game.scene.world)
-        game.focus = focus_nearest(game.player, game.scene.objects[:])
+        refresh_puzzle_objects(game)
+        if game.scene.definition==nil { game.focus = focus_nearest(game.player, game.scene.objects[:]) }
         game.response_seconds = max(0, game.response_seconds - FIXED_DT)
-        if game.pending_interact && game.focus >= 0 {
-            game.response = game.scene.objects[game.focus].response
-            game.response_seconds = 3
-        }
+        if input.return_train { _=puzzle_action(game,.Return); input.return_train=false }
+        else if game.pending_interact { interact_puzzle(game) }
+        if game.mode==.Playing { advance_crank(game,FIXED_DT) }
+        refresh_puzzle_objects(game)
         game.pending_jump = false
         game.pending_interact = false
         follow_camera(&game.camera, game.player.position.x, game.scene.camera_bounds, game.player.position.y)
         game.accumulator -= FIXED_DT
+        if game.mode!=.Playing { game.accumulator=0; break }
     }
 }
 
@@ -94,21 +104,32 @@ update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
 
     switch game.mode {
     case .Title:
-        game.selection = (game.selection + input.menu_move + 2) % 2
+        count:=2
+        if game.save.exists && !game.save.rejected { count=3 }
+        game.selection = (game.selection + input.menu_move + count) % count
         if input.confirm {
-            if game.selection == 0 {
-                if game.content_ready { start_scene(game); begin_transition(game, .Playing) }
-                else { enter_mode(game, .Content_Error) }
-            }
-            else { game.quit_requested = true }
+            if game.selection==count-1 { game.quit_requested=true }
+            else if !game.content_ready { enter_mode(game,.Content_Error) }
+            else if count==3 && game.selection==0 { continue_run(game) }
+            else if game.save.exists { enter_mode(game,.Confirm_New) }
+            else { new_run(game) }
         }
+    case .Confirm_New:
+        game.selection=(game.selection+input.menu_move+2)%2
+        if input.pause { enter_mode(game,.Title) }
+        else if input.confirm {
+            if game.selection==0 { enter_mode(game,.Title) }
+            else { new_run(game) }
+        }
+    case .Returned:
+        if input.pause || input.confirm { persist_game(game); enter_mode(game,.Title) }
     case .Content_Error:
         count := 0
         if game.content != nil { count = len(game.content.error_lines) }
         game.selection = clamp(game.selection + input.menu_move, 0, max(0, count-7))
         if input.pause || input.confirm { enter_mode(game, .Title) }
     case .Playing:
-        if input.pause { enter_mode(game, .Paused); return }
+        if input.pause { persist_game(game); enter_mode(game, .Paused); return }
         update_playing(game, input, dt)
     case .Paused:
         if game.controls_open {
@@ -123,7 +144,7 @@ update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
         if input.confirm {
             if game.selection == 0 { enter_mode(game, .Playing) }
             else if game.selection == 1 { game.controls_open = true }
-            else { begin_transition(game, .Title) }
+            else { persist_game(game); begin_transition(game, .Title) }
         }
     }
 }

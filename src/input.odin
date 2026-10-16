@@ -4,7 +4,7 @@ import rl "vendor:raylib"
 
 Input :: struct {
     menu_move: int,
-    confirm, pause, fullscreen: bool,
+    confirm, pause, fullscreen, return_train: bool,
     move: f32,
     jump_pressed, jump_down, interact, interact_down: bool,
 }
@@ -18,6 +18,7 @@ read_input :: proc() -> Input {
     // Alt+Enter must not also activate the selected menu item.
     input.confirm = !input.fullscreen &&
         (rl.IsKeyPressed(.ENTER) || rl.IsKeyPressed(.SPACE) || rl.IsKeyPressed(.Z))
+    input.return_train = rl.IsKeyPressed(.R)
     input.pause = rl.IsKeyPressed(.ESCAPE)
     if rl.IsKeyDown(.LEFT) || rl.IsKeyDown(.A) { input.move -= 1 }
     if rl.IsKeyDown(.RIGHT) || rl.IsKeyDown(.D) { input.move += 1 }

@@ -18,10 +18,11 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 **Status:** implemented + automated tests pass; human keyboard playtest pending (combined with M0 check).
 
 ## M2: Puzzle vertical slice
-- [ ] Branch visibly blocks route; empty winch + rope points to branch.
-- [ ] Shed handle pick/drop/carry/install, crank activation, branch-clear animation.
-- [ ] Optional snail micro-secret and hint progression.
+- [x] Branch visibly blocks route; empty winch + rope points to branch.
+- [x] Shed handle pick/drop/carry/install, crank activation, branch-clear animation.
+- [x] Optional snail micro-secret and hint progression.
 **Gate:** Three clean puzzle completions and deliberate wrong-order interactions without softlock.
+**Status:** implemented with save v1; automated + 3 scripted native completions incl. 5 kill/relaunch checkpoints pass. Astra review pending; human feel/readability pending.
 
 ## M3: Story loop
 - [ ] Oliver introduction as short skip-safe cutscene.
