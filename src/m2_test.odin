@@ -6,7 +6,7 @@ import "core:os"
 import "core:strings"
 import rl "vendor:raylib"
 
-when #config(M2_SELF_TEST,false) || DEV_TOOLS {
+when #config(M2_SELF_TEST,false) || #config(M3B_SELF_TEST,false) || DEV_TOOLS {
 settle_transition :: proc(g:^Game_State) {
     for _ in 0..<50 { update_game(g,{},FIXED_DT) }
 }
@@ -37,8 +37,18 @@ press_interact :: proc(g:^Game_State) {
     update_game(g,{},FIXED_DT)
 }
 visit :: proc(g:^Game_State,kind:c.Object_Kind) { walk_to(g,kind_x(g,kind)); press_interact(g) }
+reach_puzzle :: proc(g:^Game_State) {
+    for _ in 0..<4 {
+        if g.mode==.Playing || g.checkpoint>=.Returned { return }
+        update_game(g,{},0)
+        update_game(g,{skip=true,skip_down=true},0)
+        settle_transition(g)
+    }
+    assert(g.mode==.Playing)
+}
 complete_puzzle :: proc(g:^Game_State) {
     if g.checkpoint>=.Returned { return }
+    reach_puzzle(g)
     if g.puzzle.handle==.Shelf || g.puzzle.handle==.Dropped { visit(g,.Handle) }
     if g.puzzle.handle==.Held { visit(g,.Winch) }
     if g.puzzle.phase==.Blocked { visit(g,.Winch) }
@@ -46,7 +56,7 @@ complete_puzzle :: proc(g:^Game_State) {
     if g.puzzle.phase!=.Cleared { fmt.eprintln("completion failed",g.puzzle,g.checkpoint,g.mode,g.player.position,g.focus) }
     assert(g.puzzle.phase==.Cleared)
     update_game(g,{return_train=true},FIXED_DT)
-    assert(g.checkpoint==.Returned && g.mode==.Returned)
+    assert(g.checkpoint==.Returned && g.mode==.Train_Travel_Resume)
 }
 }
 
@@ -82,6 +92,7 @@ run_m2_test_entry :: proc() {
         if !g.save.rejected { g.selection=1 }
         update_game(&g,{confirm=true},0); assert(g.mode==.Confirm_New)
         if command=="reset" { g.selection=1 }
+        update_game(&g,{},0)
         update_game(&g,{confirm=true},0)
         if command=="keep" {
             current,ce:=os.read_entire_file(g.save.path,context.allocator); assert(ce==nil); defer delete(current)
@@ -111,7 +122,7 @@ run_m2_test_entry :: proc() {
     case "geometry-path": run_m2_geometry_path(&g)
     case "write-review-drop":
         // Astra's exact dropped-handle reproducer, through movement + E.
-        new_run(&g); settle_transition(&g)
+        new_run(&g); settle_transition(&g); reach_puzzle(&g)
         visit(&g,.Handle); walk_to(&g,1000)
         for _ in 0..<5 { update_game(&g,{move=1},FIXED_DT) }
         for _ in 0..<25 { update_game(&g,{},FIXED_DT) }
@@ -120,7 +131,7 @@ run_m2_test_entry :: proc() {
     case:
         if !strings.has_prefix(command,"write-") { os.exit(2) }
         target:=strings.trim_prefix(command,"write-")
-        new_run(&g); settle_transition(&g)
+        new_run(&g); settle_transition(&g); reach_puzzle(&g)
         if target=="chapter_start" { g.checkpoint=.Chapter_Start; persist_game(&g) }
         else if target=="boarded" { g.checkpoint=.Boarded; persist_game(&g) }
         else if target!="shelf" {
@@ -156,10 +167,10 @@ run_m2_return_edge_tests :: proc(g:^Game_State) {
     update_game(g,{return_train=true},FIXED_DT/2)
     assert(g.checkpoint==.Puzzle && g.mode==.Playing)
     update_game(g,{},FIXED_DT/2)
-    assert(g.checkpoint==.Returned && g.mode==.Returned, "sub-step R edge must execute on next simulation step")
+    assert(g.checkpoint==.Returned && g.mode==.Train_Travel_Resume, "sub-step R edge must execute on next simulation step")
     returned_player:=g.player
     for _ in 0..<10 { update_game(g,{},FIXED_DT) }
-    assert(g.checkpoint==.Returned && g.mode==.Returned && g.player==returned_player)
+    assert(g.checkpoint==.Returned && g.mode==.Train_Travel_Resume && g.player==returned_player)
 
     // A consumed blocked-return edge cannot fire later when clearance arrives.
     g.checkpoint=.Puzzle; g.puzzle={handle=.Installed,phase=.Cranking,crank_progress=0.99}
@@ -172,6 +183,7 @@ run_m2_return_edge_tests :: proc(g:^Game_State) {
     // Pause discards all queued action edges, including a simultaneous R.
     update_game(g,{return_train=true,jump_pressed=true,interact=true},FIXED_DT/2)
     update_game(g,{pause=true,return_train=true},0)
+    update_game(g,{},0)
     update_game(g,{pause=true},0)
     update_game(g,{},FIXED_DT)
     assert(g.mode==.Playing && g.checkpoint==.Puzzle && g.player.grounded)
@@ -185,14 +197,14 @@ run_m2_return_edge_tests :: proc(g:^Game_State) {
     // A new press still works; queued R + E cannot activate two targets.
     update_game(g,{return_train=true,interact=true},FIXED_DT/2)
     update_game(g,{},FIXED_DT/2)
-    assert(g.checkpoint==.Returned && g.mode==.Returned && !g.puzzle.snail_seen)
+    assert(g.checkpoint==.Returned && g.mode==.Train_Travel_Resume && !g.puzzle.snail_seen)
     fmt.println("PASS sub-step R: exactly one return; blocked consumption; pause/fade/mode queue clearing; simultaneous R/E")
 }
 
 run_m2_geometry_path :: proc(g:^Game_State) {
     // Each externally perturbed, validated fixture must complete using actual
     // fixed-step movement, displayed focus, and fresh input edges, not actions.
-    new_run(g); settle_transition(g)
+    new_run(g); settle_transition(g); reach_puzzle(g)
     // Check the displayed focus over the whole grounded pickup envelope,
     // including positions where a competing interaction centre is nearer.
     saved_player:=g.player
@@ -211,7 +223,7 @@ run_m2_geometry_path :: proc(g:^Game_State) {
     g.player=saved_player
     complete_puzzle(g)
     assert(g.completion_cues==1)
-    new_run(g); settle_transition(g); visit(g,.Handle)
+    new_run(g); settle_transition(g); reach_puzzle(g); visit(g,.Handle)
     assert(g.puzzle.handle==.Held)
     // Find an unfocused spot using actual movement, then E to drop and recover.
     dropped:=false
@@ -231,10 +243,10 @@ run_m2_geometry_path :: proc(g:^Game_State) {
 }
 run_m2_behavior_tests :: proc(g:^Game_State) {
     // Direct real-loop completion.
-    new_run(g); settle_transition(g); complete_puzzle(g)
+    new_run(g); settle_transition(g); reach_puzzle(g); complete_puzzle(g)
     assert(g.completion_cues==1 && !g.puzzle.snail_seen)
     // Wrong order, repeated drops, airborne drop and pause/held/simultaneous edges.
-    new_run(g); settle_transition(g)
+    new_run(g); settle_transition(g); reach_puzzle(g)
     visit(g,.Winch); assert(g.puzzle.handle==.Shelf && g.response==chapter_text(g^,"needs_handle"))
     visit(g,.Train); assert(g.checkpoint==.Puzzle)
     visit(g,.Branch); assert(g.puzzle.phase==.Blocked)
@@ -310,10 +322,11 @@ run_m2_behavior_tests :: proc(g:^Game_State) {
     assert(g.checkpoint==.Puzzle && !owns_paper_flower(g^))
     // New Game existing run requires explicit Keep/Replace; default Keep.
     g.save.active=true; g.save.exists=true; g.save.rejected=false; enter_mode(g,.Title)
+    update_game(g,{},0)
     update_game(g,{menu_move=1,confirm=true},0); assert(g.mode==.Confirm_New)
-    update_game(g,{confirm=true},0); assert(g.mode==.Title)
-    update_game(g,{menu_move=1,confirm=true},0); update_game(g,{menu_move=1,confirm=true},0)
-    settle_transition(g); assert(g.puzzle.handle==.Shelf && g.checkpoint==.Puzzle)
+    update_game(g,{},0); update_game(g,{confirm=true},0); assert(g.mode==.Title)
+    update_game(g,{},0); update_game(g,{menu_move=1,confirm=true},0); update_game(g,{},0); update_game(g,{menu_move=1,confirm=true},0)
+    settle_transition(g); reach_puzzle(g); assert(g.puzzle.handle==.Shelf && g.checkpoint==.Puzzle)
     complete_puzzle(g)
     fmt.println("PASS M2 behavioral: 12 reachable abstract states x 9 actions; completion reachable from each; direct + drop/wrong-order completions; edge/air drops; held/simultaneous/pause; hints/focus; reset confirmation")
 }

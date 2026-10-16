@@ -58,7 +58,7 @@
 
 | T-RES-R1 | gpt-6-astra (high) | 640 migration review (worktree @ 3f3bd2b) | /tmp worktree | ACCEPT (no blockers). Notes: parity trace only covers Blocked phase; one transient native initial-width assertion failure, unreproduced |
 | T-M3a | gpt-6.1-sol (high) | chapter/dialogue v2, story content migration, B2 strings | Game @ 3f3bd2b | delivered; Opus verified 15 lines verbatim vs screenplay, check.sh 0, legacy ok; committed. B2 closed |
-| T-M3b | gpt-6.1-sol (high) | story player runtime | Game @ M3a commit | running |
+| T-M3b | gpt-6.1-sol (high) | story player runtime (sole writer) | Game @ cb41083 | delivered; Opus re-ran check.sh, data/shared unchanged; committed. Opus found: wide letter-spacing in dialogue body; overlapping/garbled placeholder labels |
 - Risk accepted: M3a runs during the 640 review; any 640 fixes are queued after M3a.
 
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.

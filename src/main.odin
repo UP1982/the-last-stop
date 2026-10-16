@@ -1,7 +1,6 @@
 package main
 
 import "core:os"
-import "core:fmt"
 import rl "vendor:raylib"
 
 main :: proc() {
@@ -9,6 +8,8 @@ main :: proc() {
         run_self_tests()
         return
     }
+
+    when #config(M3B_SELF_TEST, false) { run_m3b_test_entry(); return }
 
     when #config(M3A_SELF_TEST, false) { run_m3a_content_test(); return }
 
@@ -36,6 +37,7 @@ main :: proc() {
     defer destroy_save_profile(&game.save)
     when DEV_TOOLS { autoplay: Autoplay }
     for !rl.WindowShouldClose() && !game.quit_requested {
+        free_all(context.temp_allocator)
         input := read_input()
         if input.fullscreen {
             rl.ToggleFullscreen()
@@ -45,11 +47,7 @@ main :: proc() {
             if game.content.options.autoplay!="" {
                 input,_=autoplay_input(&autoplay,&game)
                 // Capture rendezvous freezes simulation while retaining render.
-                waiting:=false
-                for name in ([8]string{"title","start","shelf","carried","installed","cranking","cleared","returned"}) {
-                    if os.exists(fmt.tprintf("%s/%s.ready",autoplay.directory,name)) && !os.exists(fmt.tprintf("%s/%s.release",autoplay.directory,name)) { waiting=true }
-                }
-                if waiting { dt=0 }
+                if autoplay_waiting(&autoplay) { dt=0 }
             }
         }
         update_game(&game, input, dt)

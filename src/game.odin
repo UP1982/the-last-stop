@@ -1,10 +1,17 @@
 package main
 
-GameMode :: enum { Title, Playing, Paused, Content_Error, Confirm_New, Returned }
+GameMode :: enum { Title, Playing, Paused, Content_Error, Confirm_New,
+    Station_Intro, Train_Travel, Obstacle_Arrival, Train_Travel_Resume, Station_Outro, Chapter_Complete }
+Action_Key :: enum { Advance, Skip, Pause, Confirm }
+Action_Keys :: bit_set[Action_Key]
 FADE_HALF_SECONDS :: 0.18
 
 Game_State :: struct {
     mode: GameMode,
+    pause_return_mode: GameMode,
+    story: Story_Player,
+    story_cues: int,
+    action_latched: Action_Keys,
     puzzle: Puzzle_State,
     checkpoint: Journey_Checkpoint,
     save: Save_Profile,
@@ -38,6 +45,7 @@ clear_gameplay_edges :: proc(game: ^Game_State) {
 
 enter_mode :: proc(game: ^Game_State, mode: GameMode) {
     game.mode = mode
+    game.action_latched = {.Advance,.Skip,.Pause,.Confirm}
     game.selection = 0
     game.controls_open = false
     clear_gameplay_edges(game)
@@ -96,17 +104,35 @@ update_playing :: proc(game: ^Game_State, frame_input: Input, dt: f32) {
 begin_transition :: proc(game: ^Game_State, next: GameMode) {
     clear_gameplay_edges(game)
     game.transitioning = true
+    game.action_latched = {.Advance,.Skip,.Pause,.Confirm}
     game.next_mode = next
     game.fade_elapsed = 0
 }
 
 update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
     dt := max(dt, 0)
+    input := input
+    down: Action_Keys
+    if input.interact || input.interact_down { down += {.Advance} }
+    if input.skip || input.skip_down { down += {.Skip} }
+    if input.pause || input.pause_down { down += {.Pause} }
+    if input.confirm || input.confirm_down { down += {.Confirm} }
+    edges:=down & ~game.action_latched
+    game.action_latched=down
+    input.interact=input.interact && .Advance in edges
+    input.skip=input.skip && .Skip in edges
+    input.pause=input.pause && .Pause in edges
+    input.confirm=input.confirm && .Confirm in edges
     if game.transitioning {
         before := game.fade_elapsed
         game.fade_elapsed += dt
         if before < FADE_HALF_SECONDS && game.fade_elapsed >= FADE_HALF_SECONDS {
             enter_mode(game, game.next_mode)
+            if game.story.finished {
+                for mode,role in STORY_MODES {
+                    if mode==game.next_mode { story_begin(game,role); break }
+                }
+            }
         }
         if game.fade_elapsed >= 2 * FADE_HALF_SECONDS {
             game.transitioning = false
@@ -133,15 +159,16 @@ update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
             if game.selection==0 { enter_mode(game,.Title) }
             else { new_run(game) }
         }
-    case .Returned:
-        if input.pause || input.confirm { persist_game(game); enter_mode(game,.Title) }
+    case .Station_Intro, .Train_Travel, .Obstacle_Arrival, .Train_Travel_Resume, .Station_Outro, .Chapter_Complete:
+        if input.pause { pause_game(game); return }
+        story_update(game,input,dt)
     case .Content_Error:
         count := 0
         if game.content != nil { count = len(game.content.error_lines) }
         game.selection = clamp(game.selection + input.menu_move, 0, max(0, count-7))
         if input.pause || input.confirm { enter_mode(game, .Title) }
     case .Playing:
-        if input.pause { persist_game(game); enter_mode(game, .Paused); return }
+        if input.pause { pause_game(game); return }
         update_playing(game, input, dt)
     case .Paused:
         if game.controls_open {
@@ -149,12 +176,12 @@ update_game :: proc(game: ^Game_State, input: Input, dt: f32) {
             return
         }
         if input.pause {
-            enter_mode(game, .Playing)
+            enter_mode(game, game.pause_return_mode)
             return
         }
         game.selection = (game.selection + input.menu_move + 3) % 3
         if input.confirm {
-            if game.selection == 0 { enter_mode(game, .Playing) }
+            if game.selection == 0 { enter_mode(game, game.pause_return_mode) }
             else if game.selection == 1 { game.controls_open = true }
             else { persist_game(game); begin_transition(game, .Title) }
         }
@@ -165,4 +192,10 @@ fade_alpha :: proc(game: Game_State) -> f32 {
     if !game.transitioning { return 0 }
     t := game.fade_elapsed / FADE_HALF_SECONDS
     return clamp(1 - abs(t - 1), 0, 1)
+}
+
+pause_game :: proc(g: ^Game_State) {
+    g.pause_return_mode=g.mode
+    persist_game(g)
+    enter_mode(g,.Paused)
 }

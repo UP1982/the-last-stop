@@ -201,13 +201,11 @@ persist_game :: proc(g: ^Game_State) {
 new_run :: proc(g: ^Game_State) {
     g.save.active=true
     g.save.rejected=false
-    g.puzzle={}; g.checkpoint=.Chapter_Start; g.completion_cues=0
+    g.puzzle={}; g.checkpoint=.Chapter_Start; g.completion_cues=0; g.story_cues=0
     start_scene(g)
     persist_game(g)
-    // M2 skips story presentation; M3 will call these at the actual boundaries.
-    board_oliver(g); enter_obstacle(g)
-    refresh_puzzle_objects(g)
-    begin_transition(g,.Playing)
+    story_begin(g,.Intro)
+    begin_transition(g,.Station_Intro)
 }
 continue_run :: proc(g: ^Game_State) {
     if !g.save.exists || g.save.rejected { return }
@@ -217,13 +215,6 @@ continue_run :: proc(g: ^Game_State) {
     g.save.active=true
     g.checkpoint=g.save.loaded.checkpoint; g.puzzle=g.save.loaded.puzzle; g.completion_cues=0
     start_scene(g)
-    if g.checkpoint<.Puzzle { board_oliver(g); enter_obstacle(g) }
-    mode:=GameMode.Playing
-    if g.checkpoint>=.Returned {
-        g.player={position=marker_position(g.scene,true),grounded=true,facing=1}
-        g.camera={}; follow_camera(&g.camera,g.player.position.x,g.scene.camera_bounds,g.player.position.y)
-        mode=.Returned
-    }
-    refresh_puzzle_objects(g)
-    begin_transition(g,mode)
+    resume_checkpoint(g)
+    begin_transition(g,g.mode)
 }

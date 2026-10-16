@@ -172,7 +172,7 @@ puzzle_action :: proc(g: ^Game_State, action: Puzzle_Action) -> bool {
             g.checkpoint=.Returned
             g.player={position=marker_position(g.scene,true),grounded=true,facing=1}
             g.camera={}; follow_camera(&g.camera,g.player.position.x,g.scene.camera_bounds,g.player.position.y)
-            enter_mode(g,.Returned); changed=true
+            story_begin(g,.Return); changed=true
         } else if p.phase == .Cranking { respond(g,chapter_text(g^,"turning")) }
         else { respond(g,chapter_text(g^,"blocked")) }
     case .Snail:
@@ -242,12 +242,36 @@ interact_puzzle :: proc(g: ^Game_State) {
         break
     }
 }
-// Reserved M3 boundaries, guarded and idempotent. M2 bypasses presentation only.
-board_oliver :: proc(g: ^Game_State) { if g.checkpoint==.Chapter_Start { g.checkpoint=.Boarded; persist_game(g) } }
-enter_obstacle :: proc(g: ^Game_State) { if g.checkpoint==.Boarded { g.checkpoint=.Puzzle; persist_game(g) } }
-enter_arrival :: proc(g:^Game_State) { if g.checkpoint==.Returned && g.puzzle.phase==.Cleared { g.checkpoint=.Arrival; persist_game(g) } }
+// Compiled journey boundaries. These also guard direct calls independently of
+// the content validator and never manufacture puzzle progress.
+board_oliver :: proc(g: ^Game_State) {
+    if g.checkpoint==.Chapter_Start && puzzle_invariant(g.puzzle,g.checkpoint,g.scene) {
+        g.checkpoint=.Boarded; persist_game(g)
+    }
+}
+enter_obstacle :: proc(g: ^Game_State) {
+    if g.checkpoint==.Boarded && puzzle_invariant(g.puzzle,g.checkpoint,g.scene) {
+        g.checkpoint=.Puzzle; persist_game(g)
+    }
+}
+begin_puzzle :: proc(g: ^Game_State) {
+    if g.mode!=.Obstacle_Arrival || g.checkpoint!=.Puzzle || !puzzle_invariant(g.puzzle,g.checkpoint,g.scene) { return }
+    start_scene(g); refresh_puzzle_objects(g); persist_game(g); enter_mode(g,.Playing)
+}
+enter_arrival :: proc(g: ^Game_State) {
+    if g.checkpoint==.Returned && puzzle_invariant(g.puzzle,g.checkpoint,g.scene) {
+        g.checkpoint=.Arrival; persist_game(g)
+    }
+}
 finish_oliver_journey :: proc(g: ^Game_State) {
-    if g.checkpoint==.Arrival && g.puzzle.phase==.Cleared { g.checkpoint=.Complete; persist_game(g) }
+    if g.checkpoint==.Arrival && puzzle_invariant(g.puzzle,g.checkpoint,g.scene) {
+        g.checkpoint=.Complete; persist_game(g)
+    }
+}
+show_title :: proc(g: ^Game_State) {
+    if g.checkpoint==.Complete && g.mode!=.Title && puzzle_invariant(g.puzzle,g.checkpoint,g.scene) {
+        persist_game(g); enter_mode(g,.Title)
+    }
 }
 owns_paper_flower :: proc(g: Game_State) -> bool { return g.checkpoint==.Complete }
 

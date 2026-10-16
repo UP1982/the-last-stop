@@ -25,11 +25,12 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 **Status:** automated/contract scope ACCEPTED (Astra R2 at 39f52ac; R1 P1 softlock + P3 input fixed). B2 strings deferred to M3a. Human playtest (feel, readability, 3 hand completions) pending.
 
 ## M3: Story loop
-- [ ] Oliver introduction as short skip-safe cutscene.
-- [ ] Automatic train movement and obstacle reveal.
-- [ ] Return-to-train and Oliver arrival farewell.
-- [ ] Single paper-flower keepsake award.
+- [x] Oliver introduction as short skip-safe cutscene.
+- [x] Automatic train movement and obstacle reveal.
+- [x] Return-to-train and Oliver arrival farewell.
+- [x] Single paper-flower keepsake award.
 **Gate:** Title-to-end journey in one playthrough.
+**Status:** implemented (screenplay content, placeholder visuals); automated + native scripted advance/skip/relaunch runs pass. Astra review + typography fix pending; human playthrough pending.
 
 ## M4: Saving and resilience
 - [ ] Versioned save representation and atomic write.

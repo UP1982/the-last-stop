@@ -24,11 +24,15 @@ run_e0b_self_tests :: proc() {
         if expect_invalid {
             assert(runtime.snapshot == nil && !g.content_ready)
             assert(g.mode == .Content_Error && len(runtime.error_lines) > 0)
+            update_game(&g, {}, 0)
             update_game(&g, {pause=true}, 0)
             assert(g.mode == .Title)
+            update_game(&g, {}, 0)
             update_game(&g, {confirm=true}, 0)
             assert(g.mode == .Content_Error && !g.transitioning)
+            update_game(&g, {}, 0)
             update_game(&g, {confirm=true}, 0)
+            update_game(&g, {}, 0)
             update_game(&g, {menu_move=1, confirm=true}, 0)
             assert(g.quit_requested) // Quit remains reachable after failed start
         } else {

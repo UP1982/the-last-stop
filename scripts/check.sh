@@ -14,3 +14,4 @@ python3 -B tests/runtime/m2.py
 python3 -B tests/runtime/m2_fix.py
 python3 -B -m unittest discover -s tests/editor_ui -v
 python3 -B tests/story/run.py
+python3 -B tests/story/runtime.py

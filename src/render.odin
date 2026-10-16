@@ -53,7 +53,7 @@ draw_world_rect :: proc(rect: rl.Rectangle, camera: Camera, color: rl.Color) {
         pixel(rect.width), pixel(rect.height), color)
 }
 
-draw_scene :: proc(game: Game_State) {
+draw_scene :: proc(game: Game_State, interface:=true, draw_player:=true) {
     scene, camera := game.scene, game.camera
     draw_world_rect(scene.solids[0], camera, rl.Color{99, 108, 116, 255})
     for authored in scene.visuals {
@@ -72,7 +72,7 @@ draw_scene :: proc(game: Game_State) {
                 dest := object.rect; dest.x -= camera.x; dest.y -= camera.y
                 dest.x = f32(pixel(dest.x)); dest.y = f32(pixel(dest.y))
                 rl.DrawTexturePro(texture, {0, 0, f32(asset.frame_size[0]), f32(asset.frame_size[1])}, dest, {}, 0, rl.WHITE)
-            }
+              }
         }
     }
     if scene.definition!=nil {
@@ -96,20 +96,25 @@ draw_scene :: proc(game: Game_State) {
             rl.DrawRectangleLinesEx({f32(x - 4), f32(y - 4), f32(pixel(r.width) + 8), f32(pixel(r.height) + 8)}, 2, CREAM)
         }
         when DEV_TOOLS {
-            zone := object.bounds
-            rl.DrawRectangleLinesEx({f32(pixel(zone.x)-pixel(camera.x)), f32(pixel(zone.y)-pixel(camera.y)), f32(pixel(zone.width)), f32(pixel(zone.height))}, 2, MINT)
+            if interface {
+                zone := object.bounds
+                rl.DrawRectangleLinesEx({f32(pixel(zone.x)-pixel(camera.x)), f32(pixel(zone.y)-pixel(camera.y)), f32(pixel(zone.width)), f32(pixel(zone.height))}, 2, MINT)
+            }
         }
 
     }
-    // Placeholder cat: body stays exactly inside the agreed collision footprint.
-    x, y := pixel(game.player.position.x) - pixel(camera.x), pixel(game.player.position.y) - pixel(camera.y)
-    rl.DrawRectangle(x - 12, y - 32, 24, 32, CREAM)
-    rl.DrawRectangle(x - 12, y - 32, 6, 6, MINT)
-    rl.DrawRectangle(x + 6, y - 32, 6, 6, MINT)
-    eye_x := x + 4
-    if game.player.facing < 0 { eye_x = x - 8 }
-    rl.DrawRectangle(eye_x, y - 20, 4, 4, NIGHT)
-    rl.DrawText("Milo", x - 18, y - 58, 20, CREAM)
+    if draw_player {
+        // Placeholder cat: body stays exactly inside the agreed collision footprint.
+        x, y := pixel(game.player.position.x) - pixel(camera.x), pixel(game.player.position.y) - pixel(camera.y)
+        rl.DrawRectangle(x - 12, y - 32, 24, 32, CREAM)
+        rl.DrawRectangle(x - 12, y - 32, 6, 6, MINT)
+        rl.DrawRectangle(x + 6, y - 32, 6, 6, MINT)
+        eye_x := x + 4
+        if game.player.facing < 0 { eye_x = x - 8 }
+        rl.DrawRectangle(eye_x, y - 20, 4, 4, NIGHT)
+        rl.DrawText("Milo", x - 18, y - 58, 20, CREAM)
+    }
+    if !interface { return }
     rl.DrawRectangle(0, 0, 640, 88, NIGHT)
     center_text("A D: walk   H: hint   T: text page   Esc: pause", 12, 20, MINT)
     if scene.definition!=nil { draw_content_text(puzzle_hint(game),34,16,CREAM,game.text_page) }
@@ -138,9 +143,10 @@ draw_controls :: proc() {
     center_text("Walk: A / D or Left / Right", 124, 20, CREAM)
     center_text("Jump: Space / Z / W / Up", 156, 20, CREAM)
     center_text("Hold jump for a higher hop", 182, 20, MINT)
-    center_text("Interact: E / Enter", 214, 20, CREAM)
-    center_text("Pause: Esc   Fullscreen: F11", 246, 20, CREAM)
-    center_text("Alt + Enter: fullscreen", 272, 20, MINT)
+    center_text("Interact / story advance: E / Enter", 210, 20, CREAM)
+    center_text("Story: X skips the scene", 234, 20, MINT)
+    center_text("Pause: Esc   Fullscreen: F11", 260, 20, CREAM)
+    center_text("Alt + Enter: fullscreen", 284, 20, MINT)
     center_text("Esc / Enter / Space / Z: back", 316, 20, CREAM)
 }
 
@@ -165,12 +171,8 @@ draw_game :: proc(game: Game_State) {
         center_text("New Game replaces the saved progress.",140,20,MINT)
         menu_item("Keep run",0,game.selection,208)
         menu_item("Replace / reset",1,game.selection,246)
-    case .Returned:
-        center_text("Back aboard Brass",96,40,CREAM)
-        draw_content_text(chapter_text(game,"clear"),168,20,MINT)
-        center_text("M2 complete - story continues in M3",208,20,CREAM)
-        center_text("Enter / Esc: title",296,20,MINT)
-        if game.save.message!=nil { center_text(game.save.message,342,20,CREAM) }
+    case .Station_Intro, .Train_Travel, .Obstacle_Arrival, .Train_Travel_Resume, .Station_Outro, .Chapter_Complete:
+        story_draw(game)
     case .Content_Error:
         center_text("Content could not load", 20, 40, CREAM)
         center_text("Chapter blocked - diagnostics below", 72, 20, MINT)
@@ -178,12 +180,13 @@ draw_game :: proc(game: Game_State) {
             lines := game.content.error_lines
             for i := 0; i < 7 && game.selection+i < len(lines); i += 1 {
                 rl.DrawText(lines[game.selection+i], 16, 108+i32(i)*24, 20, CREAM)
-            }
+              }
         }
         center_text("Up/Down: scroll   Esc / Enter: title", 302, 20, MINT)
         center_text("Full diagnostics also on stderr", 332, 20, CREAM)
     case .Playing, .Paused:
-        draw_scene(game)
+        if game.mode==.Paused && game.pause_return_mode!=.Playing { story_draw(game) }
+        else { draw_scene(game) }
         if game.mode == .Paused {
             rl.DrawRectangle(0, 0, 640, 360, rl.Color{0, 0, 0, 170})
             if game.controls_open { draw_controls() }
@@ -193,7 +196,7 @@ draw_game :: proc(game: Game_State) {
                 menu_item("Controls", 1, game.selection, 190)
                 menu_item("Quit to Title", 2, game.selection, 228)
                 center_text("Esc to resume", 302, 20, MINT)
-            }
+              }
         }
     }
     if game.transitioning {

@@ -7,7 +7,7 @@
 2. Read `docs/GAME_BIBLE.md` (creative source of truth).
 3. Read `docs/TECHNICAL_DESIGN.md` and `docs/CHAPTER_01.md`.
 4. Follow `docs/TASK_BOARD.md` in order. The first milestone is a working window, input, and pixel-perfect render loop.
-5. The project includes an intentionally small **starter shell**, not a completed prototype.
+5. Chapter 1 now plays the whole Oliver journey with placeholder staging; art, audio and fresh-player acceptance remain later work.
 
 ## Requirements
 - An installed Odin compiler with bundled `vendor:raylib` support, a C toolchain/platform dependencies appropriate to your machine.
@@ -25,7 +25,7 @@ odin build src -out:build/the-last-stop
 
 `odin run src` and `./scripts/run.sh` also work from the checkout root.
 `./scripts/check.sh` runs compilation, content/editor tests, M0/M1 regressions,
-and runtime loading/allocation tests.
+runtime loading/allocation tests, and story convergence/reload tests.
 
 The game validates the complete Chapter 1 graph before Start. Content locations,
 in order: `data/` beside the executable; `Contents/Resources/data/` for an app
@@ -59,7 +59,12 @@ scene, A/D or Left/Right walks Milo; Space/Z/W/Up jumps (hold for a higher hop).
 E or Enter interacts with the nearest focused object; its outline, name and key
 prompt identify the target. The authored scene has continuous ground and non-solid props. M1’s small-step
 controller remains supported and regression-tested; no step is authored here.
-Escape pauses/resumes; the pause menu offers Resume, Controls and Quit to Title.
+During story scenes, **E / Enter** advances one page or beat; **X** skips the
+current scene. **Esc only pauses**. Travel runs automatically, and skipping
+travel still stops at the unsolved puzzle. Release an action before pressing it
+again; held or simultaneous aliases never cascade into the next scene.
+Escape pauses/resumes the exact scene, page and timers; the pause menu offers
+Resume, Controls and Quit to Title.
 Escape or a confirm key closes the Controls overlay back to the pause menu.
 Release jump/interact keys after leaving menus before using them in play.
 Escape on the title does not exit. F11 or Alt+Enter toggles fullscreen.
@@ -136,3 +141,28 @@ before, and contradictory states remain rejected. Reading a v1 save preserves it
 bytes; the next normal checkpoint writes v2. V2 coordinates are never doubled.
 The editor uses a 640x360 backing canvas, default 16-pixel snap, doubled placement
 defaults, and a new draft-storage namespace; old-unit drafts/history are rejected.
+
+## Story runtime (M3b)
+
+New Game follows Willow Creek (Rin and Oliver) → outbound travel → obstacle
+reveal → the handle/winch puzzle → return travel → Clover Market → paper flower
+→ end card → Title. Continue restarts the sequence at the saved checkpoint;
+a Puzzle checkpoint restores the puzzle directly. Complete opens the end card.
+The paper flower is owned exactly when the checkpoint is Complete. Saves retain
+the existing v2 format and v1 migration from the 640×360 change.
+
+Story text wraps and paginates on the 640×360 UI. The bundled raylib font supplies
+letters; small pixel-stroke glyphs supply its missing em dash (—) and ellipsis (…).
+Stored content strings remain unchanged. Cue labels are silent visual placeholders.
+No new font, art or audio files are imported.
+
+```sh
+python3 -B tests/story/runtime.py  # window-free checkpoint/input/skip tests
+python3 -B tests/story/native.py   # macOS native windows; isolated temporary saves
+```
+
+DEV_TOOLS autoplay supports `--autoplay story-advance` and `--autoplay story-skip`;
+use an explicit temporary `--save-dir` and `TLS_M2_EVIDENCE` rendezvous directory.
+The native runner verifies each game PID/window ID before window-only captures,
+checks minimum-size text, and kills/relaunches at intro, crank and farewell.
+Evidence and the M3b handoff are under `build/evidence/m3b/` (generated, untracked).
