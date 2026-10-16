@@ -6,6 +6,7 @@ import "core:encoding/json"
 import "core:fmt"
 import "core:mem"
 import "core:os"
+import "core:sys/posix"
 
 main :: proc() {
     root:="."; if len(os.args)>1 { root=os.args[1] }
@@ -37,6 +38,16 @@ main :: proc() {
     }
     // Deterministic serializer and strict adapter agree for escaped Unicode.
     o:=c.new_owner(a); context.allocator=c.owner_allocator(o)
+    // Even a singly linked dependency cannot be read using the same inode as
+    // the writer's lock descriptor (for example after its lock name was moved).
+    dependency,e:=os.open(fmt.aprintf("%s/data/dialogue/oliver_intro.json",root))
+    assert(e==nil)
+    _,alias_ok:=c.read_bounded(fmt.aprintf("%s/data/dialogue/oliver_intro.json",root),c.MAX_DOCUMENT_BYTES,posix.FD(os.fd(dependency)))
+    assert(!alias_ok,"dependency alias of lock descriptor must be refused")
+    assert(os.close(dependency)==nil)
+    for raw in ([]string{"9223372036854775807","-9223372036854775808"}) {
+        _,_,valid:=c.parse_strict(transmute([]u8)raw,"integer boundary"); assert(valid)
+    }
     v,d,ok:=c.parse_strict(transmute([]u8)string(`{"x":"é 猫 \ud83d\ude80\n\t\u0001"}`),"test")
     assert(ok,d.message)
     first:=c.serialize(v); second:=c.serialize(v)

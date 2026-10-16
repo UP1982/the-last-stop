@@ -6,6 +6,7 @@ import "core:fmt"
 import "core:mem"
 import "core:slice"
 import "core:strings"
+import "core:sys/posix"
 
 Commit_State :: enum { Not_Committed, Committed, Committed_Durability_Uncertain }
 state_string :: proc(s:Commit_State) -> string {
@@ -143,7 +144,7 @@ apply_operations :: proc(value:json.Value,r:Edit_Request,v:^c.Validator) -> json
 }
 // prepare_edit never writes. Failure diagnostics use the supplied allocator;
 // success owns its candidate and buffers until destroy_prepared_edit.
-prepare_edit :: proc(s:^c.Snapshot,r:Edit_Request,allocator:mem.Allocator) -> (^Prepared_Edit,[]c.Diagnostic) {
+prepare_edit :: proc(s:^c.Snapshot,r:Edit_Request,allocator:mem.Allocator,project_root:string="",lock_fd:posix.FD=-1) -> (^Prepared_Edit,[]c.Diagnostic) {
     context.allocator=allocator
     v:=c.Validator{file="request"}
     if string(s.chapter.id)!=string(r.chapter) { c.fail(&v,"chapter","/chapter","Unknown chapter") }
@@ -173,7 +174,9 @@ prepare_edit :: proc(s:^c.Snapshot,r:Edit_Request,allocator:mem.Allocator) -> (^
     p.noop=string(normalized_before)==string(p.bytes)
     sources:=make([]c.Document_Source,len(s.sources)); copy(sources,s.sources[:])
     for &src in sources { if src.path==p.path { src.bytes=p.bytes } }
-    p.candidate=c.validate_sources(sources,s.chapter_path,context.allocator)
+    if project_root!="" && lock_fd>=0 {
+        p.candidate=c.validate_candidate_sources(project_root,sources,s.chapter_path,context.allocator,lock_fd)
+    } else { p.candidate=c.validate_sources(sources,s.chapter_path,context.allocator) }
     if p.candidate.snapshot==nil {
         context.allocator=allocator
         ds:=make([]c.Diagnostic,len(p.candidate.diagnostics))

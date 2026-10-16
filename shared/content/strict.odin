@@ -17,6 +17,11 @@ advance :: proc(s: ^Strict) {
     else if t.kind == .Integer || t.kind == .Float {
         if !strict_number(t.text) { s.error = "invalid_number"; return }
         if t.kind == .Integer {
+            // The installed strconv parser can wrap overflowing signed values
+            // while returning ok. Check decimal bounds before conversion.
+            digits:=t.text; bound:="9223372036854775807"
+            if digits[0]=='-' { digits=digits[1:]; bound="9223372036854775808" }
+            if len(digits)>len(bound) || len(digits)==len(bound) && digits>bound { s.error="number_range"; return }
             _, ok := strconv.parse_i64(t.text)
             if !ok { s.error = "number_range" }
         } else {

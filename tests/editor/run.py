@@ -95,30 +95,48 @@ class E0(unittest.TestCase):
 
     def test_01_strict_json(self):
         original = (self.root / CHAPTER).read_bytes()
+        # Every token defect is embedded in the valid chapter, so a schema
+        # failure cannot accidentally stand in for strict parser rejection.
+        number = lambda token: original.replace(b'"schema_version": 1', b'"schema_version": ' + token)
+        title = lambda token: original.replace(b'"Oliver and the Flower Market"', token)
         malformed = {
-            'truncated': original[:-3], 'duplicate': b'{"kind":"chapter","kind":"chapter"}',
-            'escaped_duplicate': b'{"kind":"chapter","\\u006bind":"chapter"}',
-            'garbage': original + b'wat', 'second_root': original + b'{}',
-            'object_trailing_comma': original.rstrip()[:-1] + b',}',
-            'array_trailing_comma': b'{"x":[1,]}', 'comment': b'/*hi*/' + original,
-            'utf8': original.replace(b'Oliver', b'\xff', 1), 'leading_zero': b'{"x":01}',
-            'plus': b'{"x":+1}', 'exponent': b'{"x":1e+}', 'float_overflow': b'{"x":1e9999}',
-            'integer_overflow': b'{"x":9223372036854775808}',
-            'negative_overflow': b'{"x":-9223372036854775809}',
-            'nan': b'{"x":NaN}', 'fraction': b'{"x":1.}',
-            'deep': b'[' * 34 + b'0' + b']' * 34,
-            'large': b' ' * 262145, 'nul': original + b'\x00garbage',
-            'formfeed': original + b'\x0c', 'apostrophe_escape': b'{"x":"\\\'"}',
-            'bad_hex_escape': b'{"x":"\\uZZZZ"}', 'high_surrogate': b'{"x":"\\ud800"}',
-            'low_surrogate': b'{"x":"\\udc00"}', 'raw_newline': b'{"x":"\n"}',
-            'missing_quote': b'{"x":"foo}', 'bom': b'\xef\xbb\xbf' + original,
+            'truncated': (original[:-3], 'expected_delimiter'),
+            'duplicate': (original.replace(b'"kind": "chapter"', b'"kind": "chapter", "kind": "chapter"'), 'invalid_json'),
+            'escaped_duplicate': (original.replace(b'"kind": "chapter"', b'"kind": "chapter", "\\u006bind": "chapter"'), 'invalid_json'),
+            'garbage': (original + b'wat', 'trailing_input'),
+            'second_root': (original + b'{}', 'trailing_input'),
+            'object_trailing_comma': (original.rstrip()[:-1] + b',}', 'trailing_comma'),
+            'array_trailing_comma': (original.replace(b'"data/scenes/oliver_obstacle.json"\n    }', b'"data/scenes/oliver_obstacle.json"\n    },'), 'trailing_comma'),
+            'comment': (b'/*hi*/' + original, 'invalid_json'),
+            'utf8': (original.replace(b'Oliver', b'\xff', 1), 'invalid_utf8'),
+            'leading_zero': (number(b'01'), 'invalid_json'),
+            'plus': (number(b'+1'), 'invalid_json'),
+            'exponent': (number(b'1e+'), 'invalid_json'),
+            'float_overflow': (number(b'1e9999'), 'number_range'),
+            'integer_overflow': (number(b'9223372036854775808'), 'number_range'),
+            'negative_overflow': (number(b'-9223372036854775809'), 'number_range'),
+            'nan': (number(b'NaN'), 'expected_value'),
+            'fraction': (number(b'1.'), 'invalid_json'),
+            'deep': (title(b'[' * 34 + b'0' + b']' * 34), 'depth_limit'),
+            'large': (original + b' ' * 262145, 'size_limit'),
+            'nul': (original + b'\x00garbage', 'invalid_json'),
+            'formfeed': (original + b'\x0c', 'invalid_json'),
+            'apostrophe_escape': (title(b'"\\\'"'), 'invalid_string'),
+            'bad_hex_escape': (title(b'"\\uZZZZ"'), 'invalid_string'),
+            'high_surrogate': (title(b'"\\ud800"'), 'invalid_string'),
+            'low_surrogate': (title(b'"\\udc00"'), 'invalid_string'),
+            'raw_newline': (title(b'"\n"'), 'invalid_json'),
+            'missing_quote': (title(b'"foo'), 'invalid_json'),
+            'bom': (b'\xef\xbb\xbf' + original, 'invalid_json'),
         }
-        for label, content in malformed.items():
+        for label, (content, code) in malformed.items():
             with self.subTest(label=label):
+                self.assertNotEqual(content, original, 'fixture replacement must take effect')
                 (self.root / CHAPTER).write_bytes(content)
                 before = self.disk()
                 status, body = invoke(self.root, 'validate-content')
                 self.assertEqual(status, 2, (label, body))
+                self.assertEqual(body['diagnostics'][0]['code'], code, (label, body))
                 self.assertEqual(self.disk(), before)
         (self.root / CHAPTER).write_bytes(original)
         for path, mutation in [
@@ -395,6 +413,96 @@ class E0(unittest.TestCase):
         # Release CLI ignores fault environment; only explicitly compiled test binary honors it.
         result=self.apply(self.request(),env=dict(os.environ,TLS_E0_FAULT='rename'))
         self.assertEqual(result['commit_state'],'committed')
+
+    def test_10_hardlinked_lock_two_writers(self):
+        first = self.request()
+        second = self.request([{'op':'set_property','collection':'objects','id':'crank_handle','property':'position','value':[592,128]}], revision=first['expected_revision'])
+        studio = self.root / '.studio'; studio.mkdir()
+        lock = studio / 'content.lock'
+        os.link(self.root / INTRO, lock)
+        paths = [self.root / 'first.json', self.root / 'second.json']
+        processes = []
+        before = self.disk()
+        for path, request in zip(paths, [first, second]):
+            path.write_bytes(encode(request))
+            processes.append(subprocess.Popen([str(FAULT_CLI), 'apply-edit', '--project-root', str(self.root), '--request', str(path)], stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+        try:
+            for process in processes:
+                out, err = process.communicate(timeout=10)
+                self.assertEqual(process.returncode, 4, (out, err))
+                body = json.loads(out)
+                self.assertEqual(body['commit_state'], 'not_committed')
+                self.assertEqual(body['diagnostics'][0]['code'], 'io_lock')
+        finally:
+            for process in processes:
+                if process.poll() is None: process.kill(); process.communicate()
+        self.assertEqual(self.disk(), before, 'neither aliased writer may overwrite authored bytes')
+        lock.unlink()
+        # The original request remains usable after replacing the unsafe lock.
+        self.apply(first)
+        self.apply(second, 3)
+
+    def asset_fixture(self):
+        payload = b'new asset fixture'
+        (self.root / 'assets/new.bin').write_bytes(payload)
+        return {'path':'assets/new.bin', 'sha256':hashlib.sha256(payload).hexdigest(),
+                'frame_size':[8,8], 'frame_count':1, 'pivot':[0,0],
+                'provenance':{'creator':'test','source':'fixture','license':'CC0','attribution':''}}
+
+    def test_11_asset_create_delete_undo_redo(self):
+        asset = self.asset_fixture()
+        before = self.read(ASSETS)
+        created = self.apply(self.request([{'op':'create','collection':'assets','id':'new_asset','value':asset}], document='chapter_01_assets'))
+        self.assertEqual(created['commit_state'], 'committed')
+        self.assertEqual(created['new_revision'], self.revision())
+        status, inspected = invoke(self.root, 'validate-content')
+        self.assertEqual(status, 0, inspected)
+        self.assertEqual(inspected['document_revisions']['assets/new.bin'], 'sha256:'+asset['sha256'])
+        with_asset = self.read(ASSETS)
+        deleted = self.apply(self.request([{'op':'delete','collection':'assets','id':'new_asset'}], document='chapter_01_assets'))
+        self.assertEqual(self.read(ASSETS), before)
+        self.assertEqual(deleted['new_revision'], self.revision())
+        self.assertNotIn('assets/new.bin', invoke(self.root, 'validate-content')[1]['document_revisions'])
+        history = self.root / '.studio/history' / deleted['undo_token']
+        undo = json.loads((history / 'before.json').read_bytes())
+        redo = json.loads((history / 'after.json').read_bytes())
+        restored = self.apply(self.request([{'op':'restore_document','value':undo}], document='chapter_01_assets'))
+        self.assertEqual(self.read(ASSETS), with_asset)
+        self.assertEqual(restored['new_revision'], created['new_revision'])
+        self.assertEqual(restored['new_revision'], self.revision())
+        redone = self.apply(self.request([{'op':'restore_document','value':redo}], document='chapter_01_assets'))
+        self.assertEqual(self.read(ASSETS), before)
+        self.assertEqual(redone['new_revision'], deleted['new_revision'])
+        self.assertEqual(redone['new_revision'], self.revision())
+
+    def test_12_new_asset_confinement_and_recheck(self):
+        asset = self.asset_fixture()
+        for path, code in [('../outside.bin','unsafe_path'), ('/tmp/outside.bin','unsafe_path'),
+                           ('assets/../outside.bin','unsafe_path'), ('assets/missing.bin','unsafe_path')]:
+            with self.subTest(path=path):
+                before = self.disk()
+                bad = dict(asset, path=path)
+                body = self.apply(self.request([{'op':'create','collection':'assets','id':'new_asset','value':bad}], document='chapter_01_assets'), 2)
+                self.assertEqual(body['diagnostics'][0]['code'], code)
+                self.assertEqual(self.disk(), before)
+        outside = self.root / 'outside.bin'; outside.write_bytes(b'new asset fixture')
+        (self.root / 'assets/link.bin').symlink_to(outside)
+        (self.root / 'assets/linked_dir').symlink_to(self.root)
+        for path in ['assets/link.bin', 'assets/linked_dir/outside.bin']:
+            body = self.apply(self.request([{'op':'create','collection':'assets','id':'new_asset','value':dict(asset,path=path)}], document='chapter_01_assets'), 2)
+            self.assertEqual(body['diagnostics'][0]['code'], 'unsafe_path')
+        body = self.apply(self.request([{'op':'create','collection':'assets','id':'new_asset','value':dict(asset,sha256='0'*64)}], document='chapter_01_assets'), 2)
+        self.assertEqual(body['diagnostics'][0]['code'], 'asset_hash')
+        request = self.request([{'op':'create','collection':'assets','id':'new_asset','value':asset}], document='chapter_01_assets')
+        before = self.disk()
+        process, marker = self.paused_writer(request, 'before_recheck')
+        (self.root / 'assets/new.bin').write_bytes(b'changed after candidate validation')
+        Path(str(marker)+'.release').touch()
+        out, err = process.communicate(timeout=10)
+        self.assertEqual(process.returncode, 3, (out, err))
+        self.assertEqual(json.loads(out)['commit_state'], 'not_committed')
+        self.assertEqual(json.loads(out)['diagnostics'][0]['code'], 'external_change')
+        self.assertEqual(self.disk(), before)
 
 
 if __name__ == '__main__':

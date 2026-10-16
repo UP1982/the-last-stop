@@ -7,6 +7,7 @@ import "core:mem"
 import "core:os"
 import "core:slice"
 import "core:strings"
+import "core:sys/posix"
 
 hash_bytes :: proc(b: []u8) -> Revision { c:sha2.Context_256; sha2.init_256(&c); sha2.update(&c,b); r:Revision; sha2.final(&c,r[:]); return r }
 hex_digest :: proc(r: Revision) -> string {
@@ -49,12 +50,20 @@ confined :: proc(root,path,prefix: string) -> bool {
     return true
 }
 // Bounded before allocation, and rechecked after reading to catch growing files.
-read_bounded :: proc(path: string,limit: int) -> ([]u8,bool) {
+read_bounded :: proc(path: string,limit: int,lock_fd:posix.FD=-1) -> ([]u8,bool) {
     info,ie:=os.stat(path,context.allocator)
     if ie!=nil { return nil,false }
     regular:=info.type==.Regular; os.file_info_delete(info,context.allocator)
     if !regular { return nil,false }
     f,e:=os.open(path); if e!=nil { return nil,false }; defer os.close(f)
+    // Closing ANY descriptor for the locked inode drops this process's POSIX
+    // record locks. Reject aliases before reading, and abort the transaction.
+    if lock_fd>=0 {
+        dependency,lock:posix.stat_t
+        if posix.fstat(posix.FD(os.fd(f)),&dependency)!=nil || posix.fstat(lock_fd,&lock)!=nil ||
+           !posix.S_ISREG(lock.st_mode) || lock.st_nlink!=1 ||
+           dependency.st_dev==lock.st_dev && dependency.st_ino==lock.st_ino { return nil,false }
+    }
     n,se:=os.file_size(f); if se!=nil || n<0 || n>i64(limit) { return nil,false }
     b:=make([]u8,int(n)); total:=0
     for total<len(b) {
@@ -63,7 +72,7 @@ read_bounded :: proc(path: string,limit: int) -> ([]u8,bool) {
     extra:[1]u8; got,_:=os.read(f,extra[:]); if got!=0 { return nil,false }
     return b,true
 }
-Loader :: struct { s:^Snapshot, v:Validator, root:string, inputs:[]Document_Source, disk:bool, total:int }
+Loader :: struct { s:^Snapshot, v:Validator, root:string, inputs:[]Document_Source, disk:bool, total:int, lock_fd:posix.FD }
 source_get :: proc(l:^Loader,path,prefix:string,binary:=false) -> (Document_Source,bool) {
     for src in l.s.sources { if src.path==path { return src,true } }
     if len(l.s.sources)>=MAX_SOURCES { fail(&l.v,"count_limit","","Too many dependencies"); return {},false }
@@ -71,7 +80,12 @@ source_get :: proc(l:^Loader,path,prefix:string,binary:=false) -> (Document_Sour
     limit:=MAX_DOCUMENT_BYTES; if binary { limit=MAX_ASSET_BYTES }
     limit=min(limit,MAX_GRAPH_BYTES-l.total)
     b:[]u8
-    if l.disk {
+    found:=false
+    if !l.disk { for src in l.inputs { if src.path==path { b=src.bytes; found=true; break } } }
+    // A candidate may introduce binary assets, but its JSON documents must
+    // still come from the supplied snapshot/serialized replacement. This is
+    // read-only and uses the same confinement and bounds as ordinary loading.
+    if l.disk || !found && binary && l.root!="" {
         if !confined(l.root,path,prefix) { l.v.file=path; fail(&l.v,"unsafe_path","","Missing file or symlink dependency"); return {},false }
         info,ie:=os.stat(fmt.aprintf("%s/%s",l.root,path),context.allocator)
         if ie==nil {
@@ -79,11 +93,9 @@ source_get :: proc(l:^Loader,path,prefix:string,binary:=false) -> (Document_Sour
             if too_big { l.v.file=path; fail(&l.v,"size_limit","","Dependency size bound exceeded"); return {},false }
         }
         ok:bool
-        b,ok=read_bounded(fmt.aprintf("%s/%s",l.root,path),limit)
+        b,ok=read_bounded(fmt.aprintf("%s/%s",l.root,path),limit,l.lock_fd)
         if !ok { l.v.file=path; fail(&l.v,"io_read","","Cannot read bounded dependency"); return {},false }
     } else {
-        found:=false
-        for src in l.inputs { if src.path==path { b=src.bytes; found=true; break } }
         if !found { l.v.file=path; fail(&l.v,"missing_reference","","Dependency source missing"); return {},false }
         if len(b)>limit { l.v.file=path; fail(&l.v,"size_limit","","Dependency size bound exceeded"); return {},false }
         b=slice.clone(b)
@@ -105,7 +117,7 @@ load_document :: proc(l:^Loader,ref:Reference,kind,prefix:string) -> (json.Value
     append(&l.s.documents,Document{src,value,id,kind})
     return value,true
 }
-build_graph :: proc(root,path:string,inputs:[]Document_Source,disk:bool,allocator:mem.Allocator) -> Load_Result {
+build_graph :: proc(root,path:string,inputs:[]Document_Source,disk:bool,allocator:mem.Allocator,lock_fd:posix.FD=-1) -> Load_Result {
     o:=new_owner(allocator); context.allocator=owner_allocator(o)
     path:=strings.clone(path)
     if !disk {
@@ -120,7 +132,7 @@ build_graph :: proc(root,path:string,inputs:[]Document_Source,disk:bool,allocato
     }
     s:=new(Snapshot); s.owner=o; s.chapter_path=strings.clone(path)
     s.scenes=make(map[ID]Scene_Def); s.dialogues=make(map[ID]Dialogue_Def)
-    l:=Loader{s=s,root=root,inputs=inputs,disk=disk}
+    l:=Loader{s=s,root=root,inputs=inputs,disk=disk,lock_fd=lock_fd}
     x,ok:=load_document(&l,{path=path},"chapter","data/chapters/")
     if ok {
         s.chapter=chapter_decode(&l.v,x)
@@ -144,7 +156,7 @@ build_graph :: proc(root,path:string,inputs:[]Document_Source,disk:bool,allocato
         for src in s.sources {
             prefix:="data/"; limit:=MAX_DOCUMENT_BYTES
             if strings.has_prefix(src.path,"assets/") { prefix="assets/"; limit=MAX_ASSET_BYTES }
-            b,valid:=read_bounded(fmt.aprintf("%s/%s",root,src.path),limit)
+            b,valid:=read_bounded(fmt.aprintf("%s/%s",root,src.path),limit,lock_fd)
             if !valid || !confined(root,src.path,prefix) || hash_bytes(b)!=src.revision { l.v.file=src.path; fail(&l.v,"external_change","","Dependency changed during load") }
         }
     }
@@ -152,7 +164,12 @@ build_graph :: proc(root,path:string,inputs:[]Document_Source,disk:bool,allocato
     s.revision=graph_revision(s.sources[:])
     return {snapshot=s}
 }
-load_chapter :: proc(project_root,chapter_path:string,allocator:mem.Allocator) -> Load_Result { return build_graph(project_root,chapter_path,nil,true,allocator) }
+load_chapter :: proc(project_root,chapter_path:string,allocator:mem.Allocator,lock_fd:posix.FD=-1) -> Load_Result { return build_graph(project_root,chapter_path,nil,true,allocator,lock_fd) }
+// Writer-only candidate validation: resolve newly referenced asset files while
+// its permanent lock is held. Successful sources include them in the revision.
+validate_candidate_sources :: proc(project_root:string,sources:[]Document_Source,chapter_path:string,allocator:mem.Allocator,lock_fd:posix.FD) -> Load_Result {
+    return build_graph(project_root,chapter_path,sources,false,allocator,lock_fd)
+}
 validate_sources :: proc(sources:[]Document_Source,chapter_path:string,allocator:mem.Allocator) -> Load_Result {
     if len(sources)>MAX_SOURCES { o:=new_owner(allocator); context.allocator=owner_allocator(o); ds:=make([]Diagnostic,1); ds[0]=diagnostic("count_limit",chapter_path,"","Too many supplied sources"); return {diagnostics=ds,owner=o} }
     return build_graph("",chapter_path,sources,false,allocator)

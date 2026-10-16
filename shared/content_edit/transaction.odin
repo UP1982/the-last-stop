@@ -72,6 +72,12 @@ exclusive_history_file :: proc(path:string,bytes:[]u8) -> bool {
     if e!=nil { return false }
     return write_synced(f,bytes)
 }
+safe_lock :: proc(fd:posix.FD,path:string) -> bool {
+    opened,named:posix.stat_t
+    return posix.fstat(fd,&opened)==nil && posix.S_ISREG(opened.st_mode) && opened.st_nlink==1 &&
+           posix.lstat(strings.clone_to_cstring(path),&named)==nil &&
+           opened.st_dev==named.st_dev && opened.st_ino==named.st_ino
+}
 apply_edit :: proc(project_root:string,request:Edit_Request,allocator:mem.Allocator) -> Edit_Result {
     owner:=c.new_owner(allocator); context.allocator=c.owner_allocator(owner)
     r:=Edit_Result{owner=owner}
@@ -80,6 +86,7 @@ apply_edit :: proc(project_root:string,request:Edit_Request,allocator:mem.Alloca
     fd:=posix.open(strings.clone_to_cstring(lock_path),{.RDWR,.CREAT,.NOFOLLOW},{.IRUSR,.IWUSR})
     if fd<0 { result_error(&r,4,"io_lock",".studio/content.lock","Cannot open permanent lock"); return r }
     defer posix.close(fd)
+    if !safe_lock(fd,lock_path) { result_error(&r,4,"io_lock",".studio/content.lock","Permanent lock must be a regular file with exactly one link"); return r }
     lock:=posix.flock{l_type=.WRLCK,l_whence=0}
     if posix.fcntl(fd,.SETLK,&lock)<0 {
         errno:=posix.errno()
@@ -88,7 +95,8 @@ apply_edit :: proc(project_root:string,request:Edit_Request,allocator:mem.Alloca
         return r
     }
     checkpoint("locked")
-    loaded:=c.load_chapter(project_root,c.CHAPTER_PATH,context.allocator)
+    if !safe_lock(fd,lock_path) { result_error(&r,4,"io_lock",".studio/content.lock","Permanent lock changed"); return r }
+    loaded:=c.load_chapter(project_root,c.CHAPTER_PATH,context.allocator,fd)
     defer c.destroy_load_result(&loaded)
     if loaded.snapshot==nil {
         // Copy diagnostics into this result's domain before the load is destroyed.
@@ -102,7 +110,7 @@ apply_edit :: proc(project_root:string,request:Edit_Request,allocator:mem.Alloca
     }
     s:=loaded.snapshot; r.old_revision=s.revision; r.new_revision=s.revision
     if c.revision_string(s.revision)!=request.expected_revision { result_error(&r,3,"stale_revision",s.chapter_path,"Chapter graph changed; inspect before retrying"); return r }
-    prepared,ds:=prepare_edit(s,request,context.allocator)
+    prepared,ds:=prepare_edit(s,request,context.allocator,project_root,fd)
     if prepared==nil { r.diagnostics=ds; r.exit_code=2; return r }
     defer destroy_prepared_edit(prepared)
     r.changed_document=strings.clone(prepared.path)
@@ -135,9 +143,20 @@ apply_edit :: proc(project_root:string,request:Edit_Request,allocator:mem.Alloca
     if !write_synced(temp,prepared.bytes,true) { result_error(&r,4,"io_write",prepared.path,"Temporary write/sync/close failed; old document remains authoritative"); return r }
     checkpoint("before_recheck")
     // Hash all dependencies under the lock, immediately before replacement.
-    current:=c.load_chapter(project_root,c.CHAPTER_PATH,context.allocator)
+    current:=c.load_chapter(project_root,c.CHAPTER_PATH,context.allocator,fd)
     changed:=current.snapshot==nil || current.snapshot.revision!=s.revision
     c.destroy_load_result(&current)
+    // Recheck the union of old and candidate dependencies. The serialized
+    // replacement isn't on disk yet; the old graph check covers its before-image.
+    for src in prepared.candidate.snapshot.sources {
+        if src.path==prepared.path { continue }
+        prefix:="data/"; limit:=c.MAX_DOCUMENT_BYTES
+        if strings.has_prefix(src.path,"assets/") { prefix="assets/"; limit=c.MAX_ASSET_BYTES }
+        if !c.confined(project_root,src.path,prefix) { changed=true; break }
+        bytes,ok:=c.read_bounded(fmt.aprintf("%s/%s",project_root,src.path),limit,fd)
+        if !ok || c.hash_bytes(bytes)!=src.revision { changed=true; break }
+    }
+    if !safe_lock(fd,lock_path) { changed=true }
     if changed { result_error(&r,3,"external_change",prepared.path,"Dependency changed during transaction; no replacement performed"); return r }
     checkpoint("before_rename")
     if hook("rename") || os.rename(temporary,destination)!=nil { result_error(&r,4,"io_rename",prepared.path,"Atomic replacement failed"); return r }

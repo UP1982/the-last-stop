@@ -24,7 +24,10 @@
 | T-E0-A | gpt-6-astra (high) | E0 contract consult (read-only) | shared @ eb04e66 | done; accepted w/ amendments → docs/E0_CONTRACT.md |
 | T-E0a-1 | gpt-6.1-sol (high) | E0a content core (no src/) | shared @ 66eab13 | delivered; checks re-run by Opus; committed c3a9f8d — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-E0a-1-sol-r1 |
 
-| T-E0a-R1 | gpt-6-astra (high) | E0a independent review r1 (read-only) | Game @ c3a9f8d+log | delegating |
+| T-E0a-R1 | gpt-6-astra (high) | E0a independent review r1 (read-only) | Game @ c3a9f8d | done: REQUEST CHANGES — P2 hard-linked lock lost update (transaction.odin:80); P2 asset create/undo missing_reference (edit.odin:174); minor weak parser fixtures |
+| T-E0a-2 | gpt-6.1-sol (high) | fix R1 findings + regressions | Game @ 8b898e4 | delivered; Opus re-ran check.sh + 12 groups OK; committed — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-E0a-2-sol-fix |
+
+| T-E0a-R2 | gpt-6-astra (high) | E0a review round 2 | Game @ fix commit | running |
 
 ## Next
 - M0: human keyboard/fullscreen check (synthetic keys can't reach window).
