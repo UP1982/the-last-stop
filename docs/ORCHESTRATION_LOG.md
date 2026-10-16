@@ -32,12 +32,13 @@
 | T-E0a-R2 | gpt-6-astra (high) | E0a review round 2 | Game @ ae3448f | done: R1 fixes verified; 1 new P2 (new-asset I/O → exit 2 not 4) |
 | T-E0a-3 | Opus (self) | exit-code fix + regression test_13 (fails pre-fix, passes post) | Game | done → **E0a ACCEPTED** |
 
-| T-M1-1 | gpt-6.1-sol (high) | M1 Milo controls (src/ only) | Game @ ef3c593 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M1-1-sol-r1 |
+| T-M1-1 | gpt-6.1-sol (high) | M1 Milo controls (src/ only) | Game @ ef3c593 | delivered; Opus reviewed + re-ran tests; committed; human playtest pending |
 | T-M2-A | gpt-6-astra (high) | M2 state/save contract (read-only) | Game @ ef3c593 | done; accepted w/ amendments B1–B4 → docs/M2_CONTRACT.md |
 
 - Decision 2026-10-16: don't idle on the M0 human keyboard check; M1 proceeds on top, and the human check covers M0+M1 together. M0/M1 acceptance still requires it. E0b serialized after M1 (both touch src/).
 
 ## Next
+- E0b → Sol (T-E0b-1).
 - Order: M1 (running) → E0b → M2 per docs/M2_CONTRACT.md.
 - M0: human keyboard/fullscreen check (synthetic keys can't reach window).
 - E0b after M0 acceptance. Astra reviews E0a when delivered.

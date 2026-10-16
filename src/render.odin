@@ -1,6 +1,7 @@
 package main
 
 import rl "vendor:raylib"
+import "core:math"
 
 VIRTUAL_WIDTH :: 320
 VIRTUAL_HEIGHT :: 180
@@ -44,6 +45,62 @@ menu_item :: proc(text: cstring, row, selected: int, y: i32) {
     center_text(text, y, 10, CREAM)
 }
 
+pixel :: proc(value: f32) -> i32 { return i32(math.round(value)) }
+
+draw_world_rect :: proc(rect: rl.Rectangle, camera: Camera, color: rl.Color) {
+    rl.DrawRectangle(pixel(rect.x) - pixel(camera.x), pixel(rect.y),
+        pixel(rect.width), pixel(rect.height), color)
+}
+
+draw_graybox :: proc(game: Game_State) {
+    scene, camera := game.scene, game.camera
+    gray := rl.Color{99, 108, 116, 255}
+    for solid in scene.solids[:scene.solid_count] { draw_world_rect(solid, camera, gray) }
+    draw_world_rect(scene.shed, camera, rl.Color{68, 77, 89, 255})
+    draw_world_rect(scene.branch, camera, rl.Color{118, 103, 147, 255})
+    for object, i in scene.objects[:scene.object_count] {
+        draw_world_rect(object.visual, camera, rl.Color{118, 131, 140, 255})
+        r := object.visual
+        x, y := pixel(r.x) - pixel(camera.x), pixel(r.y)
+        if i == game.focus {
+            rl.DrawRectangleLines(x - 2, y - 2, pixel(r.width) + 4, pixel(r.height) + 4, CREAM)
+        }
+        rl.DrawText(object.label, x, y - 12, 10, CREAM)
+    }
+    // Placeholder cat: body stays exactly inside the agreed collision footprint.
+    x, y := pixel(game.player.position.x) - pixel(camera.x), pixel(game.player.position.y)
+    rl.DrawRectangle(x - 6, y - 16, 12, 16, CREAM)
+    rl.DrawRectangle(x - 6, y - 16, 3, 3, MINT)
+    rl.DrawRectangle(x + 3, y - 16, 3, 3, MINT)
+    eye_x := x + 2
+    if game.player.facing < 0 { eye_x = x - 4 }
+    rl.DrawRectangle(eye_x, y - 10, 2, 2, NIGHT)
+    rl.DrawText("Milo", x - 9, y - 29, 10, CREAM)
+    rl.DrawRectangle(0, 0, 320, 28, NIGHT)
+    center_text("M1 - A D / arrows: walk   Esc: pause", 6, 10, MINT)
+    center_text("Space / Z / W / Up: jump", 17, 10, CREAM)
+    if game.focus >= 0 {
+        rl.DrawRectangle(2, 151, 316, 27, NIGHT)
+        center_text("[E / Enter] Interact", 153, 10, CREAM)
+        center_text(scene.objects[game.focus].label, 166, 10, MINT)
+    }
+    if game.response_seconds > 0 {
+        rl.DrawRectangle(2, 33, 316, 23, NIGHT)
+        center_text(game.response, 39, 10, CREAM)
+    }
+}
+
+draw_controls :: proc() {
+    center_text("Controls", 30, 20, CREAM)
+    center_text("Walk: A / D or Left / Right", 62, 10, CREAM)
+    center_text("Jump: Space / Z / W / Up", 78, 10, CREAM)
+    center_text("Hold jump for a higher hop", 91, 10, MINT)
+    center_text("Interact: E / Enter", 107, 10, CREAM)
+    center_text("Pause: Esc   Fullscreen: F11", 123, 10, CREAM)
+    center_text("Alt + Enter: fullscreen", 136, 10, MINT)
+    center_text("Esc / Enter / Space / Z: back", 158, 10, CREAM)
+}
+
 draw_game :: proc(game: Game_State) {
     rl.ClearBackground(NIGHT)
     switch game.mode {
@@ -54,19 +111,17 @@ draw_game :: proc(game: Game_State) {
         menu_item("Quit", 1, game.selection, 118)
         center_text("Arrows / W S  -  Enter / Space / Z", 151, 10, MINT)
     case .Playing, .Paused:
-        rl.DrawRectangle(0, 130, 320, 50, rl.Color{52, 71, 106, 255})
-        rl.DrawRectangle(45, 112, 85, 28, rl.Color{118, 103, 147, 255})
-        rl.DrawRectangle(52, 117, 17, 10, rl.Color{232, 185, 110, 255})
-        rl.DrawRectangle(76, 117, 17, 10, rl.Color{232, 185, 110, 255})
-        if game.mode == .Playing {
-            center_text("The journey begins here", 38, 10, CREAM)
-            center_text("M0 placeholder - Esc to pause", 57, 10, MINT)
-        } else {
+        draw_graybox(game)
+        if game.mode == .Paused {
             rl.DrawRectangle(0, 0, 320, 180, rl.Color{0, 0, 0, 170})
-            center_text("Paused", 45, 20, CREAM)
-            menu_item("Resume", 0, game.selection, 86)
-            menu_item("Quit to Title", 1, game.selection, 107)
-            center_text("Esc to resume", 147, 10, MINT)
+            if game.controls_open { draw_controls() }
+            else {
+                center_text("Paused", 35, 20, CREAM)
+                menu_item("Resume", 0, game.selection, 76)
+                menu_item("Controls", 1, game.selection, 95)
+                menu_item("Quit to Title", 2, game.selection, 114)
+                center_text("Esc to resume", 151, 10, MINT)
+            }
         }
     }
     if game.transitioning {

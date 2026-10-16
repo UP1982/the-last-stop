@@ -21,5 +21,9 @@ macOS 27.2 arm64; Odin `dev-2026-10:84bc3fc21`; bundled vendor:raylib 6.0. No ex
 - Astra R1: 2 P2 (aliased lock lost update; new-asset deps) → fixed ae3448f. Astra R2: verified fixes + 279 malformed inputs, 100 asset txn alloc cycles; 1 P2 exit code → fixed by Opus with regression test_13. check.sh exit 0, 13 test groups OK. E0a accepted.
 - Documented limitation: unmanaged writers ignoring the lock can race the final recheck/rename.
 
+## M1 evidence (T-M1-1, Sol; re-run by Opus)
+- `odin run src -define:M1_SELF_TEST=true` exit 0 (coyote/buffer, variable jump, walls/ceiling/step, world clamp, camera deadzone/clamps, nearest focus, pause isolation, fixed 120 Hz step). check.sh exit 0.
+- Native: launches to title (build/evidence/m1/). Keyboard feel/readability/fullscreen unverified — needs human.
+
 ## Open issues
 - None confirmed.

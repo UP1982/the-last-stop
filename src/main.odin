@@ -3,7 +3,7 @@ package main
 import rl "vendor:raylib"
 
 main :: proc() {
-    when #config(M0_SELF_TEST, false) {
+    when #config(M0_SELF_TEST, false) || #config(M1_SELF_TEST, false) {
         run_self_tests()
         return
     }

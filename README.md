@@ -30,10 +30,15 @@ odin build src -out:build/the-last-stop
 ./build/the-last-stop
 ```
 
-M0 provides a title screen and placeholder Playing / Paused scenes. Use Up/Down
-or W/S to select, and Enter/Space/Z to confirm. Escape pauses/resumes during play;
-choose Quit to Title in the pause menu to return. Escape on the title does not
-exit. F11 or Alt+Enter toggles fullscreen. The window is resizable (minimum
+Controls: use Up/Down or W/S in menus, and Enter/Space/Z to confirm. In the M1
+graybox, A/D or Left/Right walks Milo; Space/Z/W/Up jumps (hold for a higher hop).
+E or Enter interacts with the nearest focused object; its outline, name and key
+prompt identify the target. The tiny step can be walked up without jumping.
+Escape pauses/resumes; the pause menu offers Resume, Controls and Quit to Title.
+Escape or a confirm key closes the Controls overlay back to the pause menu.
+Release jump/interact keys after leaving menus before using them in play.
+Escape on the title does not exit. F11 or Alt+Enter toggles fullscreen.
+The window is resizable (minimum
 640x360); the 320x180 canvas uses nearest-neighbour integer scaling and black
 letterboxing. Close the window or choose Quit on the title to exit.
 

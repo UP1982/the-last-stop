@@ -11,10 +11,11 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 **Status:** implemented, awaiting human keyboard/fullscreen check (see BUILD_NOTES).
 
 ## M1: Milo controls
-- [ ] Move left/right, jump with forgiving collision and interact prompt.
-- [ ] Camera follow and accessible interaction radius.
-- [ ] Pause menu (including quit) and simple controls overlay.
+- [x] Move left/right, jump with forgiving collision and interact prompt. (self-tested)
+- [x] Camera follow and accessible interaction radius. (self-tested)
+- [x] Pause menu (including quit) and simple controls overlay. (self-tested)
 **Gate:** Five-minute keyboard playtest with no jitter or confusing focus.
+**Status:** implemented + automated tests pass; human keyboard playtest pending (combined with M0 check).
 
 ## M2: Puzzle vertical slice
 - [ ] Branch visibly blocks route; empty winch + rope points to branch.

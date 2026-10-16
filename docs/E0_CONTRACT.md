@@ -2,7 +2,7 @@
 
 Source: T-E0-A, GPT-6 Astra, read-only consultation at eb04e66. Accepted as written with these Opus amendments:
 
-- A1. Player footprint 12x16 bottom-centre is accepted provisionally; M1 must confirm or propose a change before reachability checks are frozen.
+- A1. (Confirmed by M1.) Player footprint 12x16 bottom-centre is accepted provisionally; M1 must confirm or propose a change before reachability checks are frozen.
 - A2. E0 is split: **E0a** (shared/content, shared/content_edit, tools/content, data/ migration+schemas, tests/editor) may proceed while M0 awaits its human keyboard check because it does not touch src/. **E0b** (src/content_adapter.odin, DEV_TOOLS preview, native round-trip gate) starts only after M0 is accepted.
 - A3. Dialogue text verified identical to docs/CHAPTER_01.md.
 - A4. Web host (editor/server.py, editor/web/) is E1 work, not E0.
