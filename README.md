@@ -21,7 +21,29 @@ From the root of this extracted kit:
 odin run src
 ```
 
-Or on macOS use `./scripts/run.sh`. To validate compile without launching: `odin build src -out:build/the-last-stop` (create `build/` first). **The authoring environment did not have the Odin compiler installed, so compilation has not been verified.** Agents must resolve version-specific APIs and document fixes instead of claiming this is tested.
+Or on macOS use `./scripts/run.sh`. Check compilation with `./scripts/check.sh`.
+To build a standalone native binary:
+
+```sh
+mkdir -p build
+odin build src -out:build/the-last-stop
+./build/the-last-stop
+```
+
+M0 provides a title screen and placeholder Playing / Paused scenes. Use Up/Down
+or W/S to select, and Enter/Space/Z to confirm. Escape pauses/resumes during play;
+choose Quit to Title in the pause menu to return. Escape on the title does not
+exit. F11 or Alt+Enter toggles fullscreen. The window is resizable (minimum
+640x360); the 320x180 canvas uses nearest-neighbour integer scaling and black
+letterboxing. Close the window or choose Quit on the title to exit.
+
+Run the window-free foundation checks with:
+
+```sh
+odin run src -define:M0_SELF_TEST=true
+```
+
+Verified compiler for this foundation: Odin `dev-2026-10:84bc3fc21` on macOS arm64.
 
 ## Package map
 - `AGENTS.md` project-wide instructions for every agent

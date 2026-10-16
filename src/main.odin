@@ -2,24 +2,43 @@ package main
 
 import rl "vendor:raylib"
 
-MAIN_WIDTH  :: 1280
-MAIN_HEIGHT :: 720
-
 main :: proc() {
-    rl.InitWindow(MAIN_WIDTH, MAIN_HEIGHT, "The Last Stop | Odin + raylib starter")
+    when #config(M0_SELF_TEST, false) {
+        run_self_tests()
+        return
+    }
+
+    rl.SetConfigFlags({.WINDOW_RESIZABLE})
+    rl.InitWindow(1280, 720, "The Last Stop")
     defer rl.CloseWindow()
+    rl.SetWindowMinSize(640, 360)
+    rl.SetExitKey(.KEY_NULL)
     rl.SetTargetFPS(60)
 
-    for !rl.WindowShouldClose() {
+    canvas := rl.LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+    defer rl.UnloadRenderTexture(canvas)
+    rl.SetTextureFilter(canvas.texture, .POINT)
+
+    game := Game_State{}
+    for !rl.WindowShouldClose() && !game.quit_requested {
+        input := read_input()
+        if input.fullscreen {
+            rl.ToggleFullscreen()
+        }
+        update_game(&game, input, min(rl.GetFrameTime(), 0.1))
+
+        // Recompute every frame, including immediately after fullscreen changes.
+        viewport := make_viewport(rl.GetScreenWidth(), rl.GetScreenHeight())
+        rl.BeginTextureMode(canvas)
+        draw_game(game)
+        rl.EndTextureMode()
+
         rl.BeginDrawing()
-        rl.ClearBackground(rl.Color{28, 36, 59, 255})
-        rl.DrawRectangle(0, 540, MAIN_WIDTH, 180, rl.Color{52, 71, 106, 255})
-        rl.DrawRectangle(160, 475, 350, 90, rl.Color{118, 103, 147, 255})
-        rl.DrawRectangle(180, 448, 310, 40, rl.Color{232, 185, 110, 255})
-        rl.DrawRectangle(820, 508, 58, 55, rl.Color{242, 220, 202, 255})
-        rl.DrawText("THE LAST STOP", 80, 80, 48, rl.Color{242, 220, 202, 255})
-        rl.DrawText("Odin + raylib starter shell | press ESC to exit", 80, 142, 24, rl.Color{169, 209, 187, 255})
-        rl.DrawText("Next: virtual canvas, input, Milo controller, Oliver puzzle", 80, 190, 22, rl.Color{242, 220, 202, 255})
+        rl.ClearBackground(rl.BLACK)
+        // Render textures are vertically inverted in OpenGL.
+        rl.DrawTexturePro(canvas.texture,
+            {0, 0, VIRTUAL_WIDTH, -VIRTUAL_HEIGHT}, viewport.destination,
+            {}, 0, rl.WHITE)
         rl.EndDrawing()
     }
 }

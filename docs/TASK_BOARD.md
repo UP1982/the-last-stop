@@ -3,11 +3,12 @@
 Game milestones M0–M5 remain ordered. The user also authorized all editor surfaces in `EDITOR_SPEC.md`. Complete M0 first, then interleave E0–E4 at the dependencies below. Initial delivery now includes Chapter 1 and the editor suite; all boxes remain unverified until supported by evidence.
 
 ## M0: Build foundation
-- [ ] Record `odin version`, platform, and dependency setup in BUILD_NOTES.md.
-- [ ] Verify `odin check src` then `odin run src` and starter window.
-- [ ] Replace direct window drawing with low-resolution render target + scaled letterbox.
-- [ ] Add simple game mode enum + title menu, scene transitions.
+- [x] Record `odin version`, platform, and dependency setup in BUILD_NOTES.md.
+- [x] Verify `odin check src` then `odin run src` and starter window.
+- [x] Replace direct window drawing with low-resolution render target + scaled letterbox.
+- [~] Add simple game mode enum + title menu, scene transitions. (implemented + self-tested; native keyboard check pending)
 **Gate:** Running at 60fps, pixel-perfect scale and quit works. No branch work before M0.
+**Status:** implemented, awaiting human keyboard/fullscreen check (see BUILD_NOTES).
 
 ## M1: Milo controls
 - [ ] Move left/right, jump with forgiving collision and interact prompt.

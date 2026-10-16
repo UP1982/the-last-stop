@@ -13,7 +13,8 @@
 ## Tasks
 | ID | Model | Task | Checkout/base | Status |
 |---|---|---|---|---|
-| T-M0-1 | gpt-6.1-sol (medium) | M0 foundation | shared @ eac98e2 | delegated |
+| T-M0-1 | gpt-6.1-sol (medium) | M0 foundation | shared @ 4ea0e53 | delivered, reviewed, committed; keyboard check pending — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M0-1-sol-r1 |
 
 ## Next
-Review M0 handoff → verify native launch/resize/transition/exit → accept M0 → Astra E0 review.
+- M0: human keyboard/fullscreen check (synthetic keys can't reach window).
+- T-E0-A: Astra read-only E0 schema/host consultation (started in parallel, read-only).
