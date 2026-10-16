@@ -55,10 +55,11 @@ Hazel/waterwheel; Felix/mirror signal; Bea/sleepy bear; Lumi/turntable; cozy und
 **Status:** gate met (native round-trip: CLI handle move → dump + window screenshot → restore byte-identical). Save isolation re-checked when saves exist (M2).
 
 ## E1: Visual scene editor — after E0, alongside M1/M2
-- [ ] Viewport, grid/snap, scene tree, selection and property inspector.
-- [ ] Placement/move/duplicate/delete, undo/redo, dirty state and save.
-- [ ] External-change/conflict handling and actual native game preview.
+- [x] Viewport, grid/snap, scene tree, selection and property inspector.
+- [x] Placement/move/duplicate/delete, undo/redo, dirty state and save.
+- [x] External-change/conflict handling and actual native game preview.
 **Gate:** Move the handle and alter its bounds visually; save and observe the same authored values in the native game.
+**Status:** gate demonstrated via API-driven browser flow + native dump/screenshot (build/evidence/e1/). Physical mouse-drag and accessibility unverified — human check.
 
 ## E2: In-game edit mode — after E0, with M2
 - [ ] Development overlays for collision/interactions/camera and stable IDs.

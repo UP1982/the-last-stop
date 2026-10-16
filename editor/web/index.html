@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Last Stop · Scene editor</title><link rel="stylesheet" href="/style.css"><script defer src="/logic.js"></script><script defer src="/app.js"></script></head>
+<body>
+<header><div><span class="eyebrow">THE LAST STOP / STUDIO</span><h1>Oliver’s woodland stop</h1></div><div class="actions"><span id="dirty" role="status">Connecting…</span><button id="reload">Reload from disk</button><button id="save" class="primary" disabled>Save</button><button id="preview" disabled>Preview in game ↗</button><button id="stop-preview" disabled>Stop preview</button></div></header>
+<div id="external" class="notice" role="alert" hidden></div>
+<main>
+<aside class="tree-panel"><div class="panel-title">Scene tree <span>01</span></div><button id="scene-root" class="tree-root">oliver_obstacle</button><div id="tree" aria-label="Scene objects and spawn markers"></div><div class="legend">■ Object &nbsp; ◇ Safe spawn<br>Stable IDs remain unchanged when moving.</div></aside>
+<section class="workspace">
+<div class="toolbar"><div class="actions"><button id="undo" disabled>Undo</button><button id="redo" disabled>Redo</button><button id="place" disabled>Place object</button><button id="duplicate" disabled>Duplicate</button><button id="delete" disabled>Delete</button></div><div class="actions"><label><input id="grid" type="checkbox" checked> Grid</label><label><input id="snap" type="checkbox" checked> Snap</label><label>px <select id="step"><option>1</option><option>4</option><option selected>8</option><option>16</option></select></label></div></div>
+<div class="viewport-meta"><span>SCENE VIEW <b>authoring approximation</b></span><span>320 × 180 · virtual pixels</span></div>
+<div class="canvas-wrap"><canvas id="viewport" width="960" height="540" tabindex="0" aria-label="Authoring approximation. Select an object in the scene tree or drag it here to move."></canvas></div>
+<div class="view-controls"><label>Camera X <input id="camera" type="range" min="0" max="320" value="320"></label><label>Zoom <select id="zoom"><option value="1">1×</option><option value="2">2×</option><option value="3" selected>3×</option><option value="4">4×</option></select></label><button id="focus">Frame selection</button><span id="coords">x 320–640</span></div>
+<div class="layer-controls"><span>Layers</span><label><input type="checkbox" data-layer="background" checked> Background</label><label><input type="checkbox" data-layer="world" checked> World</label><label><input type="checkbox" data-layer="foreground" checked> Foreground</label><span>Drag to move · arrows nudge · Shift+drag pans</span></div>
+<section class="feedback"><div class="panel-title">Activity & diagnostics</div><p id="message" role="status">Loading Oliver’s scene through the content tool…</p><pre id="diagnostics" aria-live="polite"></pre></section>
+</section>
+<aside class="inspector-panel"><div class="panel-title">Properties <span>02</span></div><div id="inspector"></div><p class="legend">Bounds on objects are local to their position. Saves validate the complete chapter. Undo after saving creates a new draft.</p></aside>
+</main>
+<footer><span>Chapter 1 / Oliver and the Flower Market</span><span>Native game preview uses saved content and an isolated session.</span></footer>
+<dialog id="record-dialog"><form id="record-form"><h2 id="record-title">Place object</h2><p>Enter an explicit, fresh stable ID.</p><label>New ID <input id="new-id" required pattern="[a-z][a-z0-9_]{0,63}" maxlength="64" autocomplete="off"></label><label id="kind-label">Kind <select id="new-kind"><option>handle</option><option>shed</option><option>snail</option><option>winch</option><option>branch</option><option>train</option></select></label><p id="record-error" role="alert"></p><div class="actions"><button type="button" id="cancel-record">Cancel</button><button type="submit" class="primary">Create</button></div></form></dialog>
+<dialog id="conflict-dialog"><h2 id="conflict-title">Content changed on disk</h2><p id="conflict-text">Your draft has been kept. Reloading discards it and reads the latest validated scene.</p><div class="actions"><button id="keep-draft">Keep my draft</button><button id="export-draft">Download draft</button><button id="confirm-reload" class="primary">Discard draft & reload</button></div></dialog>
+</body></html>

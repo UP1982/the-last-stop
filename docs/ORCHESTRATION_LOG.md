@@ -37,6 +37,17 @@
 
 - Decision 2026-10-16: don't idle on the M0 human keyboard check; M1 proceeds on top, and the human check covers M0+M1 together. M0/M1 acceptance still requires it. E0b serialized after M1 (both touch src/).
 
+| T-E0b-1 | gpt-6.1-sol (high) | E0b runtime content + preview | Game @ dacc96b | committed b18ecfd; E0 gate met |
+| T-M2-1 | gpt-6.1-sol (high) | M2 puzzle + save v1 (src/, tests/runtime, check.sh, README) | Game @ b18ecfd | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M2-1-sol-r1 |
+| T-E1-1 | gpt-6.1-sol (high) | E1 visual editor (editor/, tests/editor_ui only) | Game @ b18ecfd | delivered; Opus re-ran 12 tests, checked bridge security, data/ unchanged; committed |
+
+| T-ART-1 | gpt-6.1-sol (high) | art audit + pipeline proposal (writes build/art/ only) | Game @ 977efc4 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-ART-1-sol-r1 |
+| T-STORY-1 | gpt-6-astra (high) | screenplay → implementation design (read-only) | Game @ 977efc4 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-STORY-1-astra-r1 |
+
+- 2026-10-16 user supplied story: docs/THE_LAST_STOP_SCREENPLAY.fountain + docs/STORY_GAMEPLAY_PLAN.md (committed 977efc4) and art at ../the-last-stop-assets-sprits-images-Updated (AI-generated via image_gen; 96x96 chars, 640x360 bgs — scale mismatch with 320x180 canvas to resolve). Provenance must be confirmed by user before release.
+
+File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
+
 ## Next
 - T-E0b-1 (Sol) delivered; Opus re-ran check.sh, verified data/ unchanged + screenshot; committed. **E0 gate met.**
 - M2 → Sol (T-M2-1) per docs/M2_CONTRACT.md; Astra reviews after.
