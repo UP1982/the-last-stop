@@ -1,0 +1,130 @@
+{
+  "$comment": "Supplementary authoring schema. Odin additionally checks exact integer token types, UTF-8 byte lengths, graph references, geometry, confined filesystem paths, dependency bytes and transaction invariants.",
+  "$id": "https://the-last-stop.local/schemas/assets.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assets": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "frame_count": {
+            "maximum": 1024,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "frame_size": {
+            "items": false,
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": 1,
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "path": {
+            "maxLength": 240,
+            "pattern": "^assets/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+$",
+            "type": "string"
+          },
+          "pivot": {
+            "items": false,
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              },
+              {
+                "maximum": 16384,
+                "minimum": -16384,
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "provenance": {
+            "additionalProperties": false,
+            "properties": {
+              "attribution": {
+                "maxLength": 4096,
+                "minLength": 0,
+                "type": "string"
+              },
+              "creator": {
+                "maxLength": 4096,
+                "minLength": 1,
+                "type": "string"
+              },
+              "license": {
+                "maxLength": 4096,
+                "minLength": 1,
+                "type": "string"
+              },
+              "source": {
+                "maxLength": 4096,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "creator",
+              "source",
+              "license",
+              "attribution"
+            ],
+            "type": "object"
+          },
+          "sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "frame_size",
+          "frame_count",
+          "pivot",
+          "provenance"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "kind": {
+      "const": "assets"
+    },
+    "schema_version": {
+      "const": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "assets"
+  ],
+  "type": "object"
+}

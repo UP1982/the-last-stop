@@ -1,44 +1,45 @@
 {
-  "id": "oliver_flower_market",
-  "title": "Oliver and the Flower Market",
-  "passenger": {
-    "id": "oliver",
-    "species": "rabbit",
-    "destination": "Clover Market"
+  "assets": {
+    "id": "chapter_01_assets",
+    "path": "data/assets/manifest.json"
   },
-  "story_beats": [
-    {
-      "id": "intro",
-      "lines": [
-        "Excuse me! Does this one go to Clover Market?",
-        "Oh, good. My flowers are beginning to think I made it up."
-      ]
-    },
-    {
+  "destination": "Clover Market",
+  "dialogues": {
+    "arrival": {
       "id": "arrival",
-      "lines": [
-        "I was worried they wouldn't bloom in time.",
-        "I suppose they just needed a little trip."
-      ]
+      "path": "data/dialogue/oliver_arrival.json"
+    },
+    "intro": {
+      "id": "intro",
+      "path": "data/dialogue/oliver_intro.json"
+    }
+  },
+  "id": "oliver_flower_market",
+  "keepsakes": {
+    "paper_flower": {
+      "name": "Paper flower"
+    }
+  },
+  "kind": "chapter",
+  "passenger": "oliver",
+  "puzzle_scene": "oliver_obstacle",
+  "reward": "paper_flower",
+  "scenes": [
+    {
+      "id": "oliver_obstacle",
+      "path": "data/scenes/oliver_obstacle.json"
     }
   ],
-  "obstacle": {
-    "id": "fallen_branch",
-    "puzzle": "install_crank_handle",
-    "interactions": [
-      "inspect_winch",
-      "pick_up_handle",
-      "drop_handle",
-      "install_handle",
-      "operate_crank"
-    ],
-    "flags": [
-      "handle_collected",
-      "handle_installed",
-      "branch_cleared"
-    ]
+  "schema_version": 1,
+  "speakers": {
+    "milo": {
+      "name": "Milo",
+      "species": "cat"
+    },
+    "oliver": {
+      "name": "Oliver",
+      "species": "rabbit"
+    }
   },
-  "optional_secret": "snail_waves",
-  "keepsake": "paper_flower",
-  "notes": "Reference content only. The starter runtime does not parse this file."
+  "title": "Oliver and the Flower Market"
 }

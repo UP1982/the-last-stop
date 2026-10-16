@@ -12,13 +12,16 @@
 
 - 2026-10-16 user: prefer GPT models (more quota). Haiku support tasks → gpt-6-luna / gpt-5.6-luna; Opus reviews → Astra where suitable; Opus keeps integration/acceptance only.
 
+- 2026-10-16 user: game must live in a separate sibling folder `The Last Stop/Game/` (code, data, docs, git repo); the kit folder stays as the untouched base reference. Move after T-E0a-1 completes (don't disrupt the running child); afterwards all children use the Game/ path.
+- 2026-10-16 user: will supply the story later. Current Chapter 1 text is placeholder; keep all narrative in data/ dialogue documents (never hardcoded) so it can be replaced. Don't polish narrative beyond placeholders until the user's story arrives.
+
 ## Tasks
 | ID | Model | Task | Checkout/base | Status |
 |---|---|---|---|---|
 | T-M0-1 | gpt-6.1-sol (medium) | M0 foundation | shared @ 4ea0e53 | delivered, reviewed, committed; keyboard check pending — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M0-1-sol-r1 |
 
 | T-E0-A | gpt-6-astra (high) | E0 contract consult (read-only) | shared @ eb04e66 | done; accepted w/ amendments → docs/E0_CONTRACT.md |
-| T-E0a-1 | gpt-6.1-sol (high) | E0a content core (no src/) | shared @ HEAD | delegating |
+| T-E0a-1 | gpt-6.1-sol (high) | E0a content core (no src/) | shared @ 66eab13 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-E0a-1-sol-r1 |
 
 ## Next
 - M0: human keyboard/fullscreen check (synthetic keys can't reach window).

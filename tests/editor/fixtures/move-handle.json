@@ -1,0 +1,23 @@
+{
+  "protocol_version": 1,
+  "request_id": "move_handle_001",
+  "chapter": "oliver_flower_market",
+  "document": "oliver_obstacle",
+  "expected_revision": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "operations": [
+    {
+      "op": "set_property",
+      "collection": "objects",
+      "id": "crank_handle",
+      "property": "position",
+      "value": [596, 128]
+    },
+    {
+      "op": "set_property",
+      "collection": "objects",
+      "id": "crank_handle",
+      "property": "interaction",
+      "value": [-20, -8, 48, 32]
+    }
+  ]
+}

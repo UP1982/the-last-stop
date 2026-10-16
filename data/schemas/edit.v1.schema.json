@@ -1,0 +1,1104 @@
+{
+  "$comment": "Supplementary authoring schema. Odin additionally checks exact integer token types, UTF-8 byte lengths, graph references, geometry, confined filesystem paths, dependency bytes and transaction invariants.",
+  "$id": "https://the-last-stop.local/schemas/edit.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "chapter": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "document": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "expected_revision": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "collection": {
+                "enum": [
+                  "objects",
+                  "spawns",
+                  "lines",
+                  "assets",
+                  "speakers",
+                  "keepsakes"
+                ]
+              },
+              "id": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "op": {
+                "const": "create"
+              },
+              "value": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "id",
+              "value"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "collection": {
+                "enum": [
+                  "objects",
+                  "spawns",
+                  "lines",
+                  "assets",
+                  "speakers",
+                  "keepsakes"
+                ]
+              },
+              "id": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "op": {
+                "const": "delete"
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "id"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "collection": {
+                "enum": [
+                  "objects",
+                  "spawns",
+                  "assets",
+                  "speakers",
+                  "keepsakes"
+                ]
+              },
+              "id": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "op": {
+                "const": "set_property"
+              },
+              "property": {
+                "enum": [
+                  "position",
+                  "size",
+                  "layer",
+                  "collision",
+                  "interaction",
+                  "asset",
+                  "name",
+                  "species",
+                  "frame_size",
+                  "frame_count",
+                  "pivot",
+                  "provenance"
+                ]
+              },
+              "value": {}
+            },
+            "required": [
+              "op",
+              "collection",
+              "id",
+              "property",
+              "value"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "op": {
+                "const": "link_object"
+              },
+              "role": {
+                "enum": [
+                  "train",
+                  "branch",
+                  "winch",
+                  "shed",
+                  "handle",
+                  "snail",
+                  "player_spawn",
+                  "return_spawn",
+                  "handle_recovery_spawn"
+                ]
+              },
+              "target": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "role",
+              "target"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "speaker"
+                ]
+              },
+              {
+                "required": [
+                  "text"
+                ]
+              }
+            ],
+            "properties": {
+              "id": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "op": {
+                "const": "update_dialogue"
+              },
+              "speaker": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "text": {
+                "maxLength": 4096,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "id"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "op": {
+                "const": "set_order"
+              },
+              "order": {
+                "items": {
+                  "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                  "type": "string"
+                },
+                "maxItems": 1024,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "op",
+              "order"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "op": {
+                "const": "restore_document"
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "assets": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "id": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "path": {
+                            "maxLength": 240,
+                            "pattern": "^data/assets/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "path"
+                        ],
+                        "type": "object"
+                      },
+                      "destination": {
+                        "maxLength": 4096,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "dialogues": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "arrival": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "id": {
+                                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                                "type": "string"
+                              },
+                              "path": {
+                                "maxLength": 240,
+                                "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "path"
+                            ],
+                            "type": "object"
+                          },
+                          "intro": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "id": {
+                                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                                "type": "string"
+                              },
+                              "path": {
+                                "maxLength": 240,
+                                "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "path"
+                            ],
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "intro",
+                          "arrival"
+                        ],
+                        "type": "object"
+                      },
+                      "id": {
+                        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "keepsakes": {
+                        "additionalProperties": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "name": {
+                              "maxLength": 4096,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "type": "object"
+                        },
+                        "maxProperties": 1024,
+                        "propertyNames": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "kind": {
+                        "const": "chapter"
+                      },
+                      "passenger": {
+                        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "puzzle_scene": {
+                        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "reward": {
+                        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "scenes": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "id": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "path": {
+                              "maxLength": 240,
+                              "pattern": "^data/scenes/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "path"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 16,
+                        "minItems": 1,
+                        "type": "array"
+                      },
+                      "schema_version": {
+                        "const": 1,
+                        "type": "integer"
+                      },
+                      "speakers": {
+                        "additionalProperties": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "name": {
+                              "maxLength": 4096,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "species": {
+                              "maxLength": 4096,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "species"
+                          ],
+                          "type": "object"
+                        },
+                        "maxProperties": 1024,
+                        "propertyNames": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "title": {
+                        "maxLength": 4096,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "schema_version",
+                      "id",
+                      "title",
+                      "speakers",
+                      "passenger",
+                      "destination",
+                      "keepsakes",
+                      "reward",
+                      "assets",
+                      "scenes",
+                      "puzzle_scene",
+                      "dialogues"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "camera_bounds": {
+                        "items": false,
+                        "maxItems": 4,
+                        "minItems": 4,
+                        "prefixItems": [
+                          {
+                            "maximum": 16384,
+                            "minimum": -16384,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": -16384,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        ],
+                        "type": "array"
+                      },
+                      "ground": {
+                        "items": false,
+                        "maxItems": 4,
+                        "minItems": 4,
+                        "prefixItems": [
+                          {
+                            "maximum": 16384,
+                            "minimum": -16384,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": -16384,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        ],
+                        "type": "array"
+                      },
+                      "id": {
+                        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "kind": {
+                        "const": "scene"
+                      },
+                      "objects": {
+                        "additionalProperties": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "collision": {
+                              "items": false,
+                              "maxItems": 4,
+                              "minItems": 4,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "interaction": {
+                              "items": false,
+                              "maxItems": 4,
+                              "minItems": 4,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "kind": {
+                              "enum": [
+                                "train",
+                                "branch",
+                                "winch",
+                                "shed",
+                                "handle",
+                                "snail"
+                              ]
+                            },
+                            "layer": {
+                              "enum": [
+                                "background",
+                                "world",
+                                "foreground"
+                              ]
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "size": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "size",
+                            "layer"
+                          ],
+                          "type": "object"
+                        },
+                        "maxProperties": 1024,
+                        "propertyNames": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "puzzle": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "branch": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "branch_cleared_position": {
+                            "items": false,
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              },
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              }
+                            ],
+                            "type": "array"
+                          },
+                          "branch_rope_anchor": {
+                            "items": false,
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              },
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              }
+                            ],
+                            "type": "array"
+                          },
+                          "handle": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "handle_recovery_spawn": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "kind": {
+                            "const": "install_crank_handle"
+                          },
+                          "player_spawn": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "return_spawn": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "shed": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "snail": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "train": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "winch": {
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "winch_rope_anchor": {
+                            "items": false,
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              },
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              }
+                            ],
+                            "type": "array"
+                          },
+                          "winch_socket": {
+                            "items": false,
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              },
+                              {
+                                "maximum": 16384,
+                                "minimum": -16384,
+                                "type": "integer"
+                              }
+                            ],
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "train",
+                          "branch",
+                          "winch",
+                          "shed",
+                          "handle",
+                          "player_spawn",
+                          "return_spawn",
+                          "handle_recovery_spawn",
+                          "winch_socket",
+                          "winch_rope_anchor",
+                          "branch_rope_anchor",
+                          "branch_cleared_position"
+                        ],
+                        "type": "object"
+                      },
+                      "scene_type": {
+                        "const": "oliver_puzzle"
+                      },
+                      "schema_version": {
+                        "const": 1,
+                        "type": "integer"
+                      },
+                      "spawns": {
+                        "additionalProperties": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "kind": {
+                              "enum": [
+                                "player_feet",
+                                "handle_bottom_center"
+                              ]
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position"
+                          ],
+                          "type": "object"
+                        },
+                        "maxProperties": 1024,
+                        "propertyNames": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "world_bounds": {
+                        "items": false,
+                        "maxItems": 4,
+                        "minItems": 4,
+                        "prefixItems": [
+                          {
+                            "maximum": 16384,
+                            "minimum": -16384,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": -16384,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          {
+                            "maximum": 16384,
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        ],
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "schema_version",
+                      "id",
+                      "scene_type",
+                      "world_bounds",
+                      "camera_bounds",
+                      "ground",
+                      "spawns",
+                      "objects",
+                      "puzzle"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "completion": {
+                        "oneOf": [
+                          {
+                            "additionalProperties": false,
+                            "properties": {
+                              "action": {
+                                "const": "board_oliver"
+                              },
+                              "destination": {
+                                "const": "train_travel"
+                              }
+                            },
+                            "required": [
+                              "action",
+                              "destination"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "additionalProperties": false,
+                            "properties": {
+                              "action": {
+                                "const": "finish_oliver_journey"
+                              },
+                              "destination": {
+                                "const": "chapter_complete"
+                              }
+                            },
+                            "required": [
+                              "action",
+                              "destination"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "id": {
+                        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "kind": {
+                        "const": "dialogue"
+                      },
+                      "lines": {
+                        "additionalProperties": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "speaker": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "text": {
+                              "maxLength": 4096,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "speaker",
+                            "text"
+                          ],
+                          "type": "object"
+                        },
+                        "maxProperties": 1024,
+                        "propertyNames": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "order": {
+                        "items": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "maxItems": 1024,
+                        "minItems": 1,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "schema_version": {
+                        "const": 1,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "schema_version",
+                      "id",
+                      "order",
+                      "lines",
+                      "completion"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "assets": {
+                        "additionalProperties": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "frame_count": {
+                              "maximum": 1024,
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "frame_size": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": 1,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "path": {
+                              "maxLength": 240,
+                              "pattern": "^assets/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+$",
+                              "type": "string"
+                            },
+                            "pivot": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "provenance": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "attribution": {
+                                  "maxLength": 4096,
+                                  "minLength": 0,
+                                  "type": "string"
+                                },
+                                "creator": {
+                                  "maxLength": 4096,
+                                  "minLength": 1,
+                                  "type": "string"
+                                },
+                                "license": {
+                                  "maxLength": 4096,
+                                  "minLength": 1,
+                                  "type": "string"
+                                },
+                                "source": {
+                                  "maxLength": 4096,
+                                  "minLength": 1,
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "creator",
+                                "source",
+                                "license",
+                                "attribution"
+                              ],
+                              "type": "object"
+                            },
+                            "sha256": {
+                              "pattern": "^[a-f0-9]{64}$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "path",
+                            "sha256",
+                            "frame_size",
+                            "frame_count",
+                            "pivot",
+                            "provenance"
+                          ],
+                          "type": "object"
+                        },
+                        "maxProperties": 1024,
+                        "propertyNames": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "id": {
+                        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "kind": {
+                        "const": "assets"
+                      },
+                      "schema_version": {
+                        "const": 1,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "schema_version",
+                      "id",
+                      "assets"
+                    ],
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "value"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "type": "array"
+    },
+    "protocol_version": {
+      "const": 1,
+      "type": "integer"
+    },
+    "request_id": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "request_id",
+    "chapter",
+    "document",
+    "expected_revision",
+    "operations"
+  ],
+  "type": "object"
+}

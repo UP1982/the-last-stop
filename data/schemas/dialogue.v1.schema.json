@@ -1,0 +1,101 @@
+{
+  "$comment": "Supplementary authoring schema. Odin additionally checks exact integer token types, UTF-8 byte lengths, graph references, geometry, confined filesystem paths, dependency bytes and transaction invariants.",
+  "$id": "https://the-last-stop.local/schemas/dialogue.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "completion": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "board_oliver"
+            },
+            "destination": {
+              "const": "train_travel"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "finish_oliver_journey"
+            },
+            "destination": {
+              "const": "chapter_complete"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "kind": {
+      "const": "dialogue"
+    },
+    "lines": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "speaker": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "speaker",
+          "text"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "order": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "order",
+    "lines",
+    "completion"
+  ],
+  "type": "object"
+}

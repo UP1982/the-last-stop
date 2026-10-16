@@ -1,0 +1,198 @@
+{
+  "$comment": "Supplementary authoring schema. Odin additionally checks exact integer token types, UTF-8 byte lengths, graph references, geometry, confined filesystem paths, dependency bytes and transaction invariants.",
+  "$id": "https://the-last-stop.local/schemas/chapter.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assets": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 240,
+          "pattern": "^data/assets/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "path"
+      ],
+      "type": "object"
+    },
+    "destination": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "type": "string"
+    },
+    "dialogues": {
+      "additionalProperties": false,
+      "properties": {
+        "arrival": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        },
+        "intro": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "intro",
+        "arrival"
+      ],
+      "type": "object"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "keepsakes": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "kind": {
+      "const": "chapter"
+    },
+    "passenger": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "puzzle_scene": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "reward": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "scenes": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "path": {
+            "maxLength": 240,
+            "pattern": "^data/scenes/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "path"
+        ],
+        "type": "object"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "type": "integer"
+    },
+    "speakers": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "species": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "species"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "title": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "title",
+    "speakers",
+    "passenger",
+    "destination",
+    "keepsakes",
+    "reward",
+    "assets",
+    "scenes",
+    "puzzle_scene",
+    "dialogues"
+  ],
+  "type": "object"
+}

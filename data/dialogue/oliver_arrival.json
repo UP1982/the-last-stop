@@ -1,0 +1,23 @@
+{
+  "completion": {
+    "action": "finish_oliver_journey",
+    "destination": "chapter_complete"
+  },
+  "id": "arrival",
+  "kind": "dialogue",
+  "lines": {
+    "arrival_01": {
+      "speaker": "oliver",
+      "text": "I was worried they wouldn't bloom in time."
+    },
+    "arrival_02": {
+      "speaker": "oliver",
+      "text": "I suppose they just needed a little trip."
+    }
+  },
+  "order": [
+    "arrival_01",
+    "arrival_02"
+  ],
+  "schema_version": 1
+}

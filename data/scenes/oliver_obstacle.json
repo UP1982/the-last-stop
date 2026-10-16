@@ -1,0 +1,179 @@
+{
+  "camera_bounds": [
+    0,
+    0,
+    640,
+    180
+  ],
+  "ground": [
+    0,
+    144,
+    640,
+    36
+  ],
+  "id": "oliver_obstacle",
+  "kind": "scene",
+  "objects": {
+    "brass": {
+      "interaction": [
+        88,
+        -8,
+        48,
+        40
+      ],
+      "kind": "train",
+      "layer": "world",
+      "position": [
+        16,
+        112
+      ],
+      "size": [
+        96,
+        32
+      ]
+    },
+    "crank_handle": {
+      "interaction": [
+        -16,
+        -8,
+        40,
+        32
+      ],
+      "kind": "handle",
+      "layer": "world",
+      "position": [
+        588,
+        128
+      ],
+      "size": [
+        8,
+        8
+      ]
+    },
+    "fallen_branch": {
+      "interaction": [
+        -8,
+        -8,
+        64,
+        32
+      ],
+      "kind": "branch",
+      "layer": "world",
+      "position": [
+        96,
+        120
+      ],
+      "size": [
+        48,
+        24
+      ]
+    },
+    "shed": {
+      "kind": "shed",
+      "layer": "background",
+      "position": [
+        552,
+        96
+      ],
+      "size": [
+        72,
+        48
+      ]
+    },
+    "snail": {
+      "interaction": [
+        -12,
+        -16,
+        36,
+        32
+      ],
+      "kind": "snail",
+      "layer": "world",
+      "position": [
+        400,
+        136
+      ],
+      "size": [
+        12,
+        8
+      ]
+    },
+    "winch": {
+      "interaction": [
+        -16,
+        -8,
+        56,
+        40
+      ],
+      "kind": "winch",
+      "layer": "world",
+      "position": [
+        224,
+        120
+      ],
+      "size": [
+        24,
+        24
+      ]
+    }
+  },
+  "puzzle": {
+    "branch": "fallen_branch",
+    "branch_cleared_position": [
+      96,
+      88
+    ],
+    "branch_rope_anchor": [
+      24,
+      4
+    ],
+    "handle": "crank_handle",
+    "handle_recovery_spawn": "handle_recovery",
+    "kind": "install_crank_handle",
+    "player_spawn": "puzzle_entry",
+    "return_spawn": "train_return",
+    "shed": "shed",
+    "snail": "snail",
+    "train": "brass",
+    "winch": "winch",
+    "winch_rope_anchor": [
+      4,
+      4
+    ],
+    "winch_socket": [
+      12,
+      10
+    ]
+  },
+  "scene_type": "oliver_puzzle",
+  "schema_version": 1,
+  "spawns": {
+    "handle_recovery": {
+      "kind": "handle_bottom_center",
+      "position": [
+        592,
+        144
+      ]
+    },
+    "puzzle_entry": {
+      "kind": "player_feet",
+      "position": [
+        140,
+        144
+      ]
+    },
+    "train_return": {
+      "kind": "player_feet",
+      "position": [
+        140,
+        144
+      ]
+    }
+  },
+  "world_bounds": [
+    0,
+    0,
+    640,
+    180
+  ]
+}
