@@ -1,10 +1,16 @@
 package main
 
 import "core:fmt"
+import c "../shared/content"
 import rl "vendor:raylib"
 
 // Run without opening a window: odin run src -define:M0_SELF_TEST=true
+when #config(M0_SELF_TEST, false) || #config(M1_SELF_TEST, false) {
+
 run_self_tests :: proc() {
+    owner := c.new_owner(context.allocator)
+    defer c.destroy_owner(owner)
+    context.allocator = c.owner_allocator(owner)
     v := make_viewport(1000, 700)
     assert(v.scale == 3 && v.destination.x == 20 && v.destination.y == 80)
     assert(v.destination.width == 960 && v.destination.height == 540)
@@ -18,7 +24,7 @@ run_self_tests :: proc() {
     assert(make_viewport(1280, 720).scale == 4)
     assert(make_viewport(200, 100).scale == 1)
 
-    g := Game_State{}
+    g := Game_State{scene=make_graybox_scene(), content_ready=true}
     update_game(&g, {pause = true}, 0)
     assert(g.mode == .Title && !g.quit_requested)
     update_game(&g, {confirm = true}, 0)
@@ -45,8 +51,8 @@ run_self_tests :: proc() {
 }
 
 test_playing_game :: proc() -> Game_State {
-    g := Game_State{}
-    start_graybox(&g)
+    g := Game_State{scene=make_graybox_scene(), content_ready=true}
+    start_scene(&g)
     enter_mode(&g, .Playing)
     update_game(&g, {}, FIXED_DT) // release menu aliases
     return g
@@ -116,7 +122,7 @@ run_m1_self_tests :: proc() {
     p = {position = {330, 144}, grounded = true}
     climbed := false
     for _ in 0..<120 {
-        step_player(&p, {move = 1}, scene.solids[:scene.solid_count], world)
+        step_player(&p, {move = 1}, scene.solids[:], world)
         assert(!overlaps(player_rect(p), scene.solids[1]))
         if p.position.y == 140 { climbed = true }
     }
@@ -206,4 +212,19 @@ run_m1_self_tests :: proc() {
     update_game(&a, {jump_down = true, interact_down = true}, FIXED_DT)
     assert(a.player.position == a.scene.spawn && a.player.grounded && a.response == nil)
     fmt.println("M1 self-tests passed: coyote/expiry, buffer/expiry, variable jump, AABB walls/ceiling/step, world clamp, acceleration, camera/deadzone, nearest focus, interaction, pause/controls isolation, fixed-step/dt clamp, restart")
+}
+
+// Synthetic M1 regression fixture only. Runtime has no fallback authoring site.
+make_graybox_scene :: proc() -> Runtime_Scene {
+    scene := Runtime_Scene{
+        world={0,0,640,180}, camera_bounds={0,0,640,180}, spawn={140,144},
+        solids=make([]rl.Rectangle,2), objects=make([]Interactable,4),
+    }
+    scene.solids[0]={0,144,640,36}; scene.solids[1]={344,140,32,4}
+    scene.objects[0]={{104,104,48,40},{16,112,96,32},"Brass","Brass waits patiently. (Placeholder)",true}
+    scene.objects[1]={{208,112,56,40},{224,120,24,24},"Winch","An empty axle. (Placeholder)",true}
+    scene.objects[2]={{388,120,36,32},{400,136,12,8},"Snail","A tiny neighbour waves. (Placeholder)",true}
+    scene.objects[3]={{572,120,40,32},{588,128,8,8},"Handle","A handle on a shelf. (Placeholder)",true}
+    return scene
+}
 }

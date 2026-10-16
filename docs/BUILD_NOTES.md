@@ -25,5 +25,11 @@ macOS 27.2 arm64; Odin `dev-2026-10:84bc3fc21`; bundled vendor:raylib 6.0. No ex
 - `odin run src -define:M1_SELF_TEST=true` exit 0 (coyote/buffer, variable jump, walls/ceiling/step, world clamp, camera deadzone/clamps, nearest focus, pause isolation, fixed 120 Hz step). check.sh exit 0.
 - Native: launches to title (build/evidence/m1/). Keyboard feel/readability/fullscreen unverified — needs human.
 
+## E0b evidence (T-E0b-1, Sol; re-run by Opus)
+- Release + DEV_TOOLS builds, M0/M1 self-tests, 7 runtime test groups, 13 editor groups: all exit 0. Release has no content_edit import. data/ byte-identical to dacc96b after round-trip.
+- Native: CLI-moved crank_handle visible in game + `--dump-scene` (build/evidence/e0b/).
+- Run dev preview: `odin build src -define:DEV_TOOLS=true -out:build/the-last-stop-dev && build/the-last-stop-dev --project-root "$PWD" --preview-scene oliver_obstacle --preview-session test`.
+
 ## Open issues
+- Debug labels overlap at puzzle entry (branch/Milo/brass) — dev overlay readability, revisit in M5.
 - None confirmed.

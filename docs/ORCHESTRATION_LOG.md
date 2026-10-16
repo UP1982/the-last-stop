@@ -38,7 +38,8 @@
 - Decision 2026-10-16: don't idle on the M0 human keyboard check; M1 proceeds on top, and the human check covers M0+M1 together. M0/M1 acceptance still requires it. E0b serialized after M1 (both touch src/).
 
 ## Next
-- E0b → Sol (T-E0b-1).
+- T-E0b-1 (Sol) delivered; Opus re-ran check.sh, verified data/ unchanged + screenshot; committed. **E0 gate met.**
+- M2 → Sol (T-M2-1) per docs/M2_CONTRACT.md; Astra reviews after.
 - Order: M1 (running) → E0b → M2 per docs/M2_CONTRACT.md.
 - M0: human keyboard/fullscreen check (synthetic keys can't reach window).
 - E0b after M0 acceptance. Astra reviews E0a when delivered.

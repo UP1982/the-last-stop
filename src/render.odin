@@ -48,27 +48,43 @@ menu_item :: proc(text: cstring, row, selected: int, y: i32) {
 pixel :: proc(value: f32) -> i32 { return i32(math.round(value)) }
 
 draw_world_rect :: proc(rect: rl.Rectangle, camera: Camera, color: rl.Color) {
-    rl.DrawRectangle(pixel(rect.x) - pixel(camera.x), pixel(rect.y),
+    rl.DrawRectangle(pixel(rect.x) - pixel(camera.x), pixel(rect.y) - pixel(camera.y),
         pixel(rect.width), pixel(rect.height), color)
 }
 
-draw_graybox :: proc(game: Game_State) {
+draw_scene :: proc(game: Game_State) {
     scene, camera := game.scene, game.camera
-    gray := rl.Color{99, 108, 116, 255}
-    for solid in scene.solids[:scene.solid_count] { draw_world_rect(solid, camera, gray) }
-    draw_world_rect(scene.shed, camera, rl.Color{68, 77, 89, 255})
-    draw_world_rect(scene.branch, camera, rl.Color{118, 103, 147, 255})
-    for object, i in scene.objects[:scene.object_count] {
-        draw_world_rect(object.visual, camera, rl.Color{118, 131, 140, 255})
+    draw_world_rect(scene.solids[0], camera, rl.Color{99, 108, 116, 255})
+    for object in scene.visuals {
+        color := rl.Color{118, 131, 140, 255}
+        if object.kind == .Shed { color = {68, 77, 89, 255} }
+        if object.kind == .Branch { color = {118, 103, 147, 255} }
+        draw_world_rect(object.rect, camera, color)
+        if game.content != nil && object.asset != "" {
+            if texture, ok := game.content.textures[object.asset]; ok {
+                asset := game.content.snapshot.assets[object.asset]
+                dest := object.rect; dest.x -= camera.x; dest.y -= camera.y
+                dest.x = f32(pixel(dest.x)); dest.y = f32(pixel(dest.y))
+                rl.DrawTexturePro(texture, {0, 0, f32(asset.frame_size[0]), f32(asset.frame_size[1])}, dest, {}, 0, rl.WHITE)
+            }
+        }
+    }
+    for object, i in scene.objects {
         r := object.visual
-        x, y := pixel(r.x) - pixel(camera.x), pixel(r.y)
+        x, y := pixel(r.x) - pixel(camera.x), pixel(r.y) - pixel(camera.y)
+        if x >= VIRTUAL_WIDTH || x+pixel(r.width) <= 0 || y >= VIRTUAL_HEIGHT || y+pixel(r.height) <= 0 { continue }
         if i == game.focus {
             rl.DrawRectangleLines(x - 2, y - 2, pixel(r.width) + 4, pixel(r.height) + 4, CREAM)
         }
-        rl.DrawText(object.label, x, y - 12, 10, CREAM)
+        when DEV_TOOLS {
+            zone := object.bounds
+            rl.DrawRectangleLines(pixel(zone.x)-pixel(camera.x), pixel(zone.y)-pixel(camera.y), pixel(zone.width), pixel(zone.height), MINT)
+        }
+        label_x := clamp(x, 2, max(2, VIRTUAL_WIDTH - rl.MeasureText(object.label, 10) - 2))
+        rl.DrawText(object.label, label_x, y - 12, 10, CREAM)
     }
     // Placeholder cat: body stays exactly inside the agreed collision footprint.
-    x, y := pixel(game.player.position.x) - pixel(camera.x), pixel(game.player.position.y)
+    x, y := pixel(game.player.position.x) - pixel(camera.x), pixel(game.player.position.y) - pixel(camera.y)
     rl.DrawRectangle(x - 6, y - 16, 12, 16, CREAM)
     rl.DrawRectangle(x - 6, y - 16, 3, 3, MINT)
     rl.DrawRectangle(x + 3, y - 16, 3, 3, MINT)
@@ -77,7 +93,7 @@ draw_graybox :: proc(game: Game_State) {
     rl.DrawRectangle(eye_x, y - 10, 2, 2, NIGHT)
     rl.DrawText("Milo", x - 9, y - 29, 10, CREAM)
     rl.DrawRectangle(0, 0, 320, 28, NIGHT)
-    center_text("M1 - A D / arrows: walk   Esc: pause", 6, 10, MINT)
+    center_text("A D / arrows: walk   Esc: pause", 6, 10, MINT)
     center_text("Space / Z / W / Up: jump", 17, 10, CREAM)
     if game.focus >= 0 {
         rl.DrawRectangle(2, 151, 316, 27, NIGHT)
@@ -110,8 +126,19 @@ draw_game :: proc(game: Game_State) {
         menu_item("Start", 0, game.selection, 99)
         menu_item("Quit", 1, game.selection, 118)
         center_text("Arrows / W S  -  Enter / Space / Z", 151, 10, MINT)
+    case .Content_Error:
+        center_text("Content could not load", 10, 20, CREAM)
+        center_text("Chapter blocked - diagnostics below", 36, 10, MINT)
+        if game.content != nil {
+            lines := game.content.error_lines
+            for i := 0; i < 7 && game.selection+i < len(lines); i += 1 {
+                rl.DrawText(lines[game.selection+i], 8, 54+i32(i)*12, 10, CREAM)
+            }
+        }
+        center_text("Up/Down: scroll   Esc / Enter: title", 151, 10, MINT)
+        center_text("Full diagnostics also on stderr", 166, 10, CREAM)
     case .Playing, .Paused:
-        draw_graybox(game)
+        draw_scene(game)
         if game.mode == .Paused {
             rl.DrawRectangle(0, 0, 320, 180, rl.Color{0, 0, 0, 170})
             if game.controls_open { draw_controls() }
