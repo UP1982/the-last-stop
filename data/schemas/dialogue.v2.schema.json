@@ -1,0 +1,2432 @@
+{
+  "$comment": "Integer bounds and structure are mirrored by shared/content. Cross-document identities, references, and ordered line-beat projection are checked by the Odin graph validator. Text is bounded to 4096 UTF-8 bytes there.",
+  "$id": "dialogue.v2.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "completion": {
+            "properties": {
+              "action": {
+                "enum": [
+                  "board_oliver",
+                  "enter_obstacle",
+                  "begin_puzzle",
+                  "finish_oliver_journey"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "lines": {
+            "minProperties": 1
+          },
+          "order": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "beat_order": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "beats": {
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "line"
+              },
+              "line": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "stage": {
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "willow_platform"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "old_platform"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "carriage"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "flower",
+                            "supper_card"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "forest_travel"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "forest_obstacle"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "winch_branch"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "market_platform"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "flower",
+                            "supper_card"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "flower_window"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "flower"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ],
+                "properties": {
+                  "actors": {
+                    "additionalProperties": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "asset": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "emote": {
+                          "enum": [
+                            "neutral",
+                            "curious",
+                            "smile",
+                            "blink",
+                            "ears_up"
+                          ]
+                        },
+                        "facing": {
+                          "enum": [
+                            "left",
+                            "right"
+                          ]
+                        },
+                        "feet": {
+                          "items": false,
+                          "maxItems": 2,
+                          "minItems": 2,
+                          "prefixItems": [
+                            {
+                              "maximum": 16384,
+                              "minimum": -16384,
+                              "type": "integer"
+                            },
+                            {
+                              "maximum": 16384,
+                              "minimum": -16384,
+                              "type": "integer"
+                            }
+                          ],
+                          "type": "array"
+                        },
+                        "pose": {
+                          "enum": [
+                            "idle",
+                            "walk",
+                            "nod",
+                            "point",
+                            "reach",
+                            "wave",
+                            "carry",
+                            "sit",
+                            "look",
+                            "board",
+                            "fold",
+                            "tap",
+                            "dust_paws"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "feet",
+                        "facing",
+                        "pose",
+                        "emote"
+                      ],
+                      "type": "object"
+                    },
+                    "maxProperties": 1024,
+                    "propertyNames": {
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "cue": {
+                    "enum": [
+                      "none",
+                      "whistle_low",
+                      "door_squeak",
+                      "wheels",
+                      "brake_soft",
+                      "paper_rustle",
+                      "whistle_depart"
+                    ]
+                  },
+                  "props": {
+                    "additionalProperties": {
+                      "oneOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "train"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "waiting",
+                                "moving",
+                                "stopped"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "door"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "open",
+                                "closed"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "bag"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "ear_caught",
+                                "free",
+                                "aboard"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "flowerpot"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "bud",
+                                "bloom"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "paper_flower"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "paper",
+                                "folding",
+                                "folded",
+                                "spring"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "slat"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "loose",
+                                "slipping",
+                                "caught",
+                                "resting"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "bench"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "unrepaired",
+                                "supported"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "timetable"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "unhelpful"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "sign"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "faded"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "notice"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "supper"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "market_dressing"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "open"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "maxProperties": 1024,
+                    "propertyNames": {
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "set": {
+                    "enum": [
+                      "willow_platform",
+                      "carriage",
+                      "forest_travel",
+                      "forest_obstacle",
+                      "market_platform",
+                      "flower_window"
+                    ]
+                  },
+                  "shot": {
+                    "enum": [
+                      "wide",
+                      "passenger_pair",
+                      "old_platform",
+                      "winch_branch",
+                      "flower",
+                      "supper_card"
+                    ]
+                  }
+                },
+                "required": [
+                  "set",
+                  "shot",
+                  "actors",
+                  "props",
+                  "cue"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "kind",
+              "line",
+              "stage"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "duration_ms": {
+                "maximum": 5000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "kind": {
+                "const": "stage"
+              },
+              "stage": {
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "willow_platform"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "old_platform"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "carriage"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "flower",
+                            "supper_card"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "forest_travel"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "forest_obstacle"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "winch_branch"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "market_platform"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "flower",
+                            "supper_card"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "flower_window"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "flower"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ],
+                "properties": {
+                  "actors": {
+                    "additionalProperties": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "asset": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "emote": {
+                          "enum": [
+                            "neutral",
+                            "curious",
+                            "smile",
+                            "blink",
+                            "ears_up"
+                          ]
+                        },
+                        "facing": {
+                          "enum": [
+                            "left",
+                            "right"
+                          ]
+                        },
+                        "feet": {
+                          "items": false,
+                          "maxItems": 2,
+                          "minItems": 2,
+                          "prefixItems": [
+                            {
+                              "maximum": 16384,
+                              "minimum": -16384,
+                              "type": "integer"
+                            },
+                            {
+                              "maximum": 16384,
+                              "minimum": -16384,
+                              "type": "integer"
+                            }
+                          ],
+                          "type": "array"
+                        },
+                        "pose": {
+                          "enum": [
+                            "idle",
+                            "walk",
+                            "nod",
+                            "point",
+                            "reach",
+                            "wave",
+                            "carry",
+                            "sit",
+                            "look",
+                            "board",
+                            "fold",
+                            "tap",
+                            "dust_paws"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "feet",
+                        "facing",
+                        "pose",
+                        "emote"
+                      ],
+                      "type": "object"
+                    },
+                    "maxProperties": 1024,
+                    "propertyNames": {
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "cue": {
+                    "enum": [
+                      "none",
+                      "whistle_low",
+                      "door_squeak",
+                      "wheels",
+                      "brake_soft",
+                      "paper_rustle",
+                      "whistle_depart"
+                    ]
+                  },
+                  "props": {
+                    "additionalProperties": {
+                      "oneOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "train"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "waiting",
+                                "moving",
+                                "stopped"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "door"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "open",
+                                "closed"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "bag"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "ear_caught",
+                                "free",
+                                "aboard"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "flowerpot"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "bud",
+                                "bloom"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "paper_flower"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "paper",
+                                "folding",
+                                "folded",
+                                "spring"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "slat"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "loose",
+                                "slipping",
+                                "caught",
+                                "resting"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "bench"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "unrepaired",
+                                "supported"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "timetable"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "unhelpful"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "sign"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "faded"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "notice"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "supper"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "market_dressing"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "open"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "maxProperties": 1024,
+                    "propertyNames": {
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "set": {
+                    "enum": [
+                      "willow_platform",
+                      "carriage",
+                      "forest_travel",
+                      "forest_obstacle",
+                      "market_platform",
+                      "flower_window"
+                    ]
+                  },
+                  "shot": {
+                    "enum": [
+                      "wide",
+                      "passenger_pair",
+                      "old_platform",
+                      "winch_branch",
+                      "flower",
+                      "supper_card"
+                    ]
+                  }
+                },
+                "required": [
+                  "set",
+                  "shot",
+                  "actors",
+                  "props",
+                  "cue"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "kind",
+              "duration_ms",
+              "stage"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "card"
+              },
+              "stage": {
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "willow_platform"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "old_platform"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "carriage"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "flower",
+                            "supper_card"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "forest_travel"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "forest_obstacle"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "winch_branch"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "market_platform"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "wide",
+                            "passenger_pair",
+                            "flower",
+                            "supper_card"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "set": {
+                          "const": "flower_window"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "shot": {
+                          "enum": [
+                            "flower"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ],
+                "properties": {
+                  "actors": {
+                    "additionalProperties": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "asset": {
+                          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                          "type": "string"
+                        },
+                        "emote": {
+                          "enum": [
+                            "neutral",
+                            "curious",
+                            "smile",
+                            "blink",
+                            "ears_up"
+                          ]
+                        },
+                        "facing": {
+                          "enum": [
+                            "left",
+                            "right"
+                          ]
+                        },
+                        "feet": {
+                          "items": false,
+                          "maxItems": 2,
+                          "minItems": 2,
+                          "prefixItems": [
+                            {
+                              "maximum": 16384,
+                              "minimum": -16384,
+                              "type": "integer"
+                            },
+                            {
+                              "maximum": 16384,
+                              "minimum": -16384,
+                              "type": "integer"
+                            }
+                          ],
+                          "type": "array"
+                        },
+                        "pose": {
+                          "enum": [
+                            "idle",
+                            "walk",
+                            "nod",
+                            "point",
+                            "reach",
+                            "wave",
+                            "carry",
+                            "sit",
+                            "look",
+                            "board",
+                            "fold",
+                            "tap",
+                            "dust_paws"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "feet",
+                        "facing",
+                        "pose",
+                        "emote"
+                      ],
+                      "type": "object"
+                    },
+                    "maxProperties": 1024,
+                    "propertyNames": {
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "cue": {
+                    "enum": [
+                      "none",
+                      "whistle_low",
+                      "door_squeak",
+                      "wheels",
+                      "brake_soft",
+                      "paper_rustle",
+                      "whistle_depart"
+                    ]
+                  },
+                  "props": {
+                    "additionalProperties": {
+                      "oneOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "train"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "waiting",
+                                "moving",
+                                "stopped"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "door"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "open",
+                                "closed"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "bag"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "ear_caught",
+                                "free",
+                                "aboard"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "flowerpot"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "bud",
+                                "bloom"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "paper_flower"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "paper",
+                                "folding",
+                                "folded",
+                                "spring"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "slat"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "loose",
+                                "slipping",
+                                "caught",
+                                "resting"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "bench"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "unrepaired",
+                                "supported"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "timetable"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "unhelpful"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "sign"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "faded"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "notice"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "supper"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "asset": {
+                              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "const": "market_dressing"
+                            },
+                            "position": {
+                              "items": false,
+                              "maxItems": 2,
+                              "minItems": 2,
+                              "prefixItems": [
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                },
+                                {
+                                  "maximum": 16384,
+                                  "minimum": -16384,
+                                  "type": "integer"
+                                }
+                              ],
+                              "type": "array"
+                            },
+                            "state": {
+                              "enum": [
+                                "open"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "position",
+                            "state"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "maxProperties": 1024,
+                    "propertyNames": {
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "set": {
+                    "enum": [
+                      "willow_platform",
+                      "carriage",
+                      "forest_travel",
+                      "forest_obstacle",
+                      "market_platform",
+                      "flower_window"
+                    ]
+                  },
+                  "shot": {
+                    "enum": [
+                      "wide",
+                      "passenger_pair",
+                      "old_platform",
+                      "winch_branch",
+                      "flower",
+                      "supper_card"
+                    ]
+                  }
+                },
+                "required": [
+                  "set",
+                  "shot",
+                  "actors",
+                  "props",
+                  "cue"
+                ],
+                "type": "object"
+              },
+              "string": {
+                "enum": [
+                  "supper_card",
+                  "end_card"
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "string",
+              "stage"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "completion": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "board_oliver"
+            },
+            "destination": {
+              "const": "train_travel"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "enter_obstacle"
+            },
+            "destination": {
+              "const": "obstacle_arrival"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "begin_puzzle"
+            },
+            "destination": {
+              "const": "puzzle"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "enter_arrival"
+            },
+            "destination": {
+              "const": "station_outro"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "finish_oliver_journey"
+            },
+            "destination": {
+              "const": "chapter_complete"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "show_title"
+            },
+            "destination": {
+              "const": "title"
+            }
+          },
+          "required": [
+            "action",
+            "destination"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "kind": {
+      "const": "dialogue"
+    },
+    "lines": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "delivery": {
+            "enum": [
+              "onscreen",
+              "offscreen"
+            ]
+          },
+          "speaker": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "text": {
+            "allOf": [
+              {
+                "not": {
+                  "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+                }
+              }
+            ],
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^ \\t\\r\\n]",
+            "type": "string"
+          }
+        },
+        "required": [
+          "speaker",
+          "text"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "order": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 2,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "lines",
+    "order",
+    "beats",
+    "beat_order",
+    "completion"
+  ],
+  "type": "object"
+}

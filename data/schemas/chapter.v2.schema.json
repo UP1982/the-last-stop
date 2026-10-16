@@ -1,0 +1,719 @@
+{
+  "$comment": "Integer bounds and structure are mirrored by shared/content. Cross-document identities, references, and ordered line-beat projection are checked by the Odin graph validator. Text is bounded to 4096 UTF-8 bytes there.",
+  "$id": "chapter.v2.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assets": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 240,
+          "pattern": "^data/assets/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "path"
+      ],
+      "type": "object"
+    },
+    "destination": {
+      "allOf": [
+        {
+          "not": {
+            "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+          }
+        }
+      ],
+      "maxLength": 4096,
+      "minLength": 1,
+      "pattern": "[^ \\t\\r\\n]",
+      "type": "string"
+    },
+    "dialogues": {
+      "additionalProperties": false,
+      "properties": {
+        "arrival": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        },
+        "end_card": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        },
+        "intro": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        },
+        "obstacle": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        },
+        "return": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        },
+        "travel": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "path": {
+              "maxLength": 240,
+              "pattern": "^data/dialogue/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "path"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "intro",
+        "travel",
+        "obstacle",
+        "return",
+        "arrival",
+        "end_card"
+      ],
+      "type": "object"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "keepsakes": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "allOf": [
+              {
+                "not": {
+                  "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+                }
+              }
+            ],
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^ \\t\\r\\n]",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "kind": {
+      "const": "chapter"
+    },
+    "passenger": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "puzzle_scene": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "reward": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "type": "string"
+    },
+    "scenes": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "path": {
+            "maxLength": 240,
+            "pattern": "^data/scenes/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\x00-\\x1f]+\\.json$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "path"
+        ],
+        "type": "object"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 2,
+      "type": "integer"
+    },
+    "speakers": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "allOf": [
+              {
+                "not": {
+                  "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+                }
+              }
+            ],
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^ \\t\\r\\n]",
+            "type": "string"
+          },
+          "species": {
+            "allOf": [
+              {
+                "not": {
+                  "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+                }
+              }
+            ],
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "[^ \\t\\r\\n]",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "species"
+        ],
+        "type": "object"
+      },
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "strings": {
+      "additionalProperties": false,
+      "properties": {
+        "activate": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "advance": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "blocked": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "branch": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "clear": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "completion": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "drop": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "dropped_hint": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "end_card": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "find_hint": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "find_hint_gentle": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "find_hint_shelter": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "held_hint": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "inspect_branch": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "inspect_winch": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "install": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "installed_hint": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "needs_handle": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "pickup": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "return_hint": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "return_menu": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "return_train": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "skip_scene": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "snail": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "supper_card": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "turning": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "wait_hint": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        },
+        "wave": {
+          "allOf": [
+            {
+              "not": {
+                "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+              }
+            }
+          ],
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "[^ \\t\\r\\n]",
+          "type": "string"
+        }
+      },
+      "required": [
+        "needs_handle",
+        "branch",
+        "blocked",
+        "turning",
+        "clear",
+        "completion",
+        "snail",
+        "pickup",
+        "drop",
+        "install",
+        "activate",
+        "inspect_winch",
+        "inspect_branch",
+        "return_train",
+        "wave",
+        "find_hint_gentle",
+        "find_hint_shelter",
+        "find_hint",
+        "held_hint",
+        "dropped_hint",
+        "installed_hint",
+        "wait_hint",
+        "return_hint",
+        "supper_card",
+        "end_card",
+        "advance",
+        "skip_scene",
+        "return_menu"
+      ],
+      "type": "object"
+    },
+    "title": {
+      "allOf": [
+        {
+          "not": {
+            "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
+          }
+        }
+      ],
+      "maxLength": 4096,
+      "minLength": 1,
+      "pattern": "[^ \\t\\r\\n]",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "title",
+    "speakers",
+    "passenger",
+    "destination",
+    "keepsakes",
+    "reward",
+    "assets",
+    "scenes",
+    "puzzle_scene",
+    "dialogues",
+    "strings"
+  ],
+  "type": "object"
+}

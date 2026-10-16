@@ -1,0 +1,102 @@
+{
+  "beat_order": [
+    "return_dust_paws",
+    "return_check_track",
+    "return_board_brass",
+    "return_forest_travel"
+  ],
+  "beats": {
+    "return_board_brass": {
+      "duration_ms": 1000,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              120,
+              288
+            ],
+            "pose": "board"
+          }
+        },
+        "cue": "door_squeak",
+        "props": {},
+        "set": "forest_obstacle",
+        "shot": "wide"
+      }
+    },
+    "return_check_track": {
+      "duration_ms": 700,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              280,
+              288
+            ],
+            "pose": "look"
+          }
+        },
+        "cue": "none",
+        "props": {},
+        "set": "forest_obstacle",
+        "shot": "winch_branch"
+      }
+    },
+    "return_dust_paws": {
+      "duration_ms": 800,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              280,
+              288
+            ],
+            "pose": "dust_paws"
+          }
+        },
+        "cue": "none",
+        "props": {},
+        "set": "forest_obstacle",
+        "shot": "wide"
+      }
+    },
+    "return_forest_travel": {
+      "duration_ms": 1400,
+      "kind": "stage",
+      "stage": {
+        "actors": {},
+        "cue": "wheels",
+        "props": {
+          "return_train_visual": {
+            "kind": "train",
+            "position": [
+              320,
+              220
+            ],
+            "state": "moving"
+          }
+        },
+        "set": "forest_travel",
+        "shot": "wide"
+      }
+    }
+  },
+  "completion": {
+    "action": "enter_arrival",
+    "destination": "station_outro"
+  },
+  "id": "oliver_return",
+  "kind": "dialogue",
+  "lines": {},
+  "order": [],
+  "schema_version": 2
+}

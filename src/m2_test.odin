@@ -235,7 +235,7 @@ run_m2_behavior_tests :: proc(g:^Game_State) {
     assert(g.completion_cues==1 && !g.puzzle.snail_seen)
     // Wrong order, repeated drops, airborne drop and pause/held/simultaneous edges.
     new_run(g); settle_transition(g)
-    visit(g,.Winch); assert(g.puzzle.handle==.Shelf && g.response==M2_TEXT.needs_handle)
+    visit(g,.Winch); assert(g.puzzle.handle==.Shelf && g.response==chapter_text(g^,"needs_handle"))
     visit(g,.Train); assert(g.checkpoint==.Puzzle)
     visit(g,.Branch); assert(g.puzzle.phase==.Blocked)
     visit(g,.Handle)

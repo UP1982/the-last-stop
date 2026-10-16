@@ -1,4 +1,776 @@
 {
+  "beat_order": [
+    "arrival_market_open",
+    "arrival_lift_bloom",
+    "arrival_01_beat",
+    "arrival_show_blossom",
+    "arrival_02_beat",
+    "arrival_fold_paper",
+    "arrival_place_flower",
+    "arrival_03_beat",
+    "arrival_tap_petal",
+    "arrival_notice_card",
+    "arrival_04_beat",
+    "arrival_notice_to_flower"
+  ],
+  "beats": {
+    "arrival_01_beat": {
+      "kind": "line",
+      "line": "arrival_01",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "paper"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "passenger_pair"
+      }
+    },
+    "arrival_02_beat": {
+      "kind": "line",
+      "line": "arrival_02",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "paper"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "passenger_pair"
+      }
+    },
+    "arrival_03_beat": {
+      "kind": "line",
+      "line": "arrival_03",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "folded"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "passenger_pair"
+      }
+    },
+    "arrival_04_beat": {
+      "kind": "line",
+      "line": "arrival_04",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "look"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "folded"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "supper_card"
+      }
+    },
+    "arrival_fold_paper": {
+      "duration_ms": 1400,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "fold"
+          }
+        },
+        "cue": "paper_rustle",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "folding"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "flower"
+      }
+    },
+    "arrival_lift_bloom": {
+      "duration_ms": 800,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "paper"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "flower"
+      }
+    },
+    "arrival_market_open": {
+      "duration_ms": 1000,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "brake_soft",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "paper"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "wide"
+      }
+    },
+    "arrival_notice_card": {
+      "kind": "card",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "look"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "folded"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "supper_card"
+      },
+      "string": "supper_card"
+    },
+    "arrival_notice_to_flower": {
+      "duration_ms": 1100,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "look"
+          }
+        },
+        "cue": "whistle_depart",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "folded"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "flower"
+      }
+    },
+    "arrival_place_flower": {
+      "duration_ms": 600,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "folded"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "flower"
+      }
+    },
+    "arrival_show_blossom": {
+      "duration_ms": 700,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "paper"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "flower"
+      }
+    },
+    "arrival_tap_petal": {
+      "duration_ms": 600,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              240,
+              264
+            ],
+            "pose": "tap"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "market_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              416,
+              208
+            ],
+            "state": "bloom"
+          },
+          "market_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              222
+            ],
+            "state": "spring"
+          },
+          "market_stall": {
+            "kind": "market_dressing",
+            "position": [
+              486,
+              216
+            ],
+            "state": "open"
+          },
+          "market_supper_notice": {
+            "kind": "notice",
+            "position": [
+              536,
+              138
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "market_platform",
+        "shot": "flower"
+      }
+    }
+  },
   "completion": {
     "action": "finish_oliver_journey",
     "destination": "chapter_complete"
@@ -13,11 +785,21 @@
     "arrival_02": {
       "speaker": "oliver",
       "text": "I suppose they just needed a little trip."
+    },
+    "arrival_03": {
+      "speaker": "oliver",
+      "text": "For your window."
+    },
+    "arrival_04": {
+      "speaker": "oliver",
+      "text": "Oh. I'll take some flowers back for that. It's a lovely walk from here."
     }
   },
   "order": [
     "arrival_01",
-    "arrival_02"
+    "arrival_02",
+    "arrival_03",
+    "arrival_04"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

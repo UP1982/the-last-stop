@@ -110,23 +110,26 @@ draw_scene :: proc(game: Game_State) {
     if game.player.facing < 0 { eye_x = x - 8 }
     rl.DrawRectangle(eye_x, y - 20, 4, 4, NIGHT)
     rl.DrawText("Milo", x - 18, y - 58, 20, CREAM)
-    rl.DrawRectangle(0, 0, 640, 56, NIGHT)
-    center_text("A D / arrows: walk   Esc: pause", 12, 20, MINT)
-    if scene.definition!=nil { center_text(puzzle_hint(game.puzzle),34,20,CREAM) }
+    rl.DrawRectangle(0, 0, 640, 88, NIGHT)
+    center_text("A D: walk   H: hint   T: text page   Esc: pause", 12, 20, MINT)
+    if scene.definition!=nil { draw_content_text(puzzle_hint(game),34,16,CREAM,game.text_page) }
     else { center_text("Space / Z / W / Up: jump", 34, 20, CREAM) }
     if game.focus >= 0 {
         rl.DrawRectangle(4, 302, 632, 54, NIGHT)
         center_text("[E / Enter] Interact", 306, 20, CREAM)
-        center_text(scene.objects[game.focus].label, 332, 20, MINT)
+        draw_content_text(scene.objects[game.focus].label, 330, 16, MINT,game.text_page,1)
     }
-    if game.focus<0 && game.puzzle.handle==.Held { center_text("[E / Enter] Drop handle",332,20,CREAM) }
+    if game.focus<0 && game.puzzle.handle==.Held {
+        center_text("[E / Enter]",306,20,CREAM)
+        draw_content_text(chapter_text(game,"drop"),330,16,CREAM,game.text_page,1)
+    }
     if game.save.message!=nil {
         rl.DrawRectangle(0,274,640,24,NIGHT)
         center_text(game.save.message,276,20,CREAM)
     }
     if game.response_seconds > 0 {
-        rl.DrawRectangle(4, 66, 632, 46, NIGHT)
-        center_text(game.response, 78, 20, CREAM)
+        rl.DrawRectangle(4, 92, 632, 66, NIGHT)
+        draw_content_text(game.response, 96, 16, CREAM,game.text_page)
     }
 }
 
@@ -164,7 +167,7 @@ draw_game :: proc(game: Game_State) {
         menu_item("Replace / reset",1,game.selection,246)
     case .Returned:
         center_text("Back aboard Brass",96,40,CREAM)
-        center_text("The track is clear. Thank you, Milo.",168,20,MINT)
+        draw_content_text(chapter_text(game,"clear"),168,20,MINT)
         center_text("M2 complete - story continues in M3",208,20,CREAM)
         center_text("Enter / Esc: title",296,20,MINT)
         if game.save.message!=nil { center_text(game.save.message,342,20,CREAM) }

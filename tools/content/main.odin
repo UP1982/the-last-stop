@@ -24,10 +24,10 @@ error_response :: proc(code,message:string,exit_code:int) -> int {
     return exit_code
 }
 run :: proc() -> int {
-    if len(os.args)<2 { return error_response("arguments","Use validate-content, inspect-scene or apply-edit with --project-root",2) }
+    if len(os.args)<2 { return error_response("arguments","Use validate-content, inspect-scene, inspect-document or apply-edit with --project-root",2) }
     command:=os.args[1]
-    if !c.member(command,"validate-content|inspect-scene|apply-edit") { return error_response("arguments","Unknown command",2) }
-    root,scene,request_path:string
+    if !c.member(command,"validate-content|inspect-scene|inspect-document|apply-edit") { return error_response("arguments","Unknown command",2) }
+    root,scene,document,request_path:string
     seen:=make(map[string]bool)
     for i:=2;i<len(os.args);i+=2 {
         if i+1>=len(os.args) || seen[os.args[i]] { return error_response("arguments","Missing option value or repeated option",2) }
@@ -35,11 +35,12 @@ run :: proc() -> int {
         switch os.args[i] {
         case "--project-root":root=os.args[i+1]
         case "--scene":scene=os.args[i+1]
+        case "--document":document=os.args[i+1]
         case "--request":request_path=os.args[i+1]
         case:return error_response("arguments","Unknown option",2)
         }
     }
-    if root=="" || command=="inspect-scene" && scene=="" || command=="apply-edit" && request_path=="" || command!="inspect-scene" && scene!="" || command!="apply-edit" && request_path!="" { return error_response("arguments","Invalid command options",2) }
+    if command=="inspect-document" && document=="" || command!="inspect-document" && document!="" || root=="" || command=="inspect-scene" && scene=="" || command=="apply-edit" && request_path=="" || command!="inspect-scene" && scene!="" || command!="apply-edit" && request_path!="" { return error_response("arguments","Invalid command options",2) }
     canonical:=posix.realpath(strings.clone_to_cstring(root))
     if canonical==nil { return error_response("io_root","Project root does not exist",4) }
     root=strings.clone_from_cstring(canonical); libc.free(rawptr(canonical))
@@ -77,6 +78,14 @@ run :: proc() -> int {
             }
         } }
         if !found { return error_response("scene","Scene not found",2) }
+    }
+    if command=="inspect-document" {
+        found:=false
+        for d in s.documents { if string(d.id)==document {
+            found=true; response["document"]=string(d.id); response["document_path"]=d.source.path
+            response["authored"]=d.value
+        } }
+        if !found { return error_response("document","Document not found",2) }
     }
     output(response)
     return 0

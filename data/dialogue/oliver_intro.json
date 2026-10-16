@@ -1,4 +1,2110 @@
 {
+  "beat_order": [
+    "intro_establish",
+    "prologue_rin_01_beat",
+    "intro_milo_nods",
+    "prologue_rin_02_beat",
+    "intro_brass_whistle",
+    "intro_old_platform",
+    "prologue_rin_03_beat",
+    "intro_test_slat",
+    "prologue_rin_04_beat",
+    "intro_slat_slips",
+    "intro_slat_catch",
+    "intro_slat_safe",
+    "prologue_rin_05_beat",
+    "intro_walk_to_brass",
+    "intro_last_look",
+    "intro_call_01_beat",
+    "intro_01_beat",
+    "intro_nod_to_oliver",
+    "intro_free_ear",
+    "intro_02_beat",
+    "intro_board_sideways",
+    "intro_bag_follows",
+    "intro_wave_goodbye",
+    "intro_depart"
+  ],
+  "beats": {
+    "intro_01_beat": {
+      "kind": "line",
+      "line": "intro_01",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              340,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              520,
+              264
+            ],
+            "pose": "carry"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              510,
+              246
+            ],
+            "state": "ear_caught"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "passenger_pair"
+      }
+    },
+    "intro_02_beat": {
+      "kind": "line",
+      "line": "intro_02",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              476,
+              264
+            ],
+            "pose": "reach"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              520,
+              264
+            ],
+            "pose": "carry"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              510,
+              246
+            ],
+            "state": "free"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_bag_follows": {
+      "duration_ms": 500,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              476,
+              264
+            ],
+            "pose": "reach"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              408,
+              264
+            ],
+            "pose": "board"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              410,
+              248
+            ],
+            "state": "aboard"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_board_sideways": {
+      "duration_ms": 1000,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              476,
+              264
+            ],
+            "pose": "reach"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              408,
+              264
+            ],
+            "pose": "board"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "door_squeak",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              510,
+              246
+            ],
+            "state": "free"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_brass_whistle": {
+      "duration_ms": 900,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "look"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "whistle_low",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_call_01_beat": {
+      "kind": "line",
+      "line": "intro_call_01",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              340,
+              264
+            ],
+            "pose": "look"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_depart": {
+      "duration_ms": 1200,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              476,
+              264
+            ],
+            "pose": "wave"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "wave"
+          }
+        },
+        "cue": "whistle_depart",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              410,
+              248
+            ],
+            "state": "aboard"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "moving"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_establish": {
+      "duration_ms": 1200,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "curious",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "look"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_free_ear": {
+      "duration_ms": 800,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              476,
+              264
+            ],
+            "pose": "reach"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              520,
+              264
+            ],
+            "pose": "carry"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              510,
+              246
+            ],
+            "state": "free"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_last_look": {
+      "duration_ms": 0,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              340,
+              264
+            ],
+            "pose": "look"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "old_platform"
+      }
+    },
+    "intro_milo_nods": {
+      "duration_ms": 600,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "curious",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "nod"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_nod_to_oliver": {
+      "duration_ms": 500,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              476,
+              264
+            ],
+            "pose": "nod"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              520,
+              264
+            ],
+            "pose": "carry"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              510,
+              246
+            ],
+            "state": "ear_caught"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_old_platform": {
+      "duration_ms": 0,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "point"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "old_platform"
+      }
+    },
+    "intro_slat_catch": {
+      "duration_ms": 700,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "reach"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "caught"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_slat_safe": {
+      "duration_ms": 600,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "reach"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_slat_slips": {
+      "duration_ms": 500,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "reach"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "slipping"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_test_slat": {
+      "duration_ms": 600,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "point"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_walk_to_brass": {
+      "duration_ms": 900,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              340,
+              264
+            ],
+            "pose": "walk"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "intro_wave_goodbye": {
+      "duration_ms": 700,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              476,
+              264
+            ],
+            "pose": "wave"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "wave"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "oliver_bag": {
+            "kind": "bag",
+            "position": [
+              410,
+              248
+            ],
+            "state": "aboard"
+          },
+          "oliver_pot": {
+            "kind": "flowerpot",
+            "position": [
+              510,
+              216
+            ],
+            "state": "bud"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "prologue_rin_01_beat": {
+      "kind": "line",
+      "line": "prologue_rin_01",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "curious",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "look"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "prologue_rin_02_beat": {
+      "kind": "line",
+      "line": "prologue_rin_02",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "curious",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "nod"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "prologue_rin_03_beat": {
+      "kind": "line",
+      "line": "prologue_rin_03",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "point"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "old_platform"
+      }
+    },
+    "prologue_rin_04_beat": {
+      "kind": "line",
+      "line": "prologue_rin_04",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "point"
+          },
+          "rin": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "loose"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "unrepaired"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    },
+    "prologue_rin_05_beat": {
+      "kind": "line",
+      "line": "prologue_rin_05",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "ears_up",
+            "facing": "right",
+            "feet": [
+              280,
+              264
+            ],
+            "pose": "reach"
+          },
+          "rin": {
+            "emote": "smile",
+            "facing": "left",
+            "feet": [
+              172,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "bench_slat": {
+            "kind": "slat",
+            "position": [
+              150,
+              230
+            ],
+            "state": "resting"
+          },
+          "old_platform_sign": {
+            "kind": "sign",
+            "position": [
+              50,
+              120
+            ],
+            "state": "faded"
+          },
+          "platform_door": {
+            "kind": "door",
+            "position": [
+              392,
+              212
+            ],
+            "state": "open"
+          },
+          "platform_train": {
+            "kind": "train",
+            "position": [
+              360,
+              180
+            ],
+            "state": "waiting"
+          },
+          "rin_bench": {
+            "kind": "bench",
+            "position": [
+              118,
+              250
+            ],
+            "state": "supported"
+          },
+          "station_timetable": {
+            "kind": "timetable",
+            "position": [
+              286,
+              166
+            ],
+            "state": "unhelpful"
+          }
+        },
+        "set": "willow_platform",
+        "shot": "wide"
+      }
+    }
+  },
   "completion": {
     "action": "board_oliver",
     "destination": "train_travel"
@@ -8,16 +2114,47 @@
   "lines": {
     "intro_01": {
       "speaker": "oliver",
-      "text": "Excuse me! Does this one go to Clover Market?"
+      "text": "Does this one go to Clover Market?"
     },
     "intro_02": {
       "speaker": "oliver",
       "text": "Oh, good. My flowers are beginning to think I made it up."
+    },
+    "intro_call_01": {
+      "delivery": "offscreen",
+      "speaker": "oliver",
+      "text": "Excuse me!"
+    },
+    "prologue_rin_01": {
+      "speaker": "rin",
+      "text": "First day on this line?"
+    },
+    "prologue_rin_02": {
+      "speaker": "rin",
+      "text": "Brass knows the way. You look after the passengers."
+    },
+    "prologue_rin_03": {
+      "speaker": "rin",
+      "text": "The Last Stop. We used to have supper there when the lamps came on."
+    },
+    "prologue_rin_04": {
+      "speaker": "rin",
+      "text": "I thought I'd mend a few things. See who turns up."
+    },
+    "prologue_rin_05": {
+      "speaker": "rin",
+      "text": "That's a start."
     }
   },
   "order": [
+    "prologue_rin_01",
+    "prologue_rin_02",
+    "prologue_rin_03",
+    "prologue_rin_04",
+    "prologue_rin_05",
+    "intro_call_01",
     "intro_01",
     "intro_02"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

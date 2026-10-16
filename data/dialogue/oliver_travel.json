@@ -1,0 +1,267 @@
+{
+  "beat_order": [
+    "travel_forest",
+    "travel_turn_pot",
+    "travel_01_beat",
+    "travel_bud_pause",
+    "travel_turn_farther"
+  ],
+  "beats": {
+    "travel_01_beat": {
+      "kind": "line",
+      "line": "travel_01",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "curious",
+            "facing": "right",
+            "feet": [
+              216,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "sit"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "carriage_bag": {
+            "kind": "bag",
+            "position": [
+              472,
+              252
+            ],
+            "state": "aboard"
+          },
+          "carriage_pot": {
+            "kind": "flowerpot",
+            "position": [
+              448,
+              208
+            ],
+            "state": "bud"
+          },
+          "carriage_supper_notice": {
+            "kind": "notice",
+            "position": [
+              544,
+              126
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "carriage",
+        "shot": "passenger_pair"
+      }
+    },
+    "travel_bud_pause": {
+      "duration_ms": 1000,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "blink",
+            "facing": "right",
+            "feet": [
+              216,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "sit"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "carriage_bag": {
+            "kind": "bag",
+            "position": [
+              472,
+              252
+            ],
+            "state": "aboard"
+          },
+          "carriage_pot": {
+            "kind": "flowerpot",
+            "position": [
+              448,
+              208
+            ],
+            "state": "bud"
+          },
+          "carriage_supper_notice": {
+            "kind": "notice",
+            "position": [
+              544,
+              126
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "carriage",
+        "shot": "flower"
+      }
+    },
+    "travel_forest": {
+      "duration_ms": 1400,
+      "kind": "stage",
+      "stage": {
+        "actors": {},
+        "cue": "wheels",
+        "props": {
+          "travel_train": {
+            "kind": "train",
+            "position": [
+              320,
+              220
+            ],
+            "state": "moving"
+          }
+        },
+        "set": "forest_travel",
+        "shot": "wide"
+      }
+    },
+    "travel_turn_farther": {
+      "duration_ms": 800,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "blink",
+            "facing": "right",
+            "feet": [
+              216,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "reach"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "carriage_bag": {
+            "kind": "bag",
+            "position": [
+              472,
+              252
+            ],
+            "state": "aboard"
+          },
+          "carriage_pot": {
+            "kind": "flowerpot",
+            "position": [
+              448,
+              208
+            ],
+            "state": "bud"
+          },
+          "carriage_supper_notice": {
+            "kind": "notice",
+            "position": [
+              544,
+              126
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "carriage",
+        "shot": "passenger_pair"
+      }
+    },
+    "travel_turn_pot": {
+      "duration_ms": 800,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "curious",
+            "facing": "right",
+            "feet": [
+              216,
+              264
+            ],
+            "pose": "look"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "left",
+            "feet": [
+              396,
+              264
+            ],
+            "pose": "sit"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "carriage_bag": {
+            "kind": "bag",
+            "position": [
+              472,
+              252
+            ],
+            "state": "aboard"
+          },
+          "carriage_pot": {
+            "kind": "flowerpot",
+            "position": [
+              448,
+              208
+            ],
+            "state": "bud"
+          },
+          "carriage_supper_notice": {
+            "kind": "notice",
+            "position": [
+              544,
+              126
+            ],
+            "state": "supper"
+          }
+        },
+        "set": "carriage",
+        "shot": "passenger_pair"
+      }
+    }
+  },
+  "completion": {
+    "action": "enter_obstacle",
+    "destination": "obstacle_arrival"
+  },
+  "id": "oliver_travel",
+  "kind": "dialogue",
+  "lines": {
+    "travel_01": {
+      "speaker": "oliver",
+      "text": "They've been on the kitchen table all week. I thought they might enjoy meeting other flowers."
+    }
+  },
+  "order": [
+    "travel_01"
+  ],
+  "schema_version": 2
+}

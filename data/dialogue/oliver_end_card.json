@@ -1,0 +1,57 @@
+{
+  "beat_order": [
+    "ending_flower_hold",
+    "ending_text_card"
+  ],
+  "beats": {
+    "ending_flower_hold": {
+      "duration_ms": 1400,
+      "kind": "stage",
+      "stage": {
+        "actors": {},
+        "cue": "none",
+        "props": {
+          "ending_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              218
+            ],
+            "state": "folded"
+          }
+        },
+        "set": "flower_window",
+        "shot": "flower"
+      }
+    },
+    "ending_text_card": {
+      "kind": "card",
+      "stage": {
+        "actors": {},
+        "cue": "none",
+        "props": {
+          "ending_paper_flower": {
+            "kind": "paper_flower",
+            "position": [
+              320,
+              218
+            ],
+            "state": "folded"
+          }
+        },
+        "set": "flower_window",
+        "shot": "flower"
+      },
+      "string": "end_card"
+    }
+  },
+  "completion": {
+    "action": "show_title",
+    "destination": "title"
+  },
+  "id": "oliver_end_card",
+  "kind": "dialogue",
+  "lines": {},
+  "order": [],
+  "schema_version": 2
+}

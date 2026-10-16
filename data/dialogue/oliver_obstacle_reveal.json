@@ -1,0 +1,227 @@
+{
+  "beat_order": [
+    "obstacle_brass_stops",
+    "obstacle_milo_steps_down",
+    "obstacle_01_beat",
+    "obstacle_look_at_pot",
+    "obstacle_02_beat"
+  ],
+  "beats": {
+    "obstacle_01_beat": {
+      "kind": "line",
+      "line": "obstacle_01",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              280,
+              288
+            ],
+            "pose": "board"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              108,
+              232
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "obstacle_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              112,
+              204
+            ],
+            "state": "bud"
+          }
+        },
+        "set": "forest_obstacle",
+        "shot": "passenger_pair"
+      }
+    },
+    "obstacle_02_beat": {
+      "kind": "line",
+      "line": "obstacle_02",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              280,
+              288
+            ],
+            "pose": "board"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              108,
+              232
+            ],
+            "pose": "look"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "obstacle_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              112,
+              204
+            ],
+            "state": "bud"
+          }
+        },
+        "set": "forest_obstacle",
+        "shot": "passenger_pair"
+      }
+    },
+    "obstacle_brass_stops": {
+      "duration_ms": 1100,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              280,
+              288
+            ],
+            "pose": "board"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              108,
+              232
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "brake_soft",
+        "props": {
+          "obstacle_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              112,
+              204
+            ],
+            "state": "bud"
+          }
+        },
+        "set": "forest_obstacle",
+        "shot": "winch_branch"
+      }
+    },
+    "obstacle_look_at_pot": {
+      "duration_ms": 900,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              280,
+              288
+            ],
+            "pose": "board"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              108,
+              232
+            ],
+            "pose": "look"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "obstacle_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              112,
+              204
+            ],
+            "state": "bud"
+          }
+        },
+        "set": "forest_obstacle",
+        "shot": "passenger_pair"
+      }
+    },
+    "obstacle_milo_steps_down": {
+      "duration_ms": 800,
+      "kind": "stage",
+      "stage": {
+        "actors": {
+          "milo": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              280,
+              288
+            ],
+            "pose": "board"
+          },
+          "oliver": {
+            "emote": "neutral",
+            "facing": "right",
+            "feet": [
+              108,
+              232
+            ],
+            "pose": "carry"
+          }
+        },
+        "cue": "none",
+        "props": {
+          "obstacle_flowerpot": {
+            "kind": "flowerpot",
+            "position": [
+              112,
+              204
+            ],
+            "state": "bud"
+          }
+        },
+        "set": "forest_obstacle",
+        "shot": "wide"
+      }
+    }
+  },
+  "completion": {
+    "action": "begin_puzzle",
+    "destination": "puzzle"
+  },
+  "id": "oliver_obstacle_reveal",
+  "kind": "dialogue",
+  "lines": {
+    "obstacle_01": {
+      "speaker": "oliver",
+      "text": "I can hold the flowers."
+    },
+    "obstacle_02": {
+      "speaker": "oliver",
+      "text": "I've had practice."
+    }
+  },
+  "order": [
+    "obstacle_01",
+    "obstacle_02"
+  ],
+  "schema_version": 2
+}

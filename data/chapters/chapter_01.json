@@ -9,9 +9,25 @@
       "id": "arrival",
       "path": "data/dialogue/oliver_arrival.json"
     },
+    "end_card": {
+      "id": "oliver_end_card",
+      "path": "data/dialogue/oliver_end_card.json"
+    },
     "intro": {
       "id": "intro",
       "path": "data/dialogue/oliver_intro.json"
+    },
+    "obstacle": {
+      "id": "oliver_obstacle_reveal",
+      "path": "data/dialogue/oliver_obstacle_reveal.json"
+    },
+    "return": {
+      "id": "oliver_return",
+      "path": "data/dialogue/oliver_return.json"
+    },
+    "travel": {
+      "id": "oliver_travel",
+      "path": "data/dialogue/oliver_travel.json"
     }
   },
   "id": "oliver_flower_market",
@@ -30,7 +46,7 @@
       "path": "data/scenes/oliver_obstacle.json"
     }
   ],
-  "schema_version": 1,
+  "schema_version": 2,
   "speakers": {
     "milo": {
       "name": "Milo",
@@ -39,7 +55,41 @@
     "oliver": {
       "name": "Oliver",
       "species": "rabbit"
+    },
+    "rin": {
+      "name": "Rin",
+      "species": "raccoon"
     }
+  },
+  "strings": {
+    "activate": "Start crank",
+    "advance": "Continue",
+    "blocked": "The track is still blocked.",
+    "branch": "The rope leads to the winch.",
+    "clear": "The track is clear.",
+    "completion": "The branch is safely clear.",
+    "drop": "Put down handle",
+    "dropped_hint": "Pick up the handle and carry it to the winch.",
+    "end_card": "A little further down the line…",
+    "find_hint": "Pick up the handle in the shelter and fit it into the winch.",
+    "find_hint_gentle": "The rope leads from the branch to the winch.",
+    "find_hint_shelter": "There may be something useful in the open tool shelter.",
+    "held_hint": "Carry the handle to the winch. Away from an object, you can put it down.",
+    "inspect_branch": "Inspect branch and rope",
+    "inspect_winch": "Inspect empty winch",
+    "install": "Install handle",
+    "installed_hint": "The handle is fitted. Press Interact once to start the winch.",
+    "needs_handle": "It needs a handle.",
+    "pickup": "Pick up handle",
+    "return_hint": "The track is clear. Return to Brass when you're ready.",
+    "return_menu": "Return to menu",
+    "return_train": "Return to train",
+    "skip_scene": "Skip scene",
+    "snail": "The snail raises its feelers.",
+    "supper_card": "WILLOW CREEK PLATFORM SUPPER — ALL WELCOME",
+    "turning": "It's turning.",
+    "wait_hint": "The winch is working. Take your time.",
+    "wave": "Wave to snail"
   },
   "title": "Oliver and the Flower Market"
 }

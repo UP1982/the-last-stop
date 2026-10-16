@@ -23,6 +23,7 @@ Game_State :: struct {
     focus: int,
     response: cstring,
     response_seconds: f32,
+    hint_tier, text_page: int,
     controls_open, gameplay_keys_blocked: bool,
     accumulator: f32,
     pending_jump, pending_interact, pending_return: bool,
@@ -48,6 +49,7 @@ start_scene :: proc(game: ^Game_State) {
     game.camera = {}
     follow_camera(&game.camera, game.player.position.x, game.scene.camera_bounds, game.player.position.y)
     game.focus = focus_puzzle(game.player, game.scene, game.puzzle)
+    game.hint_tier = 0
     game.response = nil
     game.response_seconds = 0
 }
@@ -62,6 +64,8 @@ update_playing :: proc(game: ^Game_State, frame_input: Input, dt: f32) {
         input.jump_down = false
         input.interact = false
     }
+    if input.hint { request_hint(game) }
+    if input.text_page { game.text_page+=1 }
     game.pending_jump = game.pending_jump || input.jump_pressed
     // Defensive edge latch also protects scripted/simultaneous/held aliases.
     edge := input.interact && !game.interact_latched

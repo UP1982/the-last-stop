@@ -113,3 +113,51 @@ contention, SIGKILL before/after rename, exact-byte checks, history restoration,
 and injected short-write/temp/sync/close/rename/history/durability failures.
 Native runtime loading/preview, reload retention, saves and gameplay are E0b or
 later work; this package does not claim those gates.
+
+
+## Story v2 (M3a)
+
+Chapter v2 requires all six dialogue roles (`intro`, `travel`, `obstacle`,
+`return`, `arrival`, `end_card`) and the exact 28-key `strings` dictionary in
+`story.odin`. Dialogue v2 retains line IDs/order and adds complete presentation
+snapshots in ordered beats. Runtime types expose closed enums, integer
+bottom-centre actor feet, visual props, optional sprite IDs, and semantic cues.
+An omitted sprite ID explicitly selects a **placeholder**. All current Chapter 1
+stages intentionally use placeholders in **640x360 virtual pixels**; these are
+composition suggestions, not approved art placement. `forest_obstacle` borrows
+the real puzzle scene; its branch/winch/rope and camera bounds are never defined
+again in story data. No stage changes gameplay state.
+
+Set/shot compatibility and each prop kind's states are closed in `story.odin`
+(`shot_options`, `prop_states`). The supplied JSON Schemas mirror local structure;
+the Odin graph validator additionally enforces global identities, speaker and
+asset references, exact ordered line-beat projection, and role/completion pairs.
+`tools/generate_story_schemas.py` deterministically regenerates v2 schemas and
+the edit protocol's restore union. The existing scene v2, assets v1 and save v2
+contracts are unchanged.
+
+V1 chapter/dialogue documents remain readable. Typed snapshots gain default
+strings and placeholder line beats in memory; their source DOM, bytes, version,
+and graph hash stay unchanged. Runtime loading never writes content. The frozen
+v1 fixtures remain exercised by E0 transaction tests.
+
+`inspect-scene --scene ID` remains compatible with E1. Use
+`inspect-document --document ID` to inspect chapter/dialogue v2 source snapshots.
+`update_dialogue` changes speaker/text while preserving both orders and delivery.
+V2 `set_order` accepts an unchanged order. An actual reorder or line insertion /
+deletion fails with `beat_edit_required`: surrounding nonverbal beats cannot be
+attached safely by inference. Use one validated `restore_document` containing
+coherent `lines`, `order`, `beats`, and `beat_order`. Restore preserves document
+kind, identity and schema version and requires the current graph revision.
+No dedicated dialogue UI is supplied in M3a.
+
+The runtime clones chapter strings once for its C-string UI boundary. H requests
+hints in gentle / shelter / direct order when the handle is unfound. Other
+states select their relevant hint immediately. UI text wraps on UTF-8 codepoint
+boundaries; T pages long edited labels/hints/responses. Full spoken-text paging,
+Unicode font selection, and stage playback belong to M3b.
+
+Run `python3 -B tests/story/run.py` for the dependency-free behavioral suite.
+For independent schema validation, install `jsonschema` in an isolated venv and
+run that Python against `tests/story/schema_check.py`; the validator is a test
+only dependency and is not needed by the editor or game.

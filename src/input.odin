@@ -4,7 +4,7 @@ import rl "vendor:raylib"
 
 Input :: struct {
     menu_move: int,
-    confirm, pause, fullscreen, return_train: bool,
+    confirm, pause, fullscreen, return_train, hint, text_page: bool,
     move: f32,
     jump_pressed, jump_down, interact, interact_down: bool,
 }
@@ -19,6 +19,8 @@ read_input :: proc() -> Input {
     input.confirm = !input.fullscreen &&
         (rl.IsKeyPressed(.ENTER) || rl.IsKeyPressed(.SPACE) || rl.IsKeyPressed(.Z))
     input.return_train = rl.IsKeyPressed(.R)
+    input.hint = rl.IsKeyPressed(.H)
+    input.text_page = rl.IsKeyPressed(.T)
     input.pause = rl.IsKeyPressed(.ESCAPE)
     if rl.IsKeyDown(.LEFT) || rl.IsKeyDown(.A) { input.move -= 1 }
     if rl.IsKeyDown(.RIGHT) || rl.IsKeyDown(.D) { input.move += 1 }

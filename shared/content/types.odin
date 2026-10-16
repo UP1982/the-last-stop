@@ -28,6 +28,8 @@ Speaker_Def :: struct { name, species: string }
 Keepsake_Def :: struct { name: string }
 Chapter_Def :: struct {
     id: ID,
+    schema_version: int,
+    strings: map[string]string,
     title, destination: string,
     passenger, reward, puzzle_scene: ID,
     speakers: map[ID]Speaker_Def,
@@ -50,9 +52,42 @@ Scene_Def :: struct {
     objects: map[ID]Object_Def,
     puzzle: Puzzle_Def,
 }
-Line_Def :: struct { speaker: ID, text: string }
+Line_Delivery :: enum { Onscreen, Offscreen }
+Beat_Kind :: enum { Line, Stage, Card }
+Story_Set :: enum { Willow_Platform, Carriage, Forest_Travel, Forest_Obstacle, Market_Platform, Flower_Window }
+Story_Shot :: enum { Wide, Passenger_Pair, Old_Platform, Winch_Branch, Flower, Supper_Card }
+Story_Pose :: enum { Idle, Walk, Nod, Point, Reach, Wave, Carry, Sit, Look, Board, Fold, Tap, Dust_Paws }
+Story_Emote :: enum { Neutral, Curious, Smile, Blink, Ears_Up }
+Story_Cue :: enum { None, Whistle_Low, Door_Squeak, Wheels, Brake_Soft, Paper_Rustle, Whistle_Depart }
+Prop_Kind :: enum { Train, Door, Bag, Flowerpot, Paper_Flower, Slat, Bench, Timetable, Sign, Notice, Market_Dressing }
+Actor_Def :: struct {
+    feet: Vec2i, // bottom-centre, virtual pixels; presentation only
+    facing: string,
+    pose: Story_Pose,
+    emote: Story_Emote,
+    asset: ID, // empty explicitly selects built-in placeholder
+}
+Prop_Def :: struct { kind: Prop_Kind, position: Vec2i, state: string, asset: ID }
+Story_Stage_Def :: struct {
+    set: Story_Set,
+    shot: Story_Shot,
+    actors: map[ID]Actor_Def,
+    props: map[ID]Prop_Def,
+    cue: Story_Cue,
+}
+Story_Beat_Def :: struct {
+    kind: Beat_Kind,
+    line: ID,
+    string_key: string,
+    duration_ms: i32, // 0 waits for advance; positive stage holds remain skippable
+    stage: Story_Stage_Def,
+}
+Line_Def :: struct { speaker: ID, text: string, delivery: Line_Delivery }
 Dialogue_Def :: struct {
     id: ID,
+    schema_version: int,
+    beats: map[ID]Story_Beat_Def,
+    beat_order: []ID,
     order: []ID,
     lines: map[ID]Line_Def,
     action, destination: string,

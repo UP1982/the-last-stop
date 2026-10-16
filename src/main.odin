@@ -10,6 +10,8 @@ main :: proc() {
         return
     }
 
+    when #config(M3A_SELF_TEST, false) { run_m3a_content_test(); return }
+
     when #config(E0B_SELF_TEST, false) { run_e0b_self_tests(); return }
 
     when #config(M2_SELF_TEST, false) { run_m2_test_entry(); return }

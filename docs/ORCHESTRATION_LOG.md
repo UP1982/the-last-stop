@@ -57,7 +57,8 @@
 - T-RES-640: Sol chose scene schema v2 for the unit change; Opus allowed one scoped change in shared/content_edit/edit.odin (restore_document preserves loaded version, rejects version-changing restores) + tests.
 
 | T-RES-R1 | gpt-6-astra (high) | 640 migration review (worktree @ 3f3bd2b) | /tmp worktree | ACCEPT (no blockers). Notes: parity trace only covers Blocked phase; one transient native initial-width assertion failure, unreproduced |
-| T-M3a | gpt-6.1-sol (high) | chapter/dialogue v2, story content migration, B2 strings | Game @ 3f3bd2b | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M3a-sol-r1 |
+| T-M3a | gpt-6.1-sol (high) | chapter/dialogue v2, story content migration, B2 strings | Game @ 3f3bd2b | delivered; Opus verified 15 lines verbatim vs screenplay, check.sh 0, legacy ok; committed. B2 closed |
+| T-M3b | gpt-6.1-sol (high) | story player runtime | Game @ M3a commit | running |
 - Risk accepted: M3a runs during the 640 review; any 640 fixes are queued after M3a.
 
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.

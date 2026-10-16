@@ -1,0 +1,45 @@
+{
+  "assets": {
+    "id": "chapter_01_assets",
+    "path": "data/assets/manifest.json"
+  },
+  "destination": "Clover Market",
+  "dialogues": {
+    "arrival": {
+      "id": "arrival",
+      "path": "data/dialogue/oliver_arrival.json"
+    },
+    "intro": {
+      "id": "intro",
+      "path": "data/dialogue/oliver_intro.json"
+    }
+  },
+  "id": "oliver_flower_market",
+  "keepsakes": {
+    "paper_flower": {
+      "name": "Paper flower"
+    }
+  },
+  "kind": "chapter",
+  "passenger": "oliver",
+  "puzzle_scene": "oliver_obstacle",
+  "reward": "paper_flower",
+  "scenes": [
+    {
+      "id": "oliver_obstacle",
+      "path": "data/scenes/oliver_obstacle.json"
+    }
+  ],
+  "schema_version": 1,
+  "speakers": {
+    "milo": {
+      "name": "Milo",
+      "species": "cat"
+    },
+    "oliver": {
+      "name": "Oliver",
+      "species": "rabbit"
+    }
+  },
+  "title": "Oliver and the Flower Market"
+}

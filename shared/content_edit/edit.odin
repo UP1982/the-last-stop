@@ -102,6 +102,9 @@ apply_operations :: proc(value:json.Value,r:Edit_Request,v:^c.Validator) -> json
             key:=string(c.id_value(v,c.get(op,"id"),c.ptr(p,"id")))
             if !collection_allowed(kind,collection) { c.fail(v,"allowlist",p,"Collection not editable on this document"); break }
             records:=c.object(c.get(root,collection)); record,present:=records[key]
+            if kind=="dialogue" && c.integer(c.get(root,"schema_version"))==2 && collection=="lines" && name!="set_property" {
+                c.fail(v,"beat_edit_required",p,"V2 line insertion/deletion requires restore_document with coherent lines, order, beats and beat_order"); break
+            }
             if name=="create" {
                 if present { c.fail(v,"duplicate_identity",p,"Create requires a fresh ID"); break }
                 if _,ok:=c.get(op,"value").(json.Object); !ok { c.fail(v,"type",p,"Create requires a complete record"); break }
@@ -130,6 +133,9 @@ apply_operations :: proc(value:json.Value,r:Edit_Request,v:^c.Validator) -> json
             lines[key]=fields
         case "set_order":
             if kind!="dialogue" { c.fail(v,"allowlist",p,"Only dialogue order is editable"); break }
+            if c.integer(c.get(root,"schema_version"))==2 && string(c.serialize(c.get(root,"order")))!=string(c.serialize(c.get(op,"order"))) {
+                c.fail(v,"beat_edit_required",p,"V2 reordering requires restore_document with coherent order and beat_order; stage attachment cannot be inferred safely"); break
+            }
             fields:=c.object(root); fields["order"]=json.clone_value(c.get(op,"order")); root=fields
         case "restore_document":
             replacement:=c.get(op,"value")

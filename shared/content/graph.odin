@@ -67,13 +67,17 @@ graph_validate :: proc(v: ^Validator,s: ^Snapshot) {
     if _,ok:=c.speakers[c.passenger]; !ok { fail(v,"speaker","/passenger","Passenger must resolve to a speaker") }
     if _,ok:=c.keepsakes[c.reward]; !ok || len(c.keepsakes)!=1 { fail(v,"reward","/reward","Chapter has exactly one declared keepsake reward") }
     if _,ok:=s.scenes[c.puzzle_scene]; !ok { fail(v,"scene_link","/puzzle_scene","Puzzle scene not referenced") }
-    object_ids:=make(map[ID]bool); spawn_ids:=make(map[ID]bool); line_ids:=make(map[ID]bool)
+    object_ids:=make(map[ID]bool); spawn_ids:=make(map[ID]bool); line_ids:=make(map[ID]bool); beat_ids:=make(map[ID]bool)
+    for _,scene in s.scenes {
+        for id in scene.objects { object_ids[id]=true }; for id in scene.spawns { spawn_ids[id]=true }
+    }
+    checked_objects:=make(map[ID]bool); checked_spawns:=make(map[ID]bool)
     for doc in s.documents {
         v.file=doc.source.path
         if doc.kind=="scene" {
             scene:=&s.scenes[doc.id]
-            for id in scene.objects { if object_ids[id] { fail(v,"duplicate_identity",ptr("/objects",string(id)),"Object ID duplicated chapter-wide") }; object_ids[id]=true }
-            for id in scene.spawns { if spawn_ids[id] { fail(v,"duplicate_identity",ptr("/spawns",string(id)),"Spawn ID duplicated chapter-wide") }; spawn_ids[id]=true }
+            for id in scene.objects { if checked_objects[id] { fail(v,"duplicate_identity",ptr("/objects",string(id)),"Object ID duplicated chapter-wide") }; checked_objects[id]=true }
+            for id in scene.spawns { if checked_spawns[id] { fail(v,"duplicate_identity",ptr("/spawns",string(id)),"Spawn ID duplicated chapter-wide") }; checked_spawns[id]=true }
             scene_validate(v,scene,s.assets)
         }
         if doc.kind=="dialogue" {
@@ -94,8 +98,8 @@ graph_validate :: proc(v: ^Validator,s: ^Snapshot) {
     for role,ref in c.dialogues {
         d,ok:=s.dialogues[ref.id]
         v.file=ref.path
-        action,destination:="board_oliver","train_travel"
-        if role=="arrival" { action,destination="finish_oliver_journey","chapter_complete" }
+        action,destination:=completion_pair(role)
+        if ok { story_validate(v,s,d,role,&beat_ids,object_ids,spawn_ids) }
         if !ok || d.action!=action || d.destination!=destination { fail(v,"completion","/completion",fmt.aprintf("%s requires %s -> %s",role,action,destination)) }
     }
     if c.dialogues["intro"].id==c.dialogues["arrival"].id { fail(v,"reward","/completion","Dialogue roles must have distinct documents; only arrival awards the reward") }

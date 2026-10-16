@@ -52,6 +52,10 @@ class E0(unittest.TestCase):
         self.root = Path(self.tmp.name)
         shutil.copytree(ROOT / 'data', self.root / 'data')
         (self.root / 'assets').mkdir()
+        # E0's legacy transaction semantics remain covered using frozen v1
+        # chapter/dialogue fixtures. Active v2 authoring has its own story suite.
+        for name, path in [('chapter_01.json', CHAPTER), ('oliver_intro.json', INTRO), ('oliver_arrival.json', ARRIVAL)]:
+            shutil.copyfile(ROOT / 'tests/story/fixtures/v1' / name, self.root / path)
 
     def tearDown(self):
         self.tmp.cleanup()

@@ -27,6 +27,7 @@ Runtime_Content :: struct {
     options: Launch_Options,
     error_lines: [dynamic]cstring,
     textures: map[c.ID]rl.Texture2D,
+    text: map[string]cstring,
 }
 Scene_Visual :: struct {
     id: c.ID,
@@ -153,7 +154,7 @@ adapt_scene :: proc(def: ^c.Scene_Def) -> Runtime_Scene {
         if object.has_collision { scene.solids[si] = local_rect(object.collision, object.position); si += 1 }
         if object.has_interaction {
             scene.objects[ii] = {local_rect(object.interaction, object.position), visual,
-                strings.clone_to_cstring(string(object.id)), "Placeholder interaction", true}
+                strings.clone_to_cstring(string(object.id)), "", true}
             scene.visuals[i].interaction_index = ii
             ii += 1
         }
@@ -189,6 +190,8 @@ load_runtime_content :: proc(args: []string, allocator: mem.Allocator) -> Runtim
     }
     // Transfer only the complete, validated graph, never an intermediate DOM.
     r.snapshot = loaded.snapshot; loaded.snapshot = nil
+    r.text=make(map[string]cstring)
+    for key,value in r.snapshot.chapter.strings { r.text[key]=strings.clone_to_cstring(value) }
     def, ok := c.find_scene(r.snapshot, r.snapshot.chapter.puzzle_scene)
     assert(ok) // graph validation guarantees the link
     r.scene = adapt_scene(def)

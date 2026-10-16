@@ -139,7 +139,8 @@ build_graph :: proc(root,path:string,inputs:[]Document_Source,disk:bool,allocato
         if len(l.v.diagnostics)==0 {
             if a,valid:=load_document(&l,s.chapter.assets,"assets","data/assets/"); valid { s.assets=assets_decode(&l.v,a) }
             for ref in s.chapter.scenes { if val,valid:=load_document(&l,ref,"scene","data/scenes/"); valid { sc:=scene_decode(&l.v,val); s.scenes[sc.id]=sc } }
-            for role in ([]string{"intro","arrival"}) {
+            roles:="intro|arrival"; if s.chapter.schema_version==2 { roles=STORY_ROLES }
+            for role in strings.split(roles,"|") {
                 ref:=s.chapter.dialogues[role]
                 if val,valid:=load_document(&l,ref,"dialogue","data/dialogue/"); valid { d:=dialogue_decode(&l.v,val); s.dialogues[d.id]=d }
             }

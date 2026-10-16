@@ -91,6 +91,7 @@ envelope :: proc(v: ^Validator, x: json.Value, kind: string) -> ID {
     n, ok := get(x,"schema_version").(i64)
     expected := i64(1)
     if kind == "scene" { expected = SCENE_VERSION }
+    if kind=="chapter" || kind=="dialogue" { expected=n; if n!=1 && n!=2 { expected=2 } }
     if !ok || n != expected { fail(v,"unsupported_version","/schema_version",fmt.aprintf("%s requires schema_version %d",kind,expected)) }
     if text(get(x,"kind")) != kind { fail(v,"wrong_kind","/kind","Wrong document kind") }
     return id_value(v,get(x,"id"),"/id")
@@ -98,9 +99,18 @@ envelope :: proc(v: ^Validator, x: json.Value, kind: string) -> ID {
 chapter_decode :: proc(v: ^Validator, x: json.Value) -> Chapter_Def {
     c: Chapter_Def
     c.id = envelope(v,x,"chapter")
-    keys(v,x,"","kind|schema_version|id|title|speakers|passenger|destination|keepsakes|reward|assets|scenes|puzzle_scene|dialogues","")
-    c.title = str(v,get(x,"title"),"/title")
-    c.destination = str(v,get(x,"destination"),"/destination")
+    c.schema_version=int(integer(get(x,"schema_version")))
+    required:="kind|schema_version|id|title|speakers|passenger|destination|keepsakes|reward|assets|scenes|puzzle_scene|dialogues"
+    if c.schema_version==2 { required=strings.concatenate({required,"|strings"}) }
+    keys(v,x,"",required,"")
+    if c.schema_version==1 { c.strings=default_chapter_strings() }
+    if c.schema_version==2 {
+        c.strings=make(map[string]string)
+        keys(v,get(x,"strings"),"/strings",STRING_KEYS,"")
+        for k,val in object(get(x,"strings")) { c.strings[k]=story_text(v,val,ptr("/strings",k)) }
+    }
+    c.title = story_text(v,get(x,"title"),"/title")
+    c.destination = story_text(v,get(x,"destination"),"/destination")
     c.passenger = id_value(v,get(x,"passenger"),"/passenger")
     c.reward = id_value(v,get(x,"reward"),"/reward")
     c.puzzle_scene = id_value(v,get(x,"puzzle_scene"),"/puzzle_scene")
@@ -108,21 +118,22 @@ chapter_decode :: proc(v: ^Validator, x: json.Value) -> Chapter_Def {
     speakers := get(x,"speakers")
     for k, val in map_check(v,speakers,"/speakers") {
         p := ptr("/speakers",k); keys(v,val,p,"name|species","")
-        c.speakers[ID(k)] = {str(v,get(val,"name"),ptr(p,"name")),str(v,get(val,"species"),ptr(p,"species"))}
+        c.speakers[ID(k)] = {story_text(v,get(val,"name"),ptr(p,"name")),story_text(v,get(val,"species"),ptr(p,"species"))}
     }
     c.keepsakes = make(map[ID]Keepsake_Def)
     for k,val in map_check(v,get(x,"keepsakes"),"/keepsakes") {
         p := ptr("/keepsakes",k); keys(v,val,p,"name","")
-        c.keepsakes[ID(k)] = {str(v,get(val,"name"),ptr(p,"name"))}
+        c.keepsakes[ID(k)] = {story_text(v,get(val,"name"),ptr(p,"name"))}
     }
     c.assets = reference(v,get(x,"assets"),"/assets","data/assets/")
     scenes, ok := get(x,"scenes").(json.Array)
     if !ok || len(scenes) == 0 || len(scenes) > 16 { fail(v,"count_limit","/scenes","Expected 1..16 scene references") }
     c.scenes = make([]Reference,len(scenes))
     for val,i in scenes { c.scenes[i] = reference(v,val,fmt.aprintf("/scenes/%d",i),"data/scenes/") }
-    d := get(x,"dialogues"); keys(v,d,"/dialogues","intro|arrival","")
+    roles:="intro|arrival"; if c.schema_version==2 { roles=STORY_ROLES }
+    d := get(x,"dialogues"); keys(v,d,"/dialogues",roles,"")
     c.dialogues = make(map[string]Reference)
-    for role in ([]string{"intro","arrival"}) { c.dialogues[role] = reference(v,get(d,role),ptr("/dialogues",role),"data/dialogue/") }
+    for role in strings.split(roles,"|") { c.dialogues[role] = reference(v,get(d,role),ptr("/dialogues",role),"data/dialogue/") }
     return c
 }
 map_check :: proc(v: ^Validator, x: json.Value, p: string) -> json.Object {
@@ -175,23 +186,6 @@ scene_decode :: proc(v: ^Validator, x: json.Value) -> Scene_Def {
     s.puzzle.branch_rope_anchor=vector(v,get(p,"branch_rope_anchor"),"/puzzle/branch_rope_anchor")
     s.puzzle.branch_cleared_position=vector(v,get(p,"branch_cleared_position"),"/puzzle/branch_cleared_position")
     return s
-}
-dialogue_decode :: proc(v: ^Validator, x: json.Value) -> Dialogue_Def {
-    d: Dialogue_Def; d.id=envelope(v,x,"dialogue")
-    keys(v,x,"","kind|schema_version|id|order|lines|completion","")
-    d.lines=make(map[ID]Line_Def)
-    for k,val in map_check(v,get(x,"lines"),"/lines") {
-        p:=ptr("/lines",k); keys(v,val,p,"speaker|text","")
-        d.lines[ID(k)]={id_value(v,get(val,"speaker"),ptr(p,"speaker")),str(v,get(val,"text"),ptr(p,"text"))}
-    }
-    a,ok:=get(x,"order").(json.Array)
-    if !ok || len(a)==0 || len(a)>1024 { fail(v,"order","/order","Expected 1..1024 line IDs") }
-    d.order=make([]ID,len(a))
-    for val,i in a { d.order[i]=id_value(v,val,fmt.aprintf("/order/%d",i)) }
-    c:=get(x,"completion"); keys(v,c,"/completion","action|destination","")
-    d.action=str(v,get(c,"action"),"/completion/action")
-    d.destination=str(v,get(c,"destination"),"/completion/destination")
-    return d
 }
 assets_decode :: proc(v: ^Validator, x: json.Value) -> map[ID]Asset_Def {
     envelope(v,x,"assets"); keys(v,x,"","kind|schema_version|id|assets","")

@@ -145,7 +145,7 @@ normalize_puzzle :: proc(p: ^Puzzle_State, scene: Runtime_Scene) {
     p.crank_progress=0
     if p.phase == .Cleared { p.crank_progress=1 }
 }
-respond :: proc(g: ^Game_State, message: cstring) { g.response=message; g.response_seconds=3 }
+respond :: proc(g: ^Game_State, message: cstring) { g.response=message; g.response_seconds=3; g.text_page=0 }
 
 // One guarded action per edge. Caller validates spatial focus; no action can
 // cascade into a second action, including install -> activate.
@@ -161,23 +161,23 @@ puzzle_action :: proc(g: ^Game_State, action: Puzzle_Action) -> bool {
         if p.handle == .Held { p.handle=.Dropped; p.dropped_feet=project_drop(g.scene,g.player); changed=true }
     case .Install:
         if p.handle == .Held && p.phase == .Blocked { p.handle=.Installed; changed=true }
-        else { respond(g, phase_response(p^)) }
+        else { respond(g, phase_response(g^)) }
     case .Activate:
         if p.handle == .Installed && p.phase == .Blocked { p.phase=.Cranking; p.crank_progress=0; changed=true }
-        else { respond(g,phase_response(p^)) }
+        else { respond(g,phase_response(g^)) }
     case .Inspect_Branch:
-        if p.phase == .Blocked { respond(g,M2_TEXT.branch) } else { respond(g,phase_response(p^)) }
+        if p.phase == .Blocked { respond(g,chapter_text(g^,"branch")) } else { respond(g,phase_response(g^)) }
     case .Return:
         if p.phase == .Cleared {
             g.checkpoint=.Returned
             g.player={position=marker_position(g.scene,true),grounded=true,facing=1}
             g.camera={}; follow_camera(&g.camera,g.player.position.x,g.scene.camera_bounds,g.player.position.y)
             enter_mode(g,.Returned); changed=true
-        } else if p.phase == .Cranking { respond(g,M2_TEXT.turning) }
-        else { respond(g,M2_TEXT.blocked) }
+        } else if p.phase == .Cranking { respond(g,chapter_text(g^,"turning")) }
+        else { respond(g,chapter_text(g^,"blocked")) }
     case .Snail:
         if !p.snail_seen { p.snail_seen=true; changed=true }
-        respond(g,M2_TEXT.snail)
+        respond(g,chapter_text(g^,"snail"))
     }
     assert(puzzle_invariant(p^,g.checkpoint,g.scene))
     if changed { persist_game(g) }
@@ -189,7 +189,7 @@ advance_crank :: proc(g: ^Game_State, dt: f32) {
     if g.puzzle.crank_progress>=1 {
         g.puzzle.phase=.Cleared
         g.completion_cues += 1 // observable single cue, never serialized/replayed
-        respond(g,M2_TEXT.completion)
+        respond(g,chapter_text(g^,"completion"))
         persist_game(g)
     }
     assert(puzzle_invariant(g.puzzle,g.checkpoint,g.scene))
@@ -207,16 +207,16 @@ refresh_puzzle_objects :: proc(g: ^Game_State) {
             o.visual=handle_rect(g.scene,g.puzzle,g.player)
             o.bounds=o.visual
             if g.puzzle.handle==.Shelf { o.bounds=local_rect(d.objects[v.id].interaction,d.objects[v.id].position) }
-            o.label=M2_TEXT.pickup
+            o.label=chapter_text(g^,"pickup")
         case .Winch:
-            o.label=M2_TEXT.inspect_winch
-            if g.puzzle.handle==.Held { o.label=M2_TEXT.install }
-            else if g.puzzle.handle==.Installed && g.puzzle.phase==.Blocked { o.label=M2_TEXT.activate }
-            else if g.puzzle.phase==.Cranking { o.label=M2_TEXT.turning }
-            else if g.puzzle.phase==.Cleared { o.label=M2_TEXT.clear }
-        case .Train: o.label=M2_TEXT.return_train
-        case .Branch: o.label=M2_TEXT.inspect_branch; o.visual=branch_rect(g.scene,g.puzzle)
-        case .Snail: o.label=M2_TEXT.wave
+            o.label=chapter_text(g^,"inspect_winch")
+            if g.puzzle.handle==.Held { o.label=chapter_text(g^,"install") }
+            else if g.puzzle.handle==.Installed && g.puzzle.phase==.Blocked { o.label=chapter_text(g^,"activate") }
+            else if g.puzzle.phase==.Cranking { o.label=chapter_text(g^,"turning") }
+            else if g.puzzle.phase==.Cleared { o.label=chapter_text(g^,"clear") }
+        case .Train: o.label=chapter_text(g^,"return_train")
+        case .Branch: o.label=chapter_text(g^,"inspect_branch"); o.visual=branch_rect(g.scene,g.puzzle)
+        case .Snail: o.label=chapter_text(g^,"wave")
         case .Shed:
         }
     }

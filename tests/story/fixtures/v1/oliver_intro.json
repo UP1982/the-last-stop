@@ -1,0 +1,23 @@
+{
+  "completion": {
+    "action": "board_oliver",
+    "destination": "train_travel"
+  },
+  "id": "intro",
+  "kind": "dialogue",
+  "lines": {
+    "intro_01": {
+      "speaker": "oliver",
+      "text": "Excuse me! Does this one go to Clover Market?"
+    },
+    "intro_02": {
+      "speaker": "oliver",
+      "text": "Oh, good. My flowers are beginning to think I made it up."
+    }
+  },
+  "order": [
+    "intro_01",
+    "intro_02"
+  ],
+  "schema_version": 1
+}
