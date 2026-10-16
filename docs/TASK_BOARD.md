@@ -22,7 +22,7 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 - [x] Shed handle pick/drop/carry/install, crank activation, branch-clear animation.
 - [x] Optional snail micro-secret and hint progression.
 **Gate:** Three clean puzzle completions and deliberate wrong-order interactions without softlock.
-**Status:** implemented with save v1; automated + 3 scripted native completions incl. 5 kill/relaunch checkpoints pass. Astra review pending; human feel/readability pending.
+**Status:** automated/contract scope ACCEPTED (Astra R2 at 39f52ac; R1 P1 softlock + P3 input fixed). B2 strings deferred to M3a. Human playtest (feel, readability, 3 hand completions) pending.
 
 ## M3: Story loop
 - [ ] Oliver introduction as short skip-safe cutscene.

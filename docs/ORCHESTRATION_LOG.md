@@ -51,6 +51,9 @@
 | T-M2-R1 | gpt-6-astra (high) | M2 review r1 | Game @ e2c6a3e | REQUEST CHANGES: P1 focus-shadowed handle softlock; P2 B2 (→ deferred to T-M3a by Opus); P3 sub-step R lost |
 | T-M2-2 | gpt-6.1-sol (high) | fix P1+P3 + regressions | Game @ 1c943b5 | delivered; Opus re-ran check.sh; committed; R2 next |
 
+| T-M2-R2 | gpt-6-astra (high) | M2 review r2 | Game @ 39f52ac | ACCEPT (automated/contract scope) |
+| T-RES-640 | gpt-6.1-sol (high) | 640x360 migration | Game @ HEAD | running |
+
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 
 ## Next
