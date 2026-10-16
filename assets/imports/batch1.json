@@ -1,0 +1,267 @@
+{
+  "task": "T-ART-2",
+  "source_pack": "/Users/finngilbert/Documents/The Last Stop/the-last-stop-assets-sprits-images-Updated",
+  "metadata_sha256": {
+    "manifest.json": "fce829f18042183799b6a21c823dbb13debce38e4d7b1b1e4c11ecc5d6378ddc",
+    "animations.json": "d3d4ed490753cd86a3a5befd6faf5ea17e38ad235a130ed423d985d890f8fba0",
+    "PROMPTS.json": "b8d316c1ef9d0d8949a3a2c87f5fb996868e23be7aa116bb10e7c40a6907fcff"
+  },
+  "assets": {
+    "milo_idle_r": {
+      "path": "assets/characters/milo_idle_r.png",
+      "sha256": "b47038c851c7ce37d2f7625bdd9c44c1fe1300878490c04140d8b0878b7b05f4",
+      "originals": [
+        {
+          "path": "animations/milo/idle/right/00.png",
+          "sha256": "42e6b49eb0126d81fc5afbb79e1b2ba6fdaf1d13afb24b6bd417c17138727857"
+        },
+        {
+          "path": "animations/milo/idle/right/01.png",
+          "sha256": "f6245a2938fd329f952e9ab97556724d3f8e4bf5598c38e2e90a28ea490a0562"
+        },
+        {
+          "path": "animations/milo/idle/right/02.png",
+          "sha256": "720ddb2bfb462c58d781c9ef8579e52db9f1be0b9be03614d8bc245983e2a647"
+        },
+        {
+          "path": "animations/milo/idle/right/03.png",
+          "sha256": "f785d8fce69c31cd4e1f07f2432792b88a7a742057c140328280b7c9e333aef1"
+        },
+        {
+          "path": "animations/milo/idle/right/04.png",
+          "sha256": "ab808e92cd1028982ca5e164400ffcfdc6e2a2de548439ea3c23d3083f50d436"
+        },
+        {
+          "path": "animations/milo/idle/right/05.png",
+          "sha256": "3f53e55abc5a1634b1c9387d0eb666cd3a041f35b8634f40357a6e084fd6bc3b"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged; horizontal frames in animations.json order",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "milo_walk_r": {
+      "path": "assets/characters/milo_walk_r.png",
+      "sha256": "8a67169b838c865f602422c5ffa83136231f16af4a919dd8adb8eb30c7a230d0",
+      "originals": [
+        {
+          "path": "animations/milo/walk/right/00.png",
+          "sha256": "03d32c0d06254b8dc650880dc0f3e84e203bb9fcff95286946ee14504149f1be"
+        },
+        {
+          "path": "animations/milo/walk/right/01.png",
+          "sha256": "0ba6d1f528368589d21029f3252cd3bb23be38d25bc2f8ef50f866f1d97aeaed"
+        },
+        {
+          "path": "animations/milo/walk/right/02.png",
+          "sha256": "dc65d2287f34418b07d12b66be80204b30682b25fddd14d500c3558a3e187bd3"
+        },
+        {
+          "path": "animations/milo/walk/right/03.png",
+          "sha256": "2d3c61aef3f4c4288a8053afb715aa46815f37324d974302a6bf7984c766dc5e"
+        },
+        {
+          "path": "animations/milo/walk/right/04.png",
+          "sha256": "627fde110ce6481be5d0f61f852639585afde1ec5784615b1d41f9fccf0489f2"
+        },
+        {
+          "path": "animations/milo/walk/right/05.png",
+          "sha256": "b5e14e6b53f3ca3647ad9e61fcc4ffb20a0516a21ced370376f77bc65e98fa19"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged; horizontal frames in animations.json order",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "milo_jump_r": {
+      "path": "assets/characters/milo_jump_r.png",
+      "sha256": "3d8e11199091bab91a78a6b9fc18578aaf834572430ba93a647742d0762ba33e",
+      "originals": [
+        {
+          "path": "animations/milo/jump/right/00.png",
+          "sha256": "9a483b22f7edf129346675dc3b17d4e0f29068c875090edab7e21c2041d4bdaa"
+        },
+        {
+          "path": "animations/milo/jump/right/01.png",
+          "sha256": "aa247b2cfd41922f15bddd51b9258752eb4c10c9ce1333ba354f9dda53717e2b"
+        },
+        {
+          "path": "animations/milo/jump/right/02.png",
+          "sha256": "513076bcab577a6e8fcc3cfd27aa4e436deb70959a7e50078a8ec79a86a6bf8e"
+        },
+        {
+          "path": "animations/milo/jump/right/03.png",
+          "sha256": "423777eac1fec5e54f9f0ac25ee8ab01ea09f73ebbcc2a3f8c7a2067872d7d66"
+        },
+        {
+          "path": "animations/milo/jump/right/04.png",
+          "sha256": "9c95c869e9d5d6606f147b0592d0259d8fb009ad83cffae526610403674a91d3"
+        },
+        {
+          "path": "animations/milo/jump/right/05.png",
+          "sha256": "6b1a9d1da7c567f873a23c48c3e141db5037057dfb4d07d44fe8e3d12497e079"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged; horizontal frames in animations.json order",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "oliver_idle_r": {
+      "path": "assets/characters/oliver_idle_r.png",
+      "sha256": "8ed97da3b4f939af58f035b1bfe5ba959d101a205cacdddfed952dc492e78840",
+      "originals": [
+        {
+          "path": "animations/oliver/idle/right/00.png",
+          "sha256": "a6ecc647c878b8c4a688c4c611262cfc1f18fda2d04b4a7af227a398786f6774"
+        },
+        {
+          "path": "animations/oliver/idle/right/01.png",
+          "sha256": "23b6c0d2eaf1129777ad7f826b09b79d52dcef203c7106ca0a39a6d7276fd07f"
+        },
+        {
+          "path": "animations/oliver/idle/right/02.png",
+          "sha256": "2635d8372dead0efc95d470a242ed771d6fee8f0ce0c660c34469127f40b6277"
+        },
+        {
+          "path": "animations/oliver/idle/right/03.png",
+          "sha256": "ae5535898087493d3f8653a64e0d91d2419a7eeec8278821a1036a62efc7c62b"
+        },
+        {
+          "path": "animations/oliver/idle/right/04.png",
+          "sha256": "b24b9ff28abebb950943a69c0dd1e376f6ad7e230b129cb8116c429dadfe6b26"
+        },
+        {
+          "path": "animations/oliver/idle/right/05.png",
+          "sha256": "c425a1afe8396bfdd0ee602061840bc42eb231f2ea88e9ab5396836576d32309"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged; horizontal frames in animations.json order",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "oliver_walk_r": {
+      "path": "assets/characters/oliver_walk_r.png",
+      "sha256": "5b475090924b618592be874929ce45603ca57d47e45b3fb82131c0710c28d268",
+      "originals": [
+        {
+          "path": "animations/oliver/walk/right/00.png",
+          "sha256": "bd0b3e69e1a27ce7c7ae543381ef7c7fbffb0df7dea37f0872d895aa0e3cc9ea"
+        },
+        {
+          "path": "animations/oliver/walk/right/01.png",
+          "sha256": "1f3c46ee42dd5be7ae307fd756dd816ba46bc0b627eae2a360b11c4ddb2ea9a7"
+        },
+        {
+          "path": "animations/oliver/walk/right/02.png",
+          "sha256": "f67d50ba83567de0f02e1caa3bb34bbcf5f257c4b6c89943eaf1cb2b34531fac"
+        },
+        {
+          "path": "animations/oliver/walk/right/03.png",
+          "sha256": "32608d96cda471288367d239ca18a56ed64b2207d84c0342064179ec3aa6e45e"
+        },
+        {
+          "path": "animations/oliver/walk/right/04.png",
+          "sha256": "48d16258b8f2b8191de269ced4cfbd405b53c8574457e45c6296fa0338855fea"
+        },
+        {
+          "path": "animations/oliver/walk/right/05.png",
+          "sha256": "7464091b040fbba0527e3210a875c10687fdf8ec2e03a317cf3eb81700a3056e"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged; horizontal frames in animations.json order",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "rin_idle_r": {
+      "path": "assets/characters/rin_idle_r.png",
+      "sha256": "b4f3344ee61ff6bf865c33dd09f20c5396efc147023f4ba36e8da3b2d7bb7205",
+      "originals": [
+        {
+          "path": "animations/rin/idle/right/00.png",
+          "sha256": "af99ead4a7ee105972528c6a473dc2aa4f02b446bcbde2a40541aa8e1b3ad8e0"
+        },
+        {
+          "path": "animations/rin/idle/right/01.png",
+          "sha256": "5cd716c56953c1b7898d4222c12483815c80b27cde71fd405e6fc49d004462d9"
+        },
+        {
+          "path": "animations/rin/idle/right/02.png",
+          "sha256": "bbbbb0c46fe637bdbbebb64bd5bd49e907f8c0be2fdbda767b2c4dd0a2d1075d"
+        },
+        {
+          "path": "animations/rin/idle/right/03.png",
+          "sha256": "bbd0fc8aea211964cdfa45284c0d10debbb735e5c9e0aab90f055d3746375d0d"
+        },
+        {
+          "path": "animations/rin/idle/right/04.png",
+          "sha256": "69e2bd000eae52742e71b56552501a61725fffe7d8a9b0ea5388bcc9666be530"
+        },
+        {
+          "path": "animations/rin/idle/right/05.png",
+          "sha256": "a1906a01b64db3138adb4456f6829a6cbc8faf61564b35de6b9942732b8c568f"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged; horizontal frames in animations.json order",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "brass_locomotive": {
+      "path": "assets/props/locomotive.png",
+      "sha256": "5ead4b2ac737396de77a9d121bdeefd8c587ca4a4c4c1be1b53a98d1c8f05fae",
+      "originals": [
+        {
+          "path": "props/locomotive.png",
+          "sha256": "ba6b4d128b575d5b3919163c705647ae6e5db73fdba17407347f44f5649d71c5"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "brass_passenger_car": {
+      "path": "assets/props/passenger_car.png",
+      "sha256": "e8a8342acc07b4cda4861a2ec40499ca2304d8f919bc24c29bbfe88eb05c1fe5",
+      "originals": [
+        {
+          "path": "props/passenger_car.png",
+          "sha256": "f2501c39cbab61b50a621359b5f12070d209a35adbc21ac7fa9a4254405d3567"
+        }
+      ],
+      "transform": "native pixels; no resampling, trimming, recentering or quantization; alpha >=128 ->255, alpha <128 ->RGBA(0,0,0,0); retained RGB unchanged",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "bg_forest_track": {
+      "path": "assets/backgrounds/forest_track.png",
+      "sha256": "3b804eb1bf9d2d9c215455c5bc38c43c550d0bacb64e8745e59c2f7cac67b537",
+      "originals": [
+        {
+          "path": "backgrounds/forest_track.png",
+          "sha256": "3b804eb1bf9d2d9c215455c5bc38c43c550d0bacb64e8745e59c2f7cac67b537"
+        }
+      ],
+      "transform": "byte-exact copy; opaque RGB background; no alpha/color edits or resampling",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    },
+    "bg_willow_creek_station": {
+      "path": "assets/backgrounds/willow_creek_station.png",
+      "sha256": "0936f5557db61da0c681916683d57e8536cc476f699f2382777be28787c072ea",
+      "originals": [
+        {
+          "path": "backgrounds/willow_creek_station.png",
+          "sha256": "0936f5557db61da0c681916683d57e8536cc476f699f2382777be28787c072ea"
+        }
+      ],
+      "transform": "byte-exact copy; opaque RGB background; no alpha/color edits or resampling",
+      "decoded_pixels_verified": true,
+      "hand_polished": false
+    }
+  },
+  "limitations": [
+    "Mechanical alpha cleanup only; color/outline/accessory shimmer remains. No palette quantization or hand polish.",
+    "Foreground alpha threshold is not final aesthetic approval; inspect whiskers, spokes, cutouts and silhouettes in native integration.",
+    "Flattened backgrounds are not seamless or walkable foregrounds.",
+    "No scene/actor references or runtime animation integration changed."
+  ]
+}

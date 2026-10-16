@@ -1,0 +1,127 @@
+{
+  "purpose": "Import timing sidecar; informational until runtime integration. Not an assets-v1 schema extension.",
+  "source": "/Users/finngilbert/Documents/The Last Stop/the-last-stop-assets-sprits-images-Updated/animations.json",
+  "source_sha256": "d3d4ed490753cd86a3a5befd6faf5ea17e38ad235a130ed423d985d890f8fba0",
+  "clips": {
+    "milo_idle_r": {
+      "fps": 5,
+      "loop": true,
+      "root_motion": false,
+      "facing": "right",
+      "left_policy": "mirror right strip at runtime; equipment flips too",
+      "source_frame_order": [
+        "animations/milo/idle/right/00.png",
+        "animations/milo/idle/right/01.png",
+        "animations/milo/idle/right/02.png",
+        "animations/milo/idle/right/03.png",
+        "animations/milo/idle/right/04.png",
+        "animations/milo/idle/right/05.png"
+      ],
+      "frame_count": 6,
+      "pivot": [
+        48,
+        88
+      ]
+    },
+    "milo_walk_r": {
+      "fps": 9,
+      "loop": true,
+      "root_motion": false,
+      "facing": "right",
+      "left_policy": "mirror right strip at runtime; equipment flips too",
+      "source_frame_order": [
+        "animations/milo/walk/right/00.png",
+        "animations/milo/walk/right/01.png",
+        "animations/milo/walk/right/02.png",
+        "animations/milo/walk/right/03.png",
+        "animations/milo/walk/right/04.png",
+        "animations/milo/walk/right/05.png"
+      ],
+      "frame_count": 6,
+      "pivot": [
+        48,
+        88
+      ]
+    },
+    "milo_jump_r": {
+      "fps": 10,
+      "loop": false,
+      "root_motion": false,
+      "facing": "right",
+      "left_policy": "mirror right strip at runtime; equipment flips too",
+      "source_frame_order": [
+        "animations/milo/jump/right/00.png",
+        "animations/milo/jump/right/01.png",
+        "animations/milo/jump/right/02.png",
+        "animations/milo/jump/right/03.png",
+        "animations/milo/jump/right/04.png",
+        "animations/milo/jump/right/05.png"
+      ],
+      "frame_count": 6,
+      "pivot": [
+        48,
+        88
+      ]
+    },
+    "oliver_idle_r": {
+      "fps": 5,
+      "loop": true,
+      "root_motion": false,
+      "facing": "right",
+      "left_policy": "mirror right strip at runtime; equipment flips too",
+      "source_frame_order": [
+        "animations/oliver/idle/right/00.png",
+        "animations/oliver/idle/right/01.png",
+        "animations/oliver/idle/right/02.png",
+        "animations/oliver/idle/right/03.png",
+        "animations/oliver/idle/right/04.png",
+        "animations/oliver/idle/right/05.png"
+      ],
+      "frame_count": 6,
+      "pivot": [
+        48,
+        88
+      ]
+    },
+    "oliver_walk_r": {
+      "fps": 9,
+      "loop": true,
+      "root_motion": false,
+      "facing": "right",
+      "left_policy": "mirror right strip at runtime; equipment flips too",
+      "source_frame_order": [
+        "animations/oliver/walk/right/00.png",
+        "animations/oliver/walk/right/01.png",
+        "animations/oliver/walk/right/02.png",
+        "animations/oliver/walk/right/03.png",
+        "animations/oliver/walk/right/04.png",
+        "animations/oliver/walk/right/05.png"
+      ],
+      "frame_count": 6,
+      "pivot": [
+        48,
+        88
+      ]
+    },
+    "rin_idle_r": {
+      "fps": 5,
+      "loop": true,
+      "root_motion": false,
+      "facing": "right",
+      "left_policy": "mirror right strip at runtime; equipment flips too",
+      "source_frame_order": [
+        "animations/rin/idle/right/00.png",
+        "animations/rin/idle/right/01.png",
+        "animations/rin/idle/right/02.png",
+        "animations/rin/idle/right/03.png",
+        "animations/rin/idle/right/04.png",
+        "animations/rin/idle/right/05.png"
+      ],
+      "frame_count": 6,
+      "pivot": [
+        48,
+        88
+      ]
+    }
+  }
+}
