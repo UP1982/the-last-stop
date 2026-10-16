@@ -188,8 +188,22 @@ run_dev_editor_tests :: proc() {
     if scenario=="invalid-disk" {
         revision:=r.snapshot.revision
         path:=fmt.aprintf("%s/data/scenes/oliver_obstacle.json",r.root)
-        assert(os.write_entire_file(path,"{broken external content")==nil)
+        invalid:=os.get_env("TLS_E4_INVALID",context.temp_allocator)
+        if invalid=="version" {
+            doc:=json.clone_value(dev_document(r.snapshot).value)
+            object:=c.object(doc); object["schema_version"]=i64(999)
+            assert(os.write_entire_file(path,c.serialize(doc))==nil)
+        } else if invalid=="asset" {
+            doc:=json.clone_value(dev_document(r.snapshot).value)
+            objects:=c.object(c.get(doc,"objects")); handle:=c.object(objects["crank_handle"])
+            handle["asset"]="missing_e4_asset"
+            assert(os.write_entire_file(path,c.serialize(doc))==nil)
+        } else if invalid=="file" {
+            assert(os.remove(fmt.aprintf("%s/assets/backgrounds/forest_track.png",r.root))==nil)
+        } else { assert(os.write_entire_file(path,"{broken external content")==nil) }
         assert(!dev_action(&e,&g,&r,"discard-draft",nil,false))
+        assert(e.dirty && r.snapshot.revision==revision && e.baseline.revision==original)
+        assert(dev_start_apply(&e,&g,&r,false)); dev_test_poll(&e,&g,&r)
         assert(e.dirty && r.snapshot.revision==revision && e.baseline.revision==original)
         fmt.println("PASS E2 invalid external content retains draft on explicit reload"); return
     }

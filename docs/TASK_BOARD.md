@@ -38,7 +38,7 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 - [x] Resume after scene skip, quit, and reward replay.
 **Gate:** Tests in TEST_PLAN.md all pass, no duplicate keepsakes or unreachable handle.
 **Scope decision (Opus, 2026-10-16):** M4 covers game resilience (TEST_PLAN game cases + Astra T-M4-A tasks 1–6, 8). TEST_PLAN editor cases (E2 apply/undo/isolation, E3 dialogue/source/build/provider) are gated by E2/E3/E4, not M4; they remain required for final delivery.
-**Status:** automated game scope MET (Astra T-M4-R2 at c8fd7de; F1–F5 closed). Open: P3 ENOLCK misreported as 'another copy running' (saving still fails safely). Human-only: keyboard/focus/feel, min-size readability, 3 hand completions, fresh-player walkthrough.
+**Status:** automated game scope MET (Astra T-M4-R2 at c8fd7de; F1–F5 closed). P3 ENOLCK message fixed in T-E4-1. Human-only: keyboard/focus/feel, min-size readability, 3 hand completions, fresh-player walkthrough.
 
 ## M5: Presentation + playtest
 - [~] Original pixel art replacements and cozy animations. (batch 1 drawn: Milo/Oliver/Rin/Brass/2 backgrounds; 51 items in docs/art/MISSING_ART_SPEC.md pending)
@@ -78,11 +78,12 @@ Hazel/waterwheel; Felix/mirror signal; Bea/sleepy bear; Lumi/turntable; cozy und
 - [x] Actual check/build/run actions, logs, and truthful task/file-ownership status.
 - [x] Structured agent edits visible in the workspace; T3 remains the delegation provider.
 **Gate:** Edit dialogue and source, validate/build, and observe the change in the actual game; logs reflect real commands and task status reflects real orchestration.
-**Status:** web phase implemented (T-E3-1): 20 workspace + 12 editor UI + 8 edited-story tests, 37 JS assertions; native edited-dialogue run in disposable project. run-journey awaits E2's --preview-entry. Human usability (E4) pending.
+**Status:** web phase implemented (T-E3-1): 20 workspace + 12 editor UI + 8 edited-story tests, 37 JS assertions; native edited-dialogue run in disposable project. run-journey wired to --preview-entry (T-E4-1). Human usability (E4) pending.
 
 ## E4: Editor reliability — before final M5 acceptance
-- [ ] Run editor acceptance demonstration in EDITOR_SPEC.md.
-- [ ] Test malformed content, unknown versions, missing assets, conflicts and interrupted writes.
-- [ ] Verify undo/revert, restart persistence, preview isolation and release independence.
+- [x] Run editor acceptance demonstration in EDITOR_SPEC.md. (automated; build/evidence/e4/TRACEABILITY.md)
+- [x] Test malformed content, unknown versions, missing assets, conflicts and interrupted writes. (automated; build/evidence/e4/TRACEABILITY.md)
+- [x] Verify undo/revert, restart persistence, preview isolation and release independence. (automated; build/evidence/e4/TRACEABILITY.md)
 - [ ] Fresh-user editor-to-game walkthrough with recorded evidence.
 **Gate:** Visual authoring, agent editing, in-game editing and code/build workflow all work on the same project without data loss; release game runs with editor closed.
+**Status:** automated scope delivered (T-E4-1); Astra final review pending; HUMAN-ONLY: fresh-user walkthrough, physical pointer, physical keyboard/focus, min-size readability, assistive tech.

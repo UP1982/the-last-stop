@@ -165,6 +165,9 @@ class Workspace:
 
     def journal(self, transaction, value):
         path = '.studio/source-history/' + transaction + '.json'
+        self.atomic_record(path, value)
+
+    def atomic_record(self, path, value):
         parent, name = self.parent(path, internal=True, create=True)
         temp = 'record_' + secrets.token_hex(12)
         fd = None
@@ -186,6 +189,52 @@ class Workspace:
             except FileNotFoundError:
                 pass
             os.close(parent)
+
+    def draft_path(self, kind, identifier):
+        if kind not in ('scene', 'dialogue', 'source') or not isinstance(identifier, str):
+            raise self.Error(400, 'Unknown draft kind or ID')
+        if kind == 'source':
+            self.parts(identifier)
+        elif not re.fullmatch('[a-z0-9_]{1,128}', identifier):
+            raise self.Error(400, 'Invalid document draft ID')
+        key = digest((kind + ':' + identifier).encode())
+        return '.studio/drafts/' + self.bridge.project_key + '/' + key + '.json'
+
+    def read_draft(self, kind, identifier):
+        path = self.draft_path(kind, identifier)
+        # Create only private directories; no client-controlled path reaches them.
+        parent, _ = self.parent(path, internal=True, create=True)
+        os.close(parent)
+        try:
+            data, info = self.bytes(path, internal=True, limit=8 * MAX_FILE)
+        except self.Error as error:
+            if error.status == 404:
+                return {'sha256': None, 'value': None}
+            raise
+        try:
+            record = json.loads(data.decode('utf-8'))
+            if (record['schema_version'] != 1 or record['project_key'] != self.bridge.project_key
+                    or record['kind'] != kind or record['id'] != identifier or info.st_nlink != 1
+                    or not isinstance(record['value'], dict)):
+                raise ValueError()
+        except (ValueError, KeyError, TypeError, UnicodeError):
+            raise self.Error(409, 'Draft recovery record is invalid; retained on disk for inspection')
+        return {'sha256': digest(data), 'value': record['value']}
+
+    def write_draft(self, kind, identifier, expected, value):
+        path = self.draft_path(kind, identifier)
+        if expected is not None and (not isinstance(expected, str) or not re.fullmatch('[a-f0-9]{64}', expected)):
+            raise self.Error(400, 'Invalid draft revision')
+        if not isinstance(value, dict) or len(json.dumps(value, ensure_ascii=False).encode()) > 6 * MAX_FILE:
+            raise self.Error(400, 'Draft must be a bounded JSON object; download large drafts')
+        with self.write_lock, self.managed_lock():
+            current = self.read_draft(kind, identifier)
+            if current['sha256'] != expected:
+                raise self.Error(409, 'Another editor changed this recovery draft; memory draft kept. Download before reloading')
+            record = dict(schema_version=1, project_key=self.bridge.project_key, kind=kind,
+                          id=identifier, value=value, updated_at=now())
+            self.atomic_record(path, record)
+            return self.read_draft(kind, identifier)
 
     @contextmanager
     def managed_lock(self):
@@ -463,15 +512,15 @@ class Workspace:
                 raise self.Error(409, 'Artifact changed; rebuild: ' + command)
             return job
 
-    def run_scene(self):
+    def run_scene(self, entry='scene'):
         with self.jobs_lock:
             job = self.artifact_path('build-dev')
             loaded = self.bridge.content('inspect-scene')
             if loaded['exit_code'] != 0:
                 raise self.Error(409, 'Saved content is invalid; preview was not launched')
-            status = self.bridge.launch_preview(job['artifact'])
+            status = self.bridge.launch_preview(job['artifact'], entry)
             status.update(artifact=job['artifact'], artifact_sha256=job['artifact_sha256'],
-                          source_fingerprint=job['source_before'], loaded_content_revision=loaded['result']['graph_revision'])
+                          entry=entry, source_fingerprint=job['source_before'], loaded_content_revision=loaded['result']['graph_revision'])
             return status
 
     def tasks(self):

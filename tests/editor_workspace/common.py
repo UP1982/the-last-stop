@@ -18,13 +18,17 @@ spec.loader.exec_module(server_module)
 
 
 def project(destination):
-    data = subprocess.check_output(['git', 'archive', '21d6be9'], cwd=str(ROOT))
+    data = subprocess.check_output(['git', 'archive', 'HEAD'], cwd=str(ROOT))
     with tarfile.open(fileobj=io.BytesIO(data)) as archive:
         archive.extractall(str(destination))
+    # Include the integrated working source; E4 delivery is intentionally uncommitted.
+    for name in ('src', 'shared', 'tools', 'editor', 'tests', 'scripts'):
+        shutil.copytree(ROOT / name, destination / name, dirs_exist_ok=True, ignore=shutil.ignore_patterns('__pycache__'))
+    shutil.copy2(ROOT / 'README.md', destination / 'README.md')
     # Local Git history for HEAD diffs; no account or remote mutation.
     subprocess.run(['git', 'init', '-q'], cwd=str(destination), check=True)
     subprocess.run(['git', 'add', '.'], cwd=str(destination), check=True)
-    subprocess.run(['git', '-c', 'user.name=Disposable E3 test', '-c', 'user.email=e3@example.invalid', 'commit', '-qm', 'Disposable base 21d6be9'], cwd=str(destination), check=True)
+    subprocess.run(['git', '-c', 'user.name=Disposable E3 test', '-c', 'user.email=e3@example.invalid', 'commit', '-qm', 'Disposable integrated working source'], cwd=str(destination), check=True)
     (destination / 'build').mkdir(exist_ok=True)
     result = subprocess.run([shutil.which('odin'), 'build', 'tools/content', '-out:build/tls-content'], cwd=str(destination), capture_output=True)
     assert result.returncode == 0, result.stderr.decode()
@@ -43,7 +47,8 @@ class Client:
         if token:
             values['X-Editor-Token'] = self.bridge.token
         values.update(headers or {})
-        connection.request('POST', '/api/command', json.dumps(body), values)
+        path = '/api/draft' if isinstance(body, dict) and body.get('command') == 'write-draft' else '/api/command'
+        connection.request('POST', path, json.dumps(body), values)
         response = connection.getresponse()
         status, result = response.status, json.loads(response.read())
         connection.close()

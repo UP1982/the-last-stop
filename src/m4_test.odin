@@ -55,6 +55,12 @@ run_m4_tests :: proc() {
         if command=="one-save" { _=persist_game(&g) }
     case "unavailable":
         assert(!g.save.owner); new_run(&g); assert(!g.save.active && g.mode==.Title)
+    case "lock-unavailable":
+        assert(!g.save.owner && !g.save.busy)
+        assert(g.save.message=="Saving is unavailable on this drive.")
+        new_run(&g); continue_run(&g)
+        assert(!g.save.active && g.mode==.Title)
+        assert(save_atomic(&g.save,{.Arrival,{handle=.Installed,phase=.Cleared,crank_progress=1}},g.scene)==.Failed)
     case "busy":
         assert(g.save.busy && !g.save.owner)
         m4_press(&g,0); new_run(&g); continue_run(&g)

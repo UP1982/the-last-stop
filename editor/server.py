@@ -22,11 +22,13 @@ from urllib.parse import unquote, urlsplit
 SCENE = "oliver_obstacle"
 CHAPTER = "oliver_flower_market"
 MAX_BODY = 262144
+DRAFT_MAX_BODY = 8 * 1024 * 1024
 WEB = Path(__file__).resolve().parent / "web"
 STATIC = {"/": ("index.html", "text/html"),
           "/style.css": ("style.css", "text/css"),
           "/logic.js": ("logic.js", "text/javascript"),
           "/app.js": ("app.js", "text/javascript"),
+          "/drafts.js": ("drafts.js", "text/javascript"),
           "/studio.js": ("studio.js", "text/javascript")}
 
 
@@ -160,14 +162,14 @@ class Bridge:
         return {"asset_id": asset_id, "asset": asset, "mime_type": "image/png", "width": width, "height": height,
                 "base64": base64.b64encode(data).decode("ascii"), "graph_revision": manifest["result"]["graph_revision"]}
 
-    def launch_preview(self, executable):
+    def launch_preview(self, executable, entry="scene"):
         self.stop_preview()
         if self.preview_log is not None:
             self.preview_log.close()
         self.session = "editor_" + secrets.token_hex(12)
         self.preview_log = tempfile.TemporaryFile()
         argv = [executable, "--project-root", str(self.root), "--preview-scene", SCENE,
-                "--preview-session", self.session, "--dump-scene"]
+                "--preview-session", self.session, "--preview-entry", entry, "--dump-scene"]
         self.preview = subprocess.Popen(argv, cwd=str(self.root), stdin=subprocess.DEVNULL,
                                         stdout=self.preview_log, stderr=self.preview_log)
         return self.preview_status()
@@ -183,11 +185,17 @@ class Bridge:
                    "write-source": {"path", "expected_sha256", "text", "request_id"},
                    "search-project": {"text", "limit"}, "diff-head": {"path"},
                    "run-scene": set(), "run-journey": set(), "job-status": {"job_id", "cursor"},
-                   "stop-job": {"job_id"}, "task-status": set()}
+                   "stop-job": {"job_id"}, "task-status": set(),
+                   "read-draft": {"kind", "id"},
+                   "write-draft": {"kind", "id", "expected_sha256", "value"}}
         schemas.update({name: set() for name in workspace_module.COMMANDS})
         if command not in schemas or set(body) != schemas[command] | {"command"}:
             raise BridgeError(400, "Unknown command or unsupported command arguments")
         w = self.workspace
+        if command == "read-draft":
+            return w.read_draft(body["kind"], body["id"])
+        if command == "write-draft":
+            return w.write_draft(body["kind"], body["id"], body["expected_sha256"], body["value"])
         # Long-running commands execute on worker threads, never under the transport lock.
         if command in workspace_module.COMMANDS:
             return w.start_job(command)
@@ -207,8 +215,6 @@ class Bridge:
             return w.diff(body["path"])
         if command == "task-status":
             return w.tasks()
-        if command == "run-journey":
-            raise BridgeError(409, "Unavailable until E2 adds --preview-entry chapter")
         with self.lock:
             if command == "apply-edit":
                 request = body["request"]
@@ -237,8 +243,8 @@ class Bridge:
                 return self.stop_preview()
             if command == "preview-status":
                 return self.preview_status()
-            if command == "run-scene":
-                return w.run_scene()
+            if command in ("run-scene", "run-journey"):
+                return w.run_scene("chapter" if command == "run-journey" else "scene")
             # E1 compatibility name now goes through the same stale-build guard.
             return w.run_scene()
 
@@ -303,15 +309,16 @@ class Handler(BaseHTTPRequestHandler):
                 self.guard(api=True, mutation=post)
                 if not post and path == "/api/scene":
                     value = self.server.bridge.command({"command": "inspect-scene"})
-                elif post and path == "/api/command":
+                elif post and path in ("/api/command", "/api/draft"):
                     if self.headers.get_content_type() != "application/json" or self.headers.get("Transfer-Encoding"):
                         raise BridgeError(400, "Expected bounded JSON body")
                     try:
                         size = int(self.headers.get("Content-Length", "-1"))
                     except ValueError:
                         size = -1
-                    if size < 1 or size > MAX_BODY:
-                        raise BridgeError(413, "Body must be 1..262144 bytes")
+                    limit = DRAFT_MAX_BODY if path == "/api/draft" else MAX_BODY
+                    if size < 1 or size > limit:
+                        raise BridgeError(413, "Body must be 1..{} bytes".format(limit))
                     try:
                         def invalid_number(_value):
                             raise ValueError("Non-finite number")
@@ -326,6 +333,8 @@ class Handler(BaseHTTPRequestHandler):
                                           parse_constant=invalid_number, object_pairs_hook=unique_pairs)
                     except (ValueError, UnicodeError, RecursionError):
                         raise BridgeError(400, "Malformed JSON")
+                    if path == "/api/draft" and (not isinstance(body, dict) or body.get("command") != "write-draft"):
+                        raise BridgeError(400, "Recovery endpoint accepts only write-draft")
                     value = self.server.bridge.command(body)
                 else:
                     raise BridgeError(404, "Unknown API endpoint")

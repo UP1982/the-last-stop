@@ -144,7 +144,11 @@ acquire_save_profile :: proc(p:^Save_Profile) {
     if p.lock_fd<0 { return }
     if posix.fstat(p.lock_fd,&p.lock_identity)!=nil || !posix.S_ISREG(p.lock_identity.st_mode) || p.lock_identity.st_nlink!=1 { return }
     lock:=posix.flock{l_type=.WRLCK,l_whence=0}
-    if posix.fcntl(p.lock_fd,.SETLK,&lock)<0 { p.busy=true; return }
+    if posix.fcntl(p.lock_fd,.SETLK,&lock)<0 {
+        error:=posix.errno()
+        p.busy=error==.EACCES || error==.EAGAIN
+        return
+    }
     p.owner=true
     if !save_profile_identity(p) { p.owner=false }
 }
@@ -256,7 +260,7 @@ configure_save_profile :: proc(g: ^Game_State, test_mode:=false) {
     acquire_save_profile(&g.save)
     if !g.save.owner {
         if g.save.busy { g.save.message="Another copy of The Last Stop is open." }
-        else { g.save.message="Save location unavailable. Restart to retry." }
+        else { g.save.message="Saving is unavailable on this drive." }
         return
     }
     if o.preview_scene!="" {

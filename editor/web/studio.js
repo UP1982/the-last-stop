@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const {command} = window.TLSStudio, {clone, History, SourceBuffer} = TLS;
+  const {command, drafts} = window.TLSStudio, {clone, History, SourceBuffer} = TLS;
   const $ = id => document.getElementById(id);
   const el = (tag, text) => { const node = document.createElement(tag); if (text != null) node.textContent = text; return node; };
   const message = (id, text) => { $(id).textContent = text; };
@@ -12,10 +12,15 @@
   const buffer = () => buffers.get(currentPath);
   const key = (type, id) => `tls-e3:${projectKey}:${type}:${id}`;
   function store(type, id, value) {
+    drafts.store(type, id, value);
     try { localStorage.setItem(key(type, id), JSON.stringify(value)); }
-    catch (_) { message(type === 'dialogue' ? 'dialogue-status' : 'source-state', 'Browser storage unavailable; download drafts before closing.'); }
+    catch (_) { message(type === 'dialogue' ? 'dialogue-status' : 'source-state', 'Browser fallback unavailable. Check project recovery status below; download if recovery fails.'); }
   }
-  function retrieve(type, id) { try { return JSON.parse(localStorage.getItem(key(type, id)) || 'null'); } catch (_) { return null; } }
+  async function retrieve(type, id) {
+    const durable = await drafts.read(type, id);
+    if (durable) return durable;
+    try { return JSON.parse(localStorage.getItem(key(type, id)) || 'null'); } catch (_) { return null; }
+  }
   function download(name, data) {
     const url = URL.createObjectURL(new Blob([data], {type: 'text/plain;charset=utf-8'}));
     const link = el('a'); link.href = url; link.download = name; link.click();
@@ -86,8 +91,9 @@
     const response = await inspect(id), disk = response.result;
     if (!dialogues.has(id) || discard) {
       let next = new History(disk.authored, disk.graph_revision);
+      const saved = await retrieve('dialogue', id);
       if (!discard) {
-        try { const saved = retrieve('dialogue', id); if (saved) { const recovered = History.recover(saved); if (recovered.dirty && recovered.draft.id === id) next = recovered; } } catch (_) { /* Disk remains authoritative. */ }
+        try { if (saved) { const recovered = History.recover(saved); if (recovered.dirty && recovered.draft.id === id) next = recovered; } } catch (_) { /* Disk remains authoritative. */ }
       }
       dialogues.set(id, next);
     }
@@ -253,8 +259,8 @@
   async function openFile(path, line = null, column = 1, discard = false) {
     if (!buffers.has(path) || discard) {
       const file = await command('read-file', {path}); let b = new SourceBuffer(file);
+      const recovered = await retrieve('source', path);
       if (!discard) {
-        const recovered = retrieve('source', path);
         if (recovered && recovered.path === path && typeof recovered.text === 'string' && recovered.text !== recovered.base) {
           Object.assign(b, recovered); b.writable = file.writable; b.observe(file);
         }
@@ -306,7 +312,7 @@
     $('saved-choice').showModal();
   }
   async function start(name) {
-    if (name === 'run-scene') { const response = await command(name); job = null; previewMeta = response; message('job-state', response.running ? `Native preview running · PID ${response.pid}` : `Native preview exit ${response.exit_code}`); message('job-metadata', JSON.stringify(response, null, 2)); return; }
+    if (name === 'run-scene' || name === 'run-journey') { const response = await command(name); job = null; previewMeta = response; message('job-state', response.running ? `Native preview running · PID ${response.pid}` : `Native preview exit ${response.exit_code}`); message('job-metadata', JSON.stringify(response, null, 2)); return; }
     previewMeta = null;
     const response = await command(name); job = response.job_id; cursor = 0; message('job-log', ''); await pollJob();
   }

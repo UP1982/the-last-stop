@@ -101,6 +101,11 @@ class E2(unittest.TestCase):
             fcntl.lockf(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);self.invoke('busy');self.assertEqual(hashes(self.root),self.before)
         finally:lock.close()
     def test_13e_invalid_external_disk(self):self.invoke('invalid-disk')
+    def test_13ea_unknown_version_and_missing_asset_keep_native_draft(self):
+        scene=self.root/'data/scenes/oliver_obstacle.json';good=scene.read_bytes()
+        for invalid in ('version','asset','file'):
+            scene.write_bytes(good)
+            self.invoke('invalid-disk',dict(self.env,TLS_E4_INVALID=invalid))
     def test_13f_crash_both_sides_of_rename(self):
         scene=self.root/'data/scenes/oliver_obstacle.json';original=scene.read_bytes()
         for scenario,point in [('crash-before','before_rename'),('crash-after','after_rename')]:

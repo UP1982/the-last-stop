@@ -29,12 +29,14 @@
     if (!response.ok) throw Error(value.error || `Bridge HTTP ${response.status}`);
     return value;
   }
-  const command = (name, extra = {}) => api('/api/command', {command: name, ...extra});
-  window.TLSStudio = {command, token, sceneDirty: () => !!model && model.dirty};
+  const command = (name, extra = {}) => api(name === 'write-draft' ? '/api/draft' : '/api/command', {command: name, ...extra});
+  const drafts = TLSDrafts.create(command, text => { $('draft-state').textContent = text; });
+  window.TLSStudio = {command, token, drafts, sceneDirty: () => !!model && model.dirty};
   function persist() {
     if (!storageKey || !model) return;
+    drafts.store('scene', 'oliver_obstacle', model.serialize());
     try { localStorage.setItem(storageKey, JSON.stringify(model.serialize())); }
-    catch (_) { setMessage('Draft is in memory only: browser storage is unavailable or full. Download it before closing.'); }
+    catch (_) { setMessage('Browser fallback unavailable. Check project recovery status below; download if recovery fails.'); }
   }
   function current() { return model && selected.collection ? model.draft[selected.collection][selected.id] : null; }
   function controls() {
@@ -74,10 +76,11 @@
       storageKey = `tls-e1-scene-v2:${value.project_key}:oliver_obstacle`;
       model = new History(result.authored, result.graph_revision);
       external = false; $('external').hidden = true;
+      const durable = await drafts.read('scene', 'oliver_obstacle');
       let recovered = false;
       if (!discard) {
         try {
-          const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+          const saved = durable || JSON.parse(localStorage.getItem(storageKey) || 'null');
           if (saved) {
             const candidate = History.recover(saved);
             if (candidate.dirty) {
@@ -87,7 +90,7 @@
           }
         } catch (_) { setMessage('An unreadable browser draft was ignored. Disk content is loaded.'); }
       }
-      changed(recovered ? 'Recovered your unsaved browser draft. Disk was not changed.' : 'Scene loaded. Select an object, then drag or edit its properties.');
+      changed(recovered ? 'Recovered your unsaved project draft. Disk was not changed.' : 'Scene loaded. Select an object, then drag or edit its properties.');
       frame();
     } catch (error) { setMessage(error.message); }
     finally { busy = false; controls(); }

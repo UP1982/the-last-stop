@@ -141,7 +141,7 @@ class BridgeTests(unittest.TestCase):
         self.assertRegex(value["session"], r"^editor_[a-f0-9]{24}$")
         argv = popen.call_args.args[0]
         self.assertEqual(argv, [str(self.root / "build/the-last-stop-dev"), "--project-root", str(self.root),
-                                "--preview-scene", "oliver_obstacle", "--preview-session", value["session"], "--dump-scene"])
+                                "--preview-scene", "oliver_obstacle", "--preview-session", value["session"], "--preview-entry", "scene", "--dump-scene"])
         self.assertNotIn("shell", popen.call_args.kwargs)
         self.bridge.close()
         process.terminate.assert_called_once()

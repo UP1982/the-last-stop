@@ -212,7 +212,7 @@ draw_game :: proc(game: Game_State) {
             center_text("Progress in this window won't be saved.",202,20,CREAM)
             center_text("Close this window and use the first copy.",234,20,MINT)
             menu_item("Quit",0,game.selection,270)
-        } else if game.save.message!=nil { center_text(game.save.message,342,20,CREAM) }
+        } else if game.save.message!=nil { center_text(game.save.message,334,20,CREAM) }
         center_text("Arrows / W S  -  Enter / Space / Z", 302, 20, MINT)
     case .Confirm_New:
         center_text("Replace existing run?",80,40,CREAM)

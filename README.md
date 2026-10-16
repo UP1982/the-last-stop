@@ -80,6 +80,69 @@ odin run src -define:M0_SELF_TEST=true
 
 Verified compiler for this foundation: Odin `dev-2026-10:84bc3fc21` on macOS arm64.
 
+## Studio and development preview
+
+Start the local editor from the checkout root:
+
+```sh
+mkdir -p build
+odin build tools/content -out:build/tls-content
+python3 -B editor/server.py --project-root "$PWD"
+```
+
+Open the printed tokenized loopback URL. Studio has Scene, Dialogue, Assets &
+provenance, Coding workspace, and Tasks & ownership panels. In Coding workspace,
+**Build dev game**, then **Run scene** for the puzzle or **Run journey** for the
+whole chapter. Both run the actual game with a fresh isolated preview profile.
+A changed source file or executable requires another successful build. Unsaved
+buffers require an explicit saved-file choice; Save scene/document/source applies
+to its own panel. Task status shows recorded evidence and last observations;
+T3 remains responsible for delegation.
+
+Scene, dialogue and source recovery drafts are atomically retained under
+`.studio/drafts/<canonical-project-key>/`. They survive bridge restarts and port
+changes, retain original revision/hash preconditions, and never apply themselves
+to authored files. Wait for “Recovery draft saved in this project” before closing;
+failed/oversized recovery writes stay visible and require Download draft.
+Browser storage provides an additional fallback. Moving the project changes its
+canonical identity; download drafts before moving it. Recovery/history is local
+private development data and is not required by the release game.
+
+For source ownership reservations, launch with e.g.
+`python3 -B editor/server.py --project-root "$PWD" --read-only src --read-only shared`.
+See [editor/README.md](editor/README.md) for commands, confinement and conflict handling.
+
+Direct DEV launch (omit `--preview-entry chapter` to start at the puzzle):
+
+```sh
+odin build src -define:DEV_TOOLS=true -out:build/the-last-stop-dev
+./build/the-last-stop-dev --project-root "$PWD" \
+  --preview-scene oliver_obstacle --preview-session my-journey --preview-entry chapter
+```
+
+DEV controls: **F3** toggles read-only geometry/ID overlays; **F4** opens the
+inspector in an isolated preview. Select a stable ID, edit an integer property,
+then explicitly **Apply / Cmd+S**. **Cmd+Z / Undo saved** restores the last applied
+before-image with revision checking. **F6** pauses/runs editor simulation, **F7**
+steps once, **F8** resets the draft to unsolved play; **Discard disk** reloads
+validated saved content. Normal DEV player profiles permit overlays only.
+**X skips a story scene; Esc pauses.** Release builds exclude the inspector and
+reject preview flags. Close Studio with Ctrl+C; it stops its owned preview.
+
+The combined check includes content, runtime, editor UI, workspace and reliability
+suites. Native evidence is separate:
+
+```sh
+./scripts/check.sh
+python3 -B tests/dev_editor/native.py
+python3 -B tests/editor_workspace/native_demo.py --journeys
+```
+
+`tests/editor_reliability/native_demo.py` coordinates the disposable E4 browser
+walkthrough; its file-based test coordinator is not a Studio command endpoint.
+Physical editor input, accessibility and a fresh-user walkthrough remain human
+acceptance checks.
+
 ## Package map
 - `AGENTS.md` project-wide instructions for every agent
 - `prompts/` ready-to-paste agent briefs
@@ -89,8 +152,8 @@ Verified compiler for this foundation: Odin `dev-2026-10:84bc3fc21` on macOS arm
 - `docs/TASK_BOARD.md` phased milestones, deliverables and test gates
 - `docs/TEST_PLAN.md` manual automated testing expectations
 - `docs/ART_AUDIO_GUIDE.md` assets and atmosphere
-- `data/chapters/chapter_01.json` illustrative content manifest, not wired to runtime yet
-- `src/main.odin` minimal rendering shell
+- `data/chapters/chapter_01.json` active versioned Chapter 1 content graph
+- `src/main.odin` native Chapter 1 runtime and DEV inspector integration
 - `scripts/` launch/build helpers
 
 ## Definition of done for vertical slice
@@ -106,8 +169,7 @@ M2 puzzle: find the handle on the shed shelf, E/Enter to pick it up, then
 E/Enter at the winch to install it. Release and press again to start the automatic
 crank. Away from a focused object, E/Enter drops a carried handle safely onto the
 walking ground. Once the branch lifts, R returns to Brass from anywhere; E/Enter
-at Brass also returns. State-derived hints appear at the top. The returned screen
-is the M2 endpoint; Chapter 1 story presentation remains for M3.
+at Brass also returns. State-derived hints appear at the top. Returning to Brass continues the journey to Clover Market, the keepsake and end card.
 
 Save v2 uses `~/Library/Application Support/The Last Stop/saves/chapter_01.json`,
 independent of launch directory. `--save-dir /absolute/directory` overrides
