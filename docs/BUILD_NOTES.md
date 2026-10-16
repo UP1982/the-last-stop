@@ -37,7 +37,11 @@ macOS 27.2 arm64; Odin `dev-2026-10:84bc3fc21`; bundled vendor:raylib 6.0. No ex
 ## 640x360 migration (T-RES-640, Sol)
 - Canvas 640x360, window 1280x720 default / 640x360 min. Physics/collision/world doubled (footprint 24x32). Scene schema v2 (v1 old-unit scenes rejected). Save v2: v1 dropped_feet doubled then safety-checked. All suites + check.sh exit 0; 3,000-tick normalized trace matches pre-migration baseline; native captures at both sizes (build/evidence/res640/).
 
+## 640 review (Astra T-RES-R1): ACCEPT
+- 874,404 viewport sizes, 11-checkpoint real v1→v2 save migration, 27 geometry arrays, restore version guards all pass.
+
 ## Open issues
+- One transient native initial-window-width assertion failure seen once in review; not reproduced. Watch for it.
 - Multiple simultaneous game instances aren't coordinated on the save file (out of contract scope).
 - B2: hint/response strings live in one marked table in src/hints.odin pending a content-schema extension (fold into story schema v2).
 - Debug labels overlap at puzzle entry (branch/Milo/brass) — dev overlay readability, revisit in M5.
