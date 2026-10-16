@@ -1,0 +1,494 @@
+Title: The Last Stop
+Credit: A game screenplay
+Author: Story draft for development
+Draft date: October 16, 2026
+Notes: Proposed full story using the existing asset cast. Gameplay passages describe player-controlled action. This draft does not replace the canonical game bible or shipped dialogue.
+
+# Prologue — A place at the window
+
+EXT. WILLOW CREEK STATION - LATE AFTERNOON
+
+Autumn leaves settle between the sleepers. A platform lamp flickers, then holds.
+
+BRASS, a small burgundy locomotive, waits beside the platform. Its carriage windows glow amber.
+
+MILO, a small ginger cat with a red scarf and a well-used backpack, studies the station timetable. He turns his head sideways. The timetable remains unhelpful.
+
+RIN, a raccoon with a satchel of tools, emerges from behind the bench carrying a loose wooden slat.
+
+RIN
+First day on this line?
+
+Milo nods.
+
+RIN
+Brass knows the way. You look after the passengers.
+
+Brass gives a low whistle. Milo's ears rise.
+
+Beyond the main platform is a short siding and a second, unused boarding place. Leaves fill its entrance. A faded sign hangs crooked above it.
+
+Milo points toward the sign.
+
+RIN
+The Last Stop. We used to have supper there when the lamps came on.
+
+She tests the loose slat against the bench.
+
+RIN
+I thought I'd mend a few things. See who turns up.
+
+One end of the slat falls. Milo catches it with a paw.
+
+Rin smiles. Together, they rest it safely on the bench.
+
+RIN
+That's a start.
+
+GAMEPLAY: The player walks the short platform and interacts with Brass's door. Rin's bench interaction is staged; it is not a separate puzzle. Approaching the old platform offers one optional look, without opening a new level.
+
+Oliver's voice carries from the other end of the shelter.
+
+OLIVER (O.S.)
+Excuse me!
+
+# Chapter One — Oliver and the flower market
+
+EXT. WILLOW CREEK STATION - CONTINUOUS
+
+OLIVER, a rabbit in a scarf, steadies a paper-wrapped flowerpot on top of his travel bag. One long ear has caught in the bag's strap.
+
+OLIVER
+Does this one go to Clover Market?
+
+Milo nods, then gently frees the ear.
+
+OLIVER
+Oh, good. My flowers are beginning to think I made it up.
+
+He boards sideways to protect the pot. His bag follows a moment later.
+
+Rin raises a paw from beside the bench. Milo waves back.
+
+Brass whistles. The train pulls away.
+
+INT. BRASS'S CARRIAGE - TRAVEL
+
+Oliver sits with the flowerpot beside him. He turns it toward the window.
+
+OLIVER
+They've been on the kitchen table all week. I thought they might enjoy meeting other flowers.
+
+Milo blinks at the pot. The unopened bud does nothing.
+
+Oliver turns it a little farther.
+
+EXT. FOREST TRACK - LATER
+
+Brass slows to a comfortable stop.
+
+A fallen branch lies across the rails. A rope runs from the branch to an old trackside winch. The winch's axle is bare.
+
+Milo steps down. Oliver leans out of the carriage window.
+
+OLIVER
+I can hold the flowers.
+
+He looks down at the pot already in his paws.
+
+OLIVER
+I've had practice.
+
+GAMEPLAY: The player inspects the winch, follows the short path to an open tool shelter, picks up its visible handle, and returns. Installing the handle and pressing Interact starts an automatic crank animation. The rope tightens and draws the branch into a safe recess beside the track. No timer or repeated tapping is required.
+
+OPTIONAL: A snail shelters beneath a leaf. Interacting makes the snail raise its feelers. Milo crouches and waves one paw. Neither is in a hurry.
+
+The branch settles. Brass answers with two pleased notes.
+
+Milo dusts his paws, checks the clear track, and climbs aboard.
+
+EXT. CLOVER MARKET HALT - LATER
+
+A small flower stall stands beside a platform awning. There is time to browse; nobody is packing up around Oliver.
+
+Oliver lifts his pot from the seat. One flower has opened.
+
+OLIVER
+I was worried they wouldn't bloom in time.
+
+He shows Milo the blossom.
+
+OLIVER
+I suppose they just needed a little trip.
+
+He folds a spare piece of wrapping paper into a crooked flower and sets it on the carriage windowsill.
+
+OLIVER
+For your window.
+
+Milo taps one paper petal. It springs back.
+
+Oliver notices a handwritten card beside the stall: WILLOW CREEK PLATFORM SUPPER — ALL WELCOME. A small sketch of Rin sits beneath the words.
+
+OLIVER
+Oh. I'll take some flowers back for that. It's a lovely walk from here.
+
+Milo looks from the card to his paper flower.
+
+Brass's whistle carries over the stalls.
+
+[[Vertical slice ending: hold on the paper flower, then show “A little further down the line…” and return to the menu. The full game continues below.]]
+
+# Chapter Two — Hazel and the quiet crossing
+
+EXT. CLOVER MARKET HALT - LATER
+
+HAZEL, an old tortoise wearing a broad hat, waits beside a small cloth bag.
+
+HAZEL
+Riverbend, please. My sister says the kettle is on.
+
+She lifts her bag, considers the carriage step, and looks up at Milo.
+
+HAZEL
+It may be on for a while.
+
+Milo waits beside the open door. Hazel boards at her own pace.
+
+INT. BRASS'S CARRIAGE - TRAVEL
+
+Hazel admires the paper flower.
+
+HAZEL
+Someone's made themselves comfortable.
+
+Milo glances at his own empty seat. Hazel pats the cushion opposite her.
+
+He sits. For a few seconds they simply watch the trees.
+
+EXT. RIVER CROSSING - LATER
+
+A crossing arm blocks the railway. Beside it, a waterwheel stands still. Leaves have gathered at the mouth of its little feeder channel.
+
+Milo steps down. Hazel watches a worn stone beside the track.
+
+HAZEL
+We used to stop here for blackberries.
+
+She studies the brambles.
+
+HAZEL
+They've kept the place.
+
+GAMEPLAY: The player lifts the leaf blockage from a reachable channel entrance, then moves a sluice panel to direct water toward the wheel. The wheel turns slowly; a visible linkage raises the crossing arm. Both actions remain reversible until the train departs. A dry alternate channel makes the effect of the sluice readable.
+
+OPTIONAL: Inspecting the stone reveals a small, old carving of two tortoises. Hazel adjusts her hat to hide a smile. No extra dialogue is required.
+
+EXT. RIVERBEND HALT - LATER
+
+Riverside houses glow beyond the platform. A second tortoise, HAZEL'S SISTER, appears beneath a doorway lamp. She uses a simply recolored, distinguishable Hazel sprite for this brief staged appearance.
+
+HAZEL'S SISTER
+There you are.
+
+HAZEL
+I said I'd come.
+
+HAZEL'S SISTER
+You did. In April.
+
+They embrace without hurrying.
+
+Hazel returns to the train for her bag. She places a smooth, leaf-shaped river stone beside Milo's flower.
+
+HAZEL
+For keeping the windowsill company.
+
+She spots Rin's supper card pinned beside the carriage door, matching the market notice.
+
+HAZEL
+We can take the footpath back to Willow Creek after tea. She'll pretend it's too far. Bring an extra cushion.
+
+Her sister is already fetching a second shawl.
+
+# Chapter Three — Felix and the sleepy tunnel
+
+EXT. RIVERBEND HALT - CONTINUOUS
+
+FELIX, a fox in a blue coat, has been looking at an envelope. The envelope has been folded and unfolded along its edges.
+
+FELIX
+Could you stop at Fern Tunnel?
+
+Milo looks at the envelope.
+
+FELIX
+It's only an invitation.
+
+A pause.
+
+FELIX
+I've made rather a journey of it.
+
+INT. BRASS'S CARRIAGE - TRAVEL
+
+Felix places the envelope on his knee, then in his pocket, then on his knee again.
+
+Milo slides a clean saucer across the table. Felix sets the letter on it, out of reach of his own fidgeting paws.
+
+FELIX
+Thank you.
+
+EXT. FERN TUNNEL APPROACH - LATER
+
+The stone tunnel is lit by warm lamps. HUGO, a bear with a red scarf, is asleep on the broad verge at its entrance. One large boot and his rolled blanket extend across a rail.
+
+Brass stops well clear. Milo and Felix look out.
+
+FELIX
+That's Hugo.
+
+Hugo snores. A leaf trembles on his nose.
+
+FELIX
+He said he'd meet me somewhere quiet.
+
+A wicker basket rests at the bottom of a shallow grassy slope. Its handle is caught on a root. A shaded bench stands safely away from the tracks.
+
+GAMEPLAY: Milo inspects the basket, frees its handle, and carries it along the level return path to the bench. Only one item is carried. Placing it on the bench prompts a quiet bell attached to the basket handle. Hugo wakes, recognizes his lunch, and moves completely clear of the rails. There is no shouting, chasing, food consumption puzzle, or need to jump while carrying.
+
+HUGO
+There it is.
+
+He looks from the basket to the root below.
+
+HUGO
+Thought I'd packed it somewhere unusual.
+
+Felix steps down. He holds out the envelope before he can put it away again.
+
+FELIX
+I wondered if you'd come to the platform supper. With me.
+
+Hugo opens the invitation. It contains a small drawing of two cups beneath a lamp.
+
+HUGO
+I'd like that.
+
+He lifts the basket.
+
+HUGO
+Good thing I brought enough for eight.
+
+Felix looks inside. Then at Hugo.
+
+HUGO
+I get peckish.
+
+Milo's shoulders bounce with a silent laugh.
+
+Hugo folds the blanket away from the track. He and Felix board together.
+
+INT. BRASS'S CARRIAGE - CONTINUOUS
+
+Felix rests the opened envelope beside the flower and stone. Hugo puts his basket securely under their table.
+
+FELIX
+We're going back to Willow Creek, then?
+
+Milo checks the timetable. One more pair of little platform marks lies between here and home.
+
+He points to the marks, then traces the rest of the route with a paw.
+
+HUGO
+Scenic way round. Excellent.
+
+# Chapter Four — Pip and Elara at the mountain bridge
+
+EXT. HILLSIDE HALT - LATER
+
+PIP, a small bird in a blue cap, stands on a travel case to see over the platform railing.
+
+ELARA, a deer with a hiking pack, holds the case steady with one hoof.
+
+PIP
+We thought we'd missed you.
+
+Brass's door squeaks open.
+
+ELARA
+We heard you coming through the trees.
+
+Pip hops down. Elara lifts the case.
+
+PIP
+Willow Creek, please. Rin said we could hang the lamps.
+
+Pip spreads two small wings. Elara looks at her own antlers.
+
+ELARA
+We have different methods.
+
+INT. BRASS'S CARRIAGE - TRAVEL
+
+Hugo shifts his basket to make room. Felix helps slide the case beneath a seat. Milo checks that everyone is aboard.
+
+Pip examines the collection on the windowsill.
+
+PIP
+Is that the whole valley?
+
+Milo looks at the three little objects. Then at the passengers.
+
+He sits beside the window.
+
+EXT. MOUNTAIN BRIDGE APPROACH - LATER
+
+The valley opens beneath the rails. The bridge itself is intact.
+
+Brass stops at a dark signal before the crossing. A trackside lantern burns nearby, but the signal reflector is turned away from its light.
+
+Elara points to a little wheeled mirror at the maintenance recess.
+
+ELARA
+The bridge keeper used that to check the lamp from down here.
+
+Pip peers toward the opposite bank.
+
+PIP
+Can we borrow the sunshine?
+
+GAMEPLAY: The player pushes the mirror between three marked stops and rotates it through a few fixed angles. A visible beam and matching notch symbols show the path from lantern to mirror to signal reflector. There is one clear solution, no free-angle aiming, and no reliance on color alone. Aligning the beam illuminates the bridge signal and locks the safe route state for departure. The player remains on a wide fenced maintenance path; the bridge is crossed automatically aboard Brass.
+
+OPTIONAL: At an overlook, Milo can pause beside Pip and Elara. Lights dot the valley. A very small pair of figures, Hazel and her sister, walk the lower footpath toward Willow Creek. This is a staged background detail, not simulated travel.
+
+PIP
+Look. They're going, too.
+
+Elara notices Milo watching the distant station.
+
+ELARA
+Rin always leaves a space.
+
+Milo touches the knot in his scarf.
+
+The signal lamp shines. Brass whistles across the valley.
+
+INT. BRASS'S CARRIAGE - CROSSING
+
+Wheels settle into a slow, even rhythm.
+
+Felix and Hugo share the window. Pip sits on the case, now safely inside. Elara has finally set down her pack.
+
+Milo rests against an empty seat. His ears lower comfortably.
+
+For a few seconds, nobody speaks.
+
+# Finale — The Last Stop
+
+EXT. WILLOW CREEK APPROACH - DUSK
+
+The main platform comes into view. Its bench is repaired. Rin waits beside a hand-operated siding lever.
+
+Beyond her, the old platform has been swept. Its lamps are still dark. The faded station sign lies safely on its workbench beneath a loose cloth.
+
+Brass stops before the points. Rin approaches Milo's window.
+
+RIN
+Good trip?
+
+Behind Milo, Hugo's enormous basket bumps gently into view. Pip waves over it.
+
+RIN
+Looks it.
+
+She gestures toward the old platform.
+
+RIN
+The lever's free now. One last turn, if you'd like to bring them in.
+
+GAMEPLAY: The player steps down beside Rin. The siding lever has the same handle socket and press-to-operate behavior introduced by Oliver's winch. Its handle hangs visibly on a nearby hook. Install it, then operate the lever. A diagram depicts the short siding ending at the old platform; the points visibly move to match. No train moves while Milo is outside. A lit marker shows the return door. Boarding resumes the short automatic approach.
+
+Rin walks along the safe platform path. Brass eases into the siding and stops beside the old boarding place.
+
+EXT. THE LAST STOP PLATFORM - CONTINUOUS
+
+The carriage door opens.
+
+Oliver appears at the far end of the platform with a bundle of market flowers. Hazel and her sister arrive from the footpath, slightly out of breath and trying not to show it.
+
+HAZEL'S SISTER
+That was farther than you said.
+
+HAZEL
+Only at the end.
+
+Hugo lifts out his basket. Felix unfolds the cloth. Elara helps Rin hang a short string of lamps; Pip settles the last hook onto its peg.
+
+The lamps come on together, gently.
+
+Oliver arranges flowers in three ordinary jars. Rin removes the cloth from the restored sign. THE LAST STOP.
+
+RIN
+There. You can read it from the train again.
+
+Milo stands beside Brass's open door. He watches everyone finding a place at the long bench.
+
+He checks the carriage: no bags left behind, basket delivered, seats empty.
+
+He turns back toward the cab.
+
+A cup touches the platform beside him.
+
+Felix has set it down.
+
+FELIX
+That one's yours.
+
+Oliver moves along the bench. Hazel makes a little room. Hugo moves much farther than he needs to.
+
+Milo looks toward Brass.
+
+The locomotive releases a soft breath of steam. Its cab light settles to a warm glow.
+
+Milo takes off his backpack.
+
+For the first time, he leaves it behind when he walks away from the train.
+
+He joins the bench.
+
+Pip slides a plate toward him. Oliver sets a real flower beside his cup.
+
+HUGO
+Who wants the large slice?
+
+Every paw, hoof, and wing rises.
+
+Hugo considers the cake.
+
+HUGO
+Good. That makes it easier.
+
+He divides it into equally generous pieces.
+
+GAMEPLAY: After the gathering animation, offer a brief optional epilogue. Milo can walk a small safe stretch of platform, inspect the sign, and return to his seat. Interacting with the seat ends the evening. The pause menu also offers “Finish evening”; there is no required conversation checklist. Skipping the finale goes directly to the completed ending state.
+
+INT. BRASS'S CARRIAGE - LATER
+
+The paper flower, river stone, and opened invitation sit together on the windowsill.
+
+Outside, warm silhouettes linger beneath the platform lamps.
+
+A repaired timetable hangs beside the carriage door. The familiar route names are legible now. Below them, a small fresh card reads: TOMORROW — ORCHARD HALT.
+
+Milo places his backpack beneath his seat.
+
+He curls up beside the window.
+
+Brass gives one quiet whistle.
+
+FADE OUT.
+
+THE END
+
+[[Credits can play over the still carriage window. Continue after completion returns to the gathering epilogue; New Game remains a separate choice. Orchard Halt is an ending suggestion, not a promised playable chapter.]]
