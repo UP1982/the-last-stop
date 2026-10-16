@@ -232,7 +232,7 @@ configure_content :: proc(game: ^Game_State, r: ^Runtime_Content, ready: bool) {
     if !ready { enter_mode(game, .Content_Error); return }
     game.scene = r.scene
     if !validate_runtime_puzzle(game.scene) {
-        content_error(r,"M2 unreachable recovery marker for M1 player footprint; chapter blocked")
+        content_error(r,"M2 handle_recovery is not walkable/pickup-focusable with the M1 footprint and scene targets; chapter blocked")
         game.content_ready=false; enter_mode(game,.Content_Error); return
     }
     when DEV_TOOLS {

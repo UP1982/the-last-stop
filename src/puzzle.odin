@@ -54,6 +54,33 @@ branch_rect :: proc(scene: Runtime_Scene, p: Puzzle_State) -> rl.Rectangle {
         f32(b.size[0]), f32(b.size[1])}
 }
 
+// The unique loose handle wins whenever it is within pickup reach. Optional
+// scenery (and an overlapping winch/train) must never hide a required pickup.
+// Once carried/installed, the actionable winch takes the same precedence so
+// perturbed optional scenery cannot hide the remaining completion path either.
+// Visuals have stable layer/id order; ordinary targets retain the nearest
+// centre / stable-index tie-break from M1. Use this resolver for validation too.
+focus_puzzle :: proc(player: Player, scene: Runtime_Scene, puzzle: Puzzle_State) -> int {
+    if scene.definition != nil {
+        priority_id := scene.definition.puzzle.handle
+        loose := puzzle.handle == .Shelf || puzzle.handle == .Dropped
+        if !loose { priority_id = scene.definition.puzzle.winch }
+        actionable := loose || puzzle.handle == .Held || puzzle.handle == .Installed && puzzle.phase == .Blocked
+        for v in scene.visuals {
+            if !actionable || v.id != priority_id || v.interaction_index < 0 { continue }
+            target := scene.objects[v.interaction_index]
+            target.enabled = true
+            if puzzle.handle == .Dropped { target.bounds = handle_rect(scene,puzzle,player) }
+            if puzzle.handle == .Shelf || !loose {
+                h := scene.definition.objects[v.id]
+                target.bounds = local_rect(h.interaction,h.position)
+            }
+            if focus_nearest(player,[]Interactable{target}) == 0 { return v.interaction_index }
+        }
+    }
+    return focus_nearest(player,scene.objects)
+}
+
 // Validate full object + player bounds and pickup reach on ground that can
 // actually be walked to with M1's controller, without any jump input.
 safe_handle_feet :: proc(scene: Runtime_Scene, feet: [2]f32) -> bool {
@@ -72,12 +99,19 @@ safe_handle_feet :: proc(scene: Runtime_Scene, feet: [2]f32) -> bool {
         if abs(feet[1]-s.y)<0.01 && body.x>=s.x && body.x+body.width<=s.x+s.width && h.x>=s.x && h.x+h.width<=s.x+s.width { supported=true }
     }
     if !supported { return false }
-    target := Interactable{bounds=h, enabled=true}
-    if focus_nearest(p, []Interactable{target}) != 0 { return false }
+    handle_index := -1
+    for v in scene.visuals {
+        if v.id == scene.definition.puzzle.handle { handle_index = v.interaction_index; break }
+    }
+    if handle_index < 0 { return false }
     walker := Player{position=scene.spawn, grounded=true, facing=1}
     for _ in 0..<20000 {
         delta := feet[0]-walker.position.x
-        if abs(delta)<1 && abs(walker.position.y-feet[1])<0.1 { return true }
+        if abs(delta)<1 && abs(walker.position.y-feet[1])<0.1 {
+            // Test the real competing-target resolver at the reachable player
+            // position, rather than testing a handle in isolation.
+            return focus_puzzle(walker,scene,{handle=.Dropped,dropped_feet=feet}) == handle_index
+        }
         move: f32 = 1; if delta<0 { move=-1 }
         step_player(&walker, {move=move}, scene.solids, scene.world)
     }
@@ -89,7 +123,9 @@ project_drop :: proc(scene: Runtime_Scene, player: Player) -> [2]f32 {
     ground := scene.solids[0]
     feet := [2]f32{player.position.x, ground.y}
     if safe_handle_feet(scene,feet) { return feet }
-    return recovery_feet(scene)
+    fallback := recovery_feet(scene)
+    assert(safe_handle_feet(scene,fallback), "invalid authored handle_recovery must block chapter loading")
+    return fallback
 }
 puzzle_invariant :: proc(p: Puzzle_State, checkpoint: Journey_Checkpoint, scene: Runtime_Scene) -> bool {
     if p.phase != .Blocked && p.handle != .Installed { return false }
@@ -184,7 +220,7 @@ refresh_puzzle_objects :: proc(g: ^Game_State) {
         case .Shed:
         }
     }
-    g.focus=focus_nearest(g.player,g.scene.objects)
+    g.focus=focus_puzzle(g.player,g.scene,g.puzzle)
 }
 interact_puzzle :: proc(g: ^Game_State) {
     if g.scene.definition==nil { // preserve the M1 synthetic fixture

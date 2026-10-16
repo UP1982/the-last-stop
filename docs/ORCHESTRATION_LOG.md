@@ -46,9 +46,15 @@
 
 - 2026-10-16 user supplied story: docs/THE_LAST_STOP_SCREENPLAY.fountain + docs/STORY_GAMEPLAY_PLAN.md (committed 977efc4) and art at ../the-last-stop-assets-sprits-images-Updated (AI-generated via image_gen; 96x96 chars, 640x360 bgs — scale mismatch with 320x180 canvas to resolve). Provenance must be confirmed by user before release.
 
+| T-LIC-1 | gpt-6-luna (medium) | asset provenance register (assets/ASSET_LICENSES.md only) | Game @ 1c943b5 | done; Opus spot-checked; committed |
+
+| T-M2-R1 | gpt-6-astra (high) | M2 review r1 | Game @ e2c6a3e | REQUEST CHANGES: P1 focus-shadowed handle softlock; P2 B2 (→ deferred to T-M3a by Opus); P3 sub-step R lost |
+| T-M2-2 | gpt-6.1-sol (high) | fix P1+P3 + regressions | Game @ 1c943b5 | delivered; Opus re-ran check.sh; committed; R2 next |
+
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 
 ## Next
+- Queue after T-M2-R1 (+fixes): T-RES-640 (Sol) → Astra review → T-M3a → T-M3b → art import batches.
 - T-E0b-1 (Sol) delivered; Opus re-ran check.sh, verified data/ unchanged + screenshot; committed. **E0 gate met.**
 - M2 → Sol (T-M2-1) per docs/M2_CONTRACT.md; Astra reviews after.
 - Order: M1 (running) → E0b → M2 per docs/M2_CONTRACT.md.

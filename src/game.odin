@@ -25,16 +25,21 @@ Game_State :: struct {
     response_seconds: f32,
     controls_open, gameplay_keys_blocked: bool,
     accumulator: f32,
-    pending_jump, pending_interact: bool,
+    pending_jump, pending_interact, pending_return: bool,
+}
+
+clear_gameplay_edges :: proc(game: ^Game_State) {
+    game.accumulator = 0
+    game.pending_jump = false
+    game.pending_interact = false
+    game.pending_return = false
 }
 
 enter_mode :: proc(game: ^Game_State, mode: GameMode) {
     game.mode = mode
     game.selection = 0
     game.controls_open = false
-    game.accumulator = 0
-    game.pending_jump = false
-    game.pending_interact = false
+    clear_gameplay_edges(game)
     game.gameplay_keys_blocked = true
 }
 
@@ -42,7 +47,7 @@ start_scene :: proc(game: ^Game_State) {
     game.player = {position = game.scene.spawn, grounded = true, facing = 1}
     game.camera = {}
     follow_camera(&game.camera, game.player.position.x, game.scene.camera_bounds, game.player.position.y)
-    game.focus = focus_nearest(game.player, game.scene.objects[:])
+    game.focus = focus_puzzle(game.player, game.scene, game.puzzle)
     game.response = nil
     game.response_seconds = 0
 }
@@ -62,6 +67,7 @@ update_playing :: proc(game: ^Game_State, frame_input: Input, dt: f32) {
     edge := input.interact && !game.interact_latched
     game.interact_latched = input.interact_down || input.interact
     game.pending_interact = game.pending_interact || edge
+    game.pending_return = game.pending_return || input.return_train
     game.accumulator += clamp(dt, 0, 0.1)
     for game.accumulator >= FIXED_DT {
         tick_input := input
@@ -70,12 +76,13 @@ update_playing :: proc(game: ^Game_State, frame_input: Input, dt: f32) {
         refresh_puzzle_objects(game)
         if game.scene.definition==nil { game.focus = focus_nearest(game.player, game.scene.objects[:]) }
         game.response_seconds = max(0, game.response_seconds - FIXED_DT)
-        if input.return_train { _=puzzle_action(game,.Return); input.return_train=false }
+        if game.pending_return { _=puzzle_action(game,.Return) }
         else if game.pending_interact { interact_puzzle(game) }
         if game.mode==.Playing { advance_crank(game,FIXED_DT) }
         refresh_puzzle_objects(game)
         game.pending_jump = false
         game.pending_interact = false
+        game.pending_return = false
         follow_camera(&game.camera, game.player.position.x, game.scene.camera_bounds, game.player.position.y)
         game.accumulator -= FIXED_DT
         if game.mode!=.Playing { game.accumulator=0; break }
@@ -83,6 +90,7 @@ update_playing :: proc(game: ^Game_State, frame_input: Input, dt: f32) {
 }
 
 begin_transition :: proc(game: ^Game_State, next: GameMode) {
+    clear_gameplay_edges(game)
     game.transitioning = true
     game.next_mode = next
     game.fade_elapsed = 0

@@ -107,6 +107,16 @@ run_m2_test_entry :: proc() {
         p:=g.save.loaded.puzzle; normalize_puzzle(&p,g.scene); assert(p==g.save.loaded.puzzle)
         complete_puzzle(&g)
     case "selftest": run_m2_behavior_tests(&g)
+    case "return-edge": run_m2_return_edge_tests(&g)
+    case "geometry-path": run_m2_geometry_path(&g)
+    case "write-review-drop":
+        // Astra's exact dropped-handle reproducer, through movement + E.
+        new_run(&g); settle_transition(&g)
+        visit(&g,.Handle); walk_to(&g,500)
+        for _ in 0..<5 { update_game(&g,{move=1},FIXED_DT) }
+        for _ in 0..<25 { update_game(&g,{},FIXED_DT) }
+        press_interact(&g)
+        assert(g.puzzle.handle==.Dropped && abs(g.puzzle.dropped_feet[0]-497.1536)<0.01)
     case:
         if !strings.has_prefix(command,"write-") { os.exit(2) }
         target:=strings.trim_prefix(command,"write-")
@@ -136,6 +146,88 @@ run_m2_test_entry :: proc() {
     assert(puzzle_invariant(g.puzzle,g.checkpoint,g.scene))
     if g.save.dirty { if g.save.message=="Saved; disk sync uncertain. Retry pending." { os.exit(5) }; os.exit(4) }
     fmt.println("PASS M2",command,"checkpoint",g.checkpoint,"handle",g.puzzle.handle,"phase",g.puzzle.phase,"cues",g.completion_cues)
+}
+run_m2_return_edge_tests :: proc(g:^Game_State) {
+    // Use only existing public input/state fields so these exact tests can be
+    // compiled against e2c6a3e, without backporting the fix.
+    g.save.active=false
+    g.checkpoint=.Puzzle; g.puzzle={handle=.Installed,phase=.Cleared,crank_progress=1}
+    enter_mode(g,.Playing); start_scene(g)
+    update_game(g,{return_train=true},FIXED_DT/2)
+    assert(g.checkpoint==.Puzzle && g.mode==.Playing)
+    update_game(g,{},FIXED_DT/2)
+    assert(g.checkpoint==.Returned && g.mode==.Returned, "sub-step R edge must execute on next simulation step")
+    returned_player:=g.player
+    for _ in 0..<10 { update_game(g,{},FIXED_DT) }
+    assert(g.checkpoint==.Returned && g.mode==.Returned && g.player==returned_player)
+
+    // A consumed blocked-return edge cannot fire later when clearance arrives.
+    g.checkpoint=.Puzzle; g.puzzle={handle=.Installed,phase=.Cranking,crank_progress=0.99}
+    enter_mode(g,.Playing)
+    update_game(g,{return_train=true},FIXED_DT/2)
+    update_game(g,{},FIXED_DT/2)
+    for _ in 0..<10 { update_game(g,{},FIXED_DT) }
+    assert(g.puzzle.phase==.Cleared && g.checkpoint==.Puzzle)
+
+    // Pause discards all queued action edges, including a simultaneous R.
+    update_game(g,{return_train=true,jump_pressed=true,interact=true},FIXED_DT/2)
+    update_game(g,{pause=true,return_train=true},0)
+    update_game(g,{pause=true},0)
+    update_game(g,{},FIXED_DT)
+    assert(g.mode==.Playing && g.checkpoint==.Puzzle && g.player.grounded)
+    // Starting a fade clears immediately, and the destination clears again.
+    update_game(g,{return_train=true,interact=true},FIXED_DT/2)
+    begin_transition(g,.Playing); settle_transition(g)
+    assert(g.mode==.Playing && g.checkpoint==.Puzzle)
+    update_game(g,{return_train=true,interact=true},FIXED_DT/2)
+    enter_mode(g,.Playing); update_game(g,{},FIXED_DT)
+    assert(g.checkpoint==.Puzzle)
+    // A new press still works; queued R + E cannot activate two targets.
+    update_game(g,{return_train=true,interact=true},FIXED_DT/2)
+    update_game(g,{},FIXED_DT/2)
+    assert(g.checkpoint==.Returned && g.mode==.Returned && !g.puzzle.snail_seen)
+    fmt.println("PASS sub-step R: exactly one return; blocked consumption; pause/fade/mode queue clearing; simultaneous R/E")
+}
+
+run_m2_geometry_path :: proc(g:^Game_State) {
+    // Each externally perturbed, validated fixture must complete using actual
+    // fixed-step movement, displayed focus, and fresh input edges, not actions.
+    new_run(g); settle_transition(g)
+    // Check the displayed focus over the whole grounded pickup envelope,
+    // including positions where a competing interaction centre is nearer.
+    saved_player:=g.player
+    handle_index:=-1
+    for v in g.scene.visuals { if v.kind==.Handle { handle_index=v.interaction_index } }
+    assert(handle_index>=0)
+    target:=g.scene.objects[handle_index]
+    for i in 0..<640 {
+        x:=g.scene.world.x+PLAYER_WIDTH/2+f32(i)*(g.scene.world.width-PLAYER_WIDTH)/639
+        g.player={position={x,g.scene.solids[0].y},grounded=true,facing=1}
+        refresh_puzzle_objects(g)
+        if focus_nearest(g.player,[]Interactable{target})==0 {
+            assert(g.focus==handle_index, "loose pickup within reach must win the displayed focus")
+        }
+    }
+    g.player=saved_player
+    complete_puzzle(g)
+    assert(g.completion_cues==1)
+    new_run(g); settle_transition(g); visit(g,.Handle)
+    assert(g.puzzle.handle==.Held)
+    // Find an unfocused spot using actual movement, then E to drop and recover.
+    dropped:=false
+    for i in 0..<32 {
+        x:=g.scene.world.x+12+(g.scene.world.width-24)*f32(i)/31
+        walk_to(g,x)
+        if g.focus>=0 { continue }
+        press_interact(g)
+        assert(g.puzzle.handle==.Dropped)
+        dropped=true
+        break
+    }
+    assert(dropped, "fixture needs at least one unfocused drop point")
+    complete_puzzle(g)
+    assert(g.checkpoint==.Returned && g.completion_cues==1)
+    fmt.println("PASS perturbed geometry: shelf + real-input drop/pickup/install/crank/return completion paths")
 }
 run_m2_behavior_tests :: proc(g:^Game_State) {
     // Direct real-loop completion.
