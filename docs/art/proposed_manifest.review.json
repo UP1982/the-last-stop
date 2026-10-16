@@ -1,0 +1,178 @@
+{
+  "kind": "assets",
+  "schema_version": 1,
+  "id": "chapter_01_assets",
+  "assets": {
+    "milo_idle_r": {
+      "path": "assets/characters/milo_idle_r.png",
+      "sha256": "8d27791c0294b44ec655601afd980db4c712fd3f4e84abf61328494632778df5",
+      "frame_size": [
+        48,
+        48
+      ],
+      "frame_count": 6,
+      "pivot": [
+        24,
+        44
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; animations/milo/idle/right/00.png..05.png -> nearest 1/2, alpha128, horizontal strip; NOT hand-cleaned",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "milo_walk_r": {
+      "path": "assets/characters/milo_walk_r.png",
+      "sha256": "06cff60c6c11fa24427eaedbbb2e0046285974f708a6d9c9518d8bf4635217be",
+      "frame_size": [
+        48,
+        48
+      ],
+      "frame_count": 6,
+      "pivot": [
+        24,
+        44
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; animations/milo/walk/right/00.png..05.png -> nearest 1/2, alpha128, horizontal strip; NOT hand-cleaned",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "milo_jump_r": {
+      "path": "assets/characters/milo_jump_r.png",
+      "sha256": "662d78c663c14553349ce4a8bac8007c10b1bc5a23f2e3236adb5908a1cab216",
+      "frame_size": [
+        48,
+        48
+      ],
+      "frame_count": 6,
+      "pivot": [
+        24,
+        44
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; animations/milo/jump/right/00.png..05.png -> nearest 1/2, alpha128, horizontal strip; NOT hand-cleaned",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "oliver_idle_r": {
+      "path": "assets/characters/oliver_idle_r.png",
+      "sha256": "fcd545bb8e588497d1941df4595df8c97fc0bbc0f1ec3c1e61318d5157aa19b1",
+      "frame_size": [
+        48,
+        48
+      ],
+      "frame_count": 6,
+      "pivot": [
+        24,
+        44
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; animations/oliver/idle/right/00.png..05.png -> nearest 1/2, alpha128, horizontal strip; NOT hand-cleaned",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "oliver_walk_r": {
+      "path": "assets/characters/oliver_walk_r.png",
+      "sha256": "6411fd991ce6da05219cded1a836a7f77307635c5bc0dc0f59e5619d4b5bedd7",
+      "frame_size": [
+        48,
+        48
+      ],
+      "frame_count": 6,
+      "pivot": [
+        24,
+        44
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; animations/oliver/walk/right/00.png..05.png -> nearest 1/2, alpha128, horizontal strip; NOT hand-cleaned",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "brass_locomotive": {
+      "path": "assets/props/locomotive.png",
+      "sha256": "a343efc091355409fef69a0167412685ce71790831a1810f1a26523dedafc515",
+      "frame_size": [
+        120,
+        48
+      ],
+      "frame_count": 1,
+      "pivot": [
+        60,
+        47
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; props/locomotive.png -> nearest 1/2, alpha128; NOT hand-cleaned",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "brass_passenger_car": {
+      "path": "assets/props/passenger_car.png",
+      "sha256": "b5499524173103f90d69093119d5c200de1d0d5a2c945c0b518c0e2ae03ac173",
+      "frame_size": [
+        112,
+        48
+      ],
+      "frame_count": 1,
+      "pivot": [
+        56,
+        47
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; props/passenger_car.png -> nearest 1/2, alpha128; NOT hand-cleaned",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "bg_forest_track": {
+      "path": "assets/backgrounds/forest_track_matte.png",
+      "sha256": "02b597836cb08323b46a76f8070d81ff1c20c8c723d5bce4b6f91507102e241c",
+      "frame_size": [
+        320,
+        180
+      ],
+      "frame_count": 1,
+      "pivot": [
+        0,
+        0
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; backgrounds/forest_track.png -> nearest 1/2; flattened raw matte, ground NOT adapted",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    },
+    "bg_willow_creek_station": {
+      "path": "assets/backgrounds/willow_creek_station_matte.png",
+      "sha256": "8248a25c15d97b74ccb868c33ef1a21bbde3163df22f0d6302e36ea08bbca02a",
+      "frame_size": [
+        320,
+        180
+      ],
+      "frame_count": 1,
+      "pivot": [
+        0,
+        0
+      ],
+      "provenance": {
+        "creator": "User-supplied generated collection; generating operator and rights holder unconfirmed",
+        "source": "the-last-stop-assets-sprits-images-Updated; README.txt, manifest.json, PROMPTS.json, animations.json; mechanical audit derivative in build/art/candidates; backgrounds/willow_creek_station.png -> nearest 1/2; flattened raw matte, ground NOT adapted",
+        "license": "UNCONFIRMED - no shipping authorization established; confirm tool, applicable terms and reference rights",
+        "attribution": "Unconfirmed; record applicable requirements after rights review"
+      }
+    }
+  }
+}
