@@ -1,7 +1,8 @@
 # Orchestration log (owner: Opus 5.5)
 
 ## State
-- Active milestone: **M0 — Foundation** (none verified yet).
+- **Project root is now `/Users/finngilbert/Documents/The Last Stop/Game`** (moved 2026-10-16 at c3a9f8d; history kept). The kit folder was restored to baseline eac98e2 as read-only reference — never edit it.
+- Active milestone: **M0** implemented, awaiting human keyboard check. E0a committed (c3a9f8d); E0b waits for M0.
 - Baseline: `eac98e2` (local repo initialized 2026-10-16, author Hayden; no remote).
 - Env: macOS 27.2 arm64, Odin `dev-2026-10:84bc3fc21`; `odin check src` exit 0 on baseline (static starter only).
 - Models verified via T3 `orchestrator_capabilities`: codex/gpt-6.1-sol, codex/gpt-6-astra, claudeAgent/claude-haiku-5-5.
@@ -21,7 +22,9 @@
 | T-M0-1 | gpt-6.1-sol (medium) | M0 foundation | shared @ 4ea0e53 | delivered, reviewed, committed; keyboard check pending — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M0-1-sol-r1 |
 
 | T-E0-A | gpt-6-astra (high) | E0 contract consult (read-only) | shared @ eb04e66 | done; accepted w/ amendments → docs/E0_CONTRACT.md |
-| T-E0a-1 | gpt-6.1-sol (high) | E0a content core (no src/) | shared @ 66eab13 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-E0a-1-sol-r1 |
+| T-E0a-1 | gpt-6.1-sol (high) | E0a content core (no src/) | shared @ 66eab13 | delivered; checks re-run by Opus; committed c3a9f8d — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-E0a-1-sol-r1 |
+
+| T-E0a-R1 | gpt-6-astra (high) | E0a independent review r1 (read-only) | Game @ c3a9f8d+log | delegating |
 
 ## Next
 - M0: human keyboard/fullscreen check (synthetic keys can't reach window).

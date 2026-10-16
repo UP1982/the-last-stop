@@ -47,9 +47,9 @@ Hazel/waterwheel; Felix/mirror signal; Bea/sleepy bear; Lumi/turntable; cozy und
 
 ## E0: Editor content contract — after M0, before editor-dependent M2 work
 - [x] Record accepted host, schema, shared-loader and operation-interface decisions. (docs/E0_CONTRACT.md)
-- [ ] Implement versioned scene/chapter/dialogue validation and runtime loading.
-- [ ] Provide agent-readable inspection and transactional edits with stale-write rejection.
-- [ ] Explicitly migrate the reference manifest and isolate authored content from saves.
+- [~] Implement versioned scene/chapter/dialogue validation and runtime loading. (validation/CLI done E0a; runtime loading = E0b)
+- [x] Provide agent-readable inspection and transactional edits with stale-write rejection. (E0a; Astra review pending)
+- [~] Explicitly migrate the reference manifest and isolate authored content from saves. (migrated; save isolation verified with saves in M2/M4)
 **Gate:** Valid content loads in the actual game; malformed/stale edits fail without data loss; stable IDs/references survive round-trip.
 
 ## E1: Visual scene editor — after E0, alongside M1/M2

@@ -13,5 +13,9 @@ macOS 27.2 arm64; Odin `dev-2026-10:84bc3fc21`; bundled vendor:raylib 6.0. No ex
 - Automated: state machine/transition self-tests above.
 - **Unverified natively:** keyboard menu/Enter/Escape pause, visible fade, F11/Alt+Enter fullscreen, measured 60 FPS. Synthetic keystrokes via osascript did not reach the window (2 attempts: Sol, Opus) — needs human check.
 
+## E0a evidence (T-E0a-1, Sol; re-run by Opus)
+- `./scripts/check.sh` exit 0; `python3 -B tests/editor/run.py` 9 groups OK; CLI validate/inspect/edit/stale(3)/malformed(2) demo with byte-identical rejection evidence in `build/evidence/e0a/`. Legacy manifest byte-exact. Native integration unverified (E0b).
+- Env: Python 3.9.6 OK; Node broken (missing libsimdjson) — not a dependency.
+
 ## Open issues
 - None confirmed.
