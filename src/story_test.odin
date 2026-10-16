@@ -177,6 +177,27 @@ run_m3b_test_entry :: proc() {
     command:=os.args[1]
     runtime:=load_runtime_content(os.args[2:],context.allocator)
     defer unload_runtime_content(&runtime)
+    if command=="startup-rejected" {
+        assert(runtime.snapshot==nil && len(runtime.error_lines)>0)
+        message:=""
+        for line in runtime.error_lines { message=fmt.tprintf("%s%s",message,line) }
+        assert(strings.contains(message,"story_migration_required"))
+        assert(strings.contains(message,"schema v1; migrate to v2 to play"))
+        g:=Game_State{}
+        configure_content(&g,&runtime,false); configure_save_profile(&g,true)
+        defer destroy_save_profile(&g.save)
+        assert(g.mode==.Content_Error && !g.content_ready)
+        assert(!g.save.enabled && !g.save.active && g.save.path=="")
+        // The only way back to the menu must still refuse Start/Continue.
+        for _ in 0..<3 {
+            update_game(&g,{},0); update_game(&g,{confirm=true},0)
+            assert(g.mode==.Title)
+            update_game(&g,{},0); update_game(&g,{confirm=true},0)
+            assert(g.mode==.Content_Error && !g.transitioning && !g.save.active)
+        }
+        fmt.println("PASS startup refused before menus/save profile:",message)
+        return
+    }
     assert(runtime.snapshot!=nil)
     g:=Game_State{}
     configure_content(&g,&runtime,true); configure_save_profile(&g,true)

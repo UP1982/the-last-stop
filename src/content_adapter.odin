@@ -188,6 +188,18 @@ load_runtime_content :: proc(args: []string, allocator: mem.Allocator) -> Runtim
         }
         return r
     }
+    // The content tool may inspect/adapt v1 documents, but gameplay needs the
+    // complete six-role v2 graph. Refuse before resources, menus or save setup.
+    if loaded.snapshot.chapter.schema_version != 2 {
+        content_error(&r, "story_migration_required: Chapter content is schema v1; migrate to v2 to play")
+        return r
+    }
+    for _, dialogue in loaded.snapshot.dialogues {
+        if dialogue.schema_version != 2 {
+            content_error(&r, fmt.aprintf("story_migration_required: Dialogue %s is schema v1; migrate to v2 to play", dialogue.id))
+            return r
+        }
+    }
     // Transfer only the complete, validated graph, never an intermediate DOM.
     r.snapshot = loaded.snapshot; loaded.snapshot = nil
     r.text=make(map[string]cstring)

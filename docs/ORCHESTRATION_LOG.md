@@ -61,8 +61,11 @@
 | T-M3b | gpt-6.1-sol (high) | story player runtime (sole writer) | Game @ cb41083 | delivered; Opus re-ran check.sh, data/shared unchanged; committed. Opus found: wide letter-spacing in dialogue body; overlapping/garbled placeholder labels |
 - Risk accepted: M3a runs during the 640 review; any 640 fixes are queued after M3a.
 
-| T-M3-R1 | gpt-6-astra (high) | M3a+M3b review (worktree @ e343e85) | /tmp worktree | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-M3-R1-astra |
+| T-M3-R1 | gpt-6-astra (high) | M3a+M3b review (worktree @ e343e85) | /tmp worktree | REQUEST CHANGES: P2 v1 story content fails mid-journey; P2 long UI strings push Skip offscreen. Reward/skip invariants held (1,728 guard cases) |
+| T-M3-FIX | gpt-6.1-sol (high) | fix M3 R1 (Opus: refuse v1 story content at startup w/ diagnostic; UI string budgets + bounded footer) | Game @ 0be6065 | delivered; Opus checked footer screenshot + check.sh; committed with fixture repairs; Astra R2 next |
 | T-M3-TYPO | gpt-6.1-sol (medium) | story text spacing + label overlap | Game @ e343e85 | delivered; Opus checked screenshots + check.sh; committed |
+
+| T-ART-2 | gpt-6.1-sol (high) | art import batch 1 (assets/, data/assets/manifest.json, tests/assets/) + MISSING_ART_SPEC | Game @ 0be6065 | delivered (10 assets, 51-item MISSING_ART_SPEC → docs/art). Its asset import broke test fixtures that copy data/ without assets; T-M3-FIX repaired fixtures concurrently → commit both together after T-M3-FIX |
 
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 

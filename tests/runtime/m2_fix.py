@@ -41,6 +41,7 @@ class ReviewRegressions(unittest.TestCase):
     def fixture(self, name, scene):
         root = self.root / name
         shutil.copytree(ROOT / 'data', root / 'data', dirs_exist_ok=True)
+        shutil.copytree(ROOT / 'assets', root / 'assets', dirs_exist_ok=True)
         (root / SCENE).write_text(json.dumps(scene))
         p = subprocess.run([str(CLI), 'validate-content', '--project-root', str(root)],
                            env=self.env, capture_output=True, timeout=30)

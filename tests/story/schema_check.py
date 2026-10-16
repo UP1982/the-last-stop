@@ -46,4 +46,28 @@ class SchemaTests(unittest.TestCase):
         for file in ('oliver_intro','oliver_arrival'):
             self.validator('dialogue.v1.schema.json').validate(json.loads((ROOT/('tests/story/fixtures/v1/'+file+'.json')).read_text()))
 
+    def test_ui_budgets_match_runtime_and_restore_union(self):
+        chapter=json.loads((ROOT/'data/chapters/chapter_01.json').read_text())
+        schema=self.validator('chapter.v2.schema.json')
+        edit=self.validator('edit.v1.schema.json')
+        budgets={'advance':14,'skip_scene':10,'return_menu':14,
+                 **dict.fromkeys(('pickup','drop','install','activate','inspect_winch',
+                                  'inspect_branch','return_train','wave','turning','clear'),26)}
+        limited={k:v['maxLength'] for k,v in schema.schema['properties']['strings']['properties'].items() if v['maxLength']<4096}
+        self.assertEqual(limited,budgets)
+        def request(value):
+            return dict(protocol_version=1,request_id='ui_budget',chapter=chapter['id'],document=chapter['id'],expected_revision='sha256:'+'0'*64,operations=[dict(op='restore_document',value=value)])
+        for key,limit in budgets.items():
+            for text in ('Æ'*limit,'猫'*limit):
+                value=copy.deepcopy(chapter);value['strings'][key]=text
+                schema.validate(value);edit.validate(request(value))
+            for text in ('W'*(limit+1),'a\nb','a\tb','a\rb'):
+                value=copy.deepcopy(chapter);value['strings'][key]=text
+                self.assertTrue(list(schema.iter_errors(value)))
+                self.assertTrue(list(edit.iter_errors(request(value))))
+        for length in (20,21):
+            value=copy.deepcopy(chapter);value['speakers']['rin']['name']='Æ'*length
+            self.assertEqual(bool(list(schema.iter_errors(value))),length==21)
+            self.assertEqual(bool(list(edit.iter_errors(request(value)))),length==21)
+
 if __name__=='__main__':unittest.main(verbosity=2)

@@ -41,7 +41,7 @@ class StoryTests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory(prefix='m3a-',dir=str(ROOT/'build'))
         self.root=Path(self.tmp.name)
         shutil.copytree(ROOT/'data',self.root/'data')
-        (self.root/'assets').mkdir()
+        shutil.copytree(ROOT/'assets',self.root/'assets')
         self.chapter=self.read(CHAPTER)
         self.paths={r:self.chapter['dialogues'][r]['path'] for r in ROLES}
 
@@ -201,14 +201,14 @@ class StoryTests(unittest.TestCase):
         for key in expected:self.chapter['strings'][key]='Edited '+key+' — café…'
         self.write(CHAPTER,self.chapter);before=self.disk()
         self.assertEqual(self.runtime()['responses'],[self.chapter['strings'][k] for k in expected]);self.assertEqual(before,self.disk())
-        # Frozen v1 documents remain v1 on disk after CLI + runtime adaptation.
+        # V1 remains readable to the content tool; gameplay explicitly requires
+        # migration and is covered by runtime.py's startup/no-save regression.
         for name,path in [('chapter_01.json',CHAPTER),('oliver_intro.json',self.paths['intro']),('oliver_arrival.json',self.paths['arrival'])]:
             shutil.copyfile(ROOT/'tests/story/fixtures/v1'/name,self.root/path)
-        before=self.disk();self.invoke();runtime=self.runtime()
-        self.assertEqual(len(runtime['dialogues']),2)
-        for doc in runtime['dialogues'].values():
-            self.assertEqual(doc['version'],1);self.assertEqual(len(doc['order']),len(doc['beat_order']))
-        self.assertEqual(runtime['dialogues']['intro']['order'][0]['text'],'Excuse me! Does this one go to Clover Market?')
+        before=self.disk();self.invoke()
+        for document,path in [('oliver_flower_market',CHAPTER),('intro',self.paths['intro']),('arrival',self.paths['arrival'])]:
+            doc=self.invoke('inspect-document',['--document',document])['authored']
+            self.assertEqual(doc,self.read(path));self.assertEqual(doc['schema_version'],1)
         self.assertEqual(before,self.disk())
 
     def test_07_inspect_schema_generation_determinism_and_legacy(self):
@@ -224,6 +224,25 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256((ROOT/'data/legacy/chapter_01.v0.json').read_bytes()).hexdigest(),hashlib.sha256(subprocess.check_output(['git','show','HEAD:data/legacy/chapter_01.v0.json'],cwd=ROOT)).hexdigest())
         scene=self.invoke('inspect-scene',['--scene','oliver_obstacle'])
         self.assertEqual(scene['authored']['schema_version'],2)
+
+    def test_08_closed_single_line_ui_budgets(self):
+        budgets={'advance':14,'skip_scene':10,'return_menu':14,
+                 **dict.fromkeys(('pickup','drop','install','activate','inspect_winch',
+                                  'inspect_branch','return_train','wave','turning','clear'),26)}
+        self.invalid(CHAPTER,lambda d:d['strings'].update(advance='Continue through this quiet station scene whenever you are ready.'),'ui_text_budget')
+        for key,limit in budgets.items():
+            with self.subTest(key=key):
+                self.invalid(CHAPTER,lambda d:d['strings'].update({key:'W'*(limit+1)}),'ui_text_budget')
+                for control in ('\n','\t','\r'):
+                    self.invalid(CHAPTER,lambda d:d['strings'].update({key:'a'+control+'b'}),'ui_text_layout')
+                for character in ('W','Æ','é','猫'):
+                    chapter=copy.deepcopy(self.chapter);chapter['strings'][key]=character*limit
+                    self.write(CHAPTER,chapter);self.invoke()
+                self.write(CHAPTER,self.chapter)
+        self.invalid(CHAPTER,lambda d:d['speakers']['rin'].update(name='W'*21),'ui_text_budget')
+        self.invalid(CHAPTER,lambda d:d['speakers']['rin'].update(name='Rin\nCat'),'ui_text_layout')
+        chapter=copy.deepcopy(self.chapter);chapter['speakers']['rin']['name']='Æ'*20
+        self.write(CHAPTER,chapter);self.invoke()
 
 if __name__=='__main__':
     subprocess.run(['odin','build','tools/content','-out:'+str(CLI)],cwd=ROOT,check=True)

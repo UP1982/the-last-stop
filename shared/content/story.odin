@@ -6,6 +6,26 @@ import "core:strings"
 
 STORY_ROLES :: "intro|travel|obstacle|return|arrival|end_card"
 STRING_KEYS :: "needs_handle|branch|blocked|turning|clear|completion|snail|pickup|drop|install|activate|inspect_winch|inspect_branch|return_train|wave|find_hint_gentle|find_hint_shelter|find_hint|held_hint|dropped_hint|installed_hint|wait_hint|return_hint|supper_card|end_card|advance|skip_scene|return_menu"
+// Closed single-line UI budgets, in Unicode codepoints (not UTF-8 bytes).
+// Responses/hints/cards retain the general 4096-byte bound and pagination.
+// Mirrored into JSON Schema by tools/generate_story_schemas.py.
+UI_String_Budget :: struct { key:string, limit:int }
+UI_STRING_BUDGETS := [?]UI_String_Budget{
+    {"advance",14}, {"skip_scene",10}, {"return_menu",14},
+    {"pickup",26}, {"drop",26}, {"install",26}, {"activate",26},
+    {"inspect_winch",26}, {"inspect_branch",26}, {"return_train",26},
+    {"wave",26}, {"turning",26}, {"clear",26},
+}
+UI_SPEAKER_NAME_BUDGET :: 20
+
+ui_text_budget :: proc(v:^Validator,s,p:string,limit:int) {
+    count:=0
+    for ch in s {
+        count+=1
+        if ch=='\n' || ch=='\r' || ch=='\t' { fail(v,"ui_text_layout",p,"UI chrome must be a single line without tabs") }
+    }
+    if count>limit { fail(v,"ui_text_budget",p,fmt.aprintf("UI chrome exceeds its %d-character budget",limit)) }
+}
 SETS :: "willow_platform|carriage|forest_travel|forest_obstacle|market_platform|flower_window"
 SHOTS :: "wide|passenger_pair|old_platform|winch_branch|flower|supper_card"
 POSES :: "idle|walk|nod|point|reach|wave|carry|sit|look|board|fold|tap|dust_paws"

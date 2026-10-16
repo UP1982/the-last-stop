@@ -220,12 +220,12 @@ story_draw :: proc(game: Game_State) {
     } else if b.kind==.Card {
         speaker="Rin's supper notice"; if b.string_key=="end_card" { speaker="Journey complete" }
     } else { speaker="[E / Enter] Continue when ready" }
-    rl.DrawText(fmt.ctprintf("%s",speaker),32,240,18,MINT)
+    rl.DrawText(fmt.ctprintf("%s",story_ui_fit(speaker,520,18)),32,240,18,MINT)
     draw_story_page(text,game.story.page_index,264,CREAM)
     pages:=story_page_count(text)
     action:=chapter_text(game,"advance")
     if game.story.role==.End_Card && game.story.beat_index==len(story_dialogue(&g).beat_order)-1 { action=chapter_text(game,"return_menu") }
-    rl.DrawText(fmt.ctprintf("E/Enter: %s   X: %s   Esc: pause",action,chapter_text(game,"skip_scene")),24,336,16,MINT)
+    draw_story_footer(string(action),string(chapter_text(game,"skip_scene")),MINT)
     if pages>1 { rl.DrawText(fmt.ctprintf("%d/%d",game.story.page_index+1,pages),566,240,16,MINT) }
     // Supper shot also accompanies arrival_04; its dialogue retains its own pages.
     if stage.shot==.Supper_Card && b.kind!=.Card {

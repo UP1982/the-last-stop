@@ -26,6 +26,7 @@ class RuntimeTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory(prefix='e0b-tests-', dir=str(ROOT / 'build'))
         self.root = Path(self.tmp.name)
         shutil.copytree(ROOT / 'data', self.root / 'data')
+        shutil.copytree(ROOT / 'assets', self.root / 'assets')
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -108,6 +109,7 @@ class RuntimeTests(unittest.TestCase):
         resources = contents / 'Resources'
         resources.mkdir()
         shutil.move(str(self.root / 'data'), resources / 'data')
+        shutil.move(str(self.root / 'assets'), resources / 'assets')
         p = run([executable, 'valid'], cwd='/tmp')
         self.assertIn(b'PASS E0b valid', p.stdout)
 

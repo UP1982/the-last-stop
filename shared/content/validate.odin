@@ -107,7 +107,13 @@ chapter_decode :: proc(v: ^Validator, x: json.Value) -> Chapter_Def {
     if c.schema_version==2 {
         c.strings=make(map[string]string)
         keys(v,get(x,"strings"),"/strings",STRING_KEYS,"")
-        for k,val in object(get(x,"strings")) { c.strings[k]=story_text(v,val,ptr("/strings",k)) }
+        for k,val in object(get(x,"strings")) {
+            p:=ptr("/strings",k)
+            c.strings[k]=story_text(v,val,p)
+            for budget in UI_STRING_BUDGETS {
+                if k==budget.key { ui_text_budget(v,c.strings[k],p,budget.limit); break }
+            }
+        }
     }
     c.title = story_text(v,get(x,"title"),"/title")
     c.destination = story_text(v,get(x,"destination"),"/destination")
@@ -119,6 +125,7 @@ chapter_decode :: proc(v: ^Validator, x: json.Value) -> Chapter_Def {
     for k, val in map_check(v,speakers,"/speakers") {
         p := ptr("/speakers",k); keys(v,val,p,"name|species","")
         c.speakers[ID(k)] = {story_text(v,get(val,"name"),ptr(p,"name")),story_text(v,get(val,"species"),ptr(p,"species"))}
+        if c.schema_version==2 { ui_text_budget(v,c.speakers[ID(k)].name,ptr(p,"name"),UI_SPEAKER_NAME_BUDGET) }
     }
     c.keepsakes = make(map[ID]Keepsake_Def)
     for k,val in map_check(v,get(x,"keepsakes"),"/keepsakes") {

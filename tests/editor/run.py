@@ -51,7 +51,7 @@ class E0(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory(prefix='e0-tests-', dir=str(ROOT / 'build'))
         self.root = Path(self.tmp.name)
         shutil.copytree(ROOT / 'data', self.root / 'data')
-        (self.root / 'assets').mkdir()
+        shutil.copytree(ROOT / 'assets', self.root / 'assets')
         # E0's legacy transaction semantics remain covered using frozen v1
         # chapter/dialogue fixtures. Active v2 authoring has its own story suite.
         for name, path in [('chapter_01.json', CHAPTER), ('oliver_intro.json', INTRO), ('oliver_arrival.json', ARRIVAL)]:
@@ -418,7 +418,7 @@ class E0(unittest.TestCase):
         self.assertEqual(body['authored'],self.read(SCENE))
         self.assertEqual(body['resolved_links']['handle'],'crank_handle')
         self.assertIn('interaction',body['editable_fields']['objects'])
-        dependencies = sorted(PATHS)
+        dependencies = sorted(PATHS + [a['path'] for a in self.read(ASSETS)['assets'].values()])
         h=hashlib.sha256()
         for path in dependencies:
             digest=hashlib.sha256((self.root/path).read_bytes()).digest()

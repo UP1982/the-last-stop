@@ -18,8 +18,16 @@ def array(item, minimum=0):return dict(type='array',items=item,minItems=minimum,
 def mapping(value):return dict(type='object', propertyNames=ID, additionalProperties=value,maxProperties=1024)
 source=(ROOT/'shared/content/story.odin').read_text()
 constants=dict(re.findall(r'^(\w+) :: "([^"]+)"',source,re.M))
+budget_block=re.search(r'UI_STRING_BUDGETS := \[\?\]UI_String_Budget\{(.*?)\n\}',source,re.S).group(1)
+ui_budgets={key:int(limit) for key,limit in re.findall(r'\{"(\w+)",\s*(\d+)\}',budget_block)}
+speaker_budget=int(re.search(r'UI_SPEAKER_NAME_BUDGET :: (\d+)',source).group(1))
 ID=dict(type='string',pattern='^[a-z][a-z0-9_]{0,63}$')
 TEXT=dict(type='string',minLength=1,maxLength=4096,pattern=r'[^ \t\r\n]',allOf=[{'not':{'pattern':r'[\x00-\x08\x0b-\x1f\x7f]'}}])
+def ui_text(limit):
+    value=copy.deepcopy(TEXT)
+    value.update(maxLength=limit,description=f'Single-line UI chrome: at most {limit} Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.')
+    value['allOf'].append({'not':{'pattern':r'[\t\r\n]'}})
+    return value
 VEC=dict(type='array',minItems=2,maxItems=2,prefixItems=[bounded(-16384,16384)]*2,items=False)
 actor=obj(dict(feet=VEC,facing=enum('left|right'),pose=enum(constants['POSES']),emote=enum(constants['EMOTES']),asset=ID),['feet','facing','pose','emote'])
 states={'train':'waiting|moving|stopped','door':'open|closed','bag':'ear_caught|free|aboard','flowerpot':'bud|bloom','paper_flower':'paper|folding|folded|spring','slat':'loose|slipping|caught|resting','bench':'unrepaired|supported','timetable':'unhelpful','sign':'faded','notice':'supper','market_dressing':'open'}
@@ -38,10 +46,11 @@ chapter=json.loads((OUT/'chapter.v1.schema.json').read_text());chapter.pop('$id'
 chapter['properties']['schema_version']['const']=2
 for field in ('title','destination'):chapter['properties'][field]=TEXT
 for field in ('name','species'):chapter['properties']['speakers']['additionalProperties']['properties'][field]=TEXT
+chapter['properties']['speakers']['additionalProperties']['properties']['name']=ui_text(speaker_budget)
 chapter['properties']['keepsakes']['additionalProperties']['properties']['name']=TEXT
 ref=copy.deepcopy(chapter['properties']['dialogues']['properties']['intro'])
 chapter['properties']['dialogues']=obj({role:copy.deepcopy(ref) for role in constants['STORY_ROLES'].split('|')})
-chapter['properties']['strings']=obj({key:TEXT for key in constants['STRING_KEYS'].split('|')});chapter['required'].append('strings')
+chapter['properties']['strings']=obj({key:ui_text(ui_budgets[key]) if key in ui_budgets else TEXT for key in constants['STRING_KEYS'].split('|')});chapter['required'].append('strings')
 for name,value in [('chapter',chapter),('dialogue',dialogue)]:
  value['$schema']='https://json-schema.org/draft/2020-12/schema';value['$id']=f'{name}.v2.schema.json'
  value['$comment']='Integer bounds and structure are mirrored by shared/content. Cross-document identities, references, and ordered line-beat projection are checked by the Odin graph validator. Text is bounded to 4096 UTF-8 bytes there.'

@@ -102,6 +102,7 @@ class M2Tests(unittest.TestCase):
             call('resume', self.save)
         fixture = self.dir / 'moved'
         shutil.copytree(ROOT / 'data', fixture / 'data')
+        shutil.copytree(ROOT / 'assets', fixture / 'assets')
         scene = json.loads((fixture / SCENE).read_bytes())
         for key in ('world_bounds', 'camera_bounds', 'ground'):
             scene[key][0] += 80

@@ -251,9 +251,15 @@
                 "not": {
                   "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
                 }
+              },
+              {
+                "not": {
+                  "pattern": "[\\t\\r\\n]"
+                }
               }
             ],
-            "maxLength": 4096,
+            "description": "Single-line UI chrome: at most 20 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+            "maxLength": 20,
             "minLength": 1,
             "pattern": "[^ \\t\\r\\n]",
             "type": "string"
@@ -294,9 +300,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -307,9 +319,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 14 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 14,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -346,9 +364,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -372,9 +396,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -463,9 +493,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -476,9 +512,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -489,9 +531,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -528,9 +576,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -554,9 +608,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 14 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 14,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -567,9 +627,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -580,9 +646,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 10 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 10,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -619,9 +691,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"
@@ -645,9 +723,15 @@
               "not": {
                 "pattern": "[\\x00-\\x08\\x0b-\\x1f\\x7f]"
               }
+            },
+            {
+              "not": {
+                "pattern": "[\\t\\r\\n]"
+              }
             }
           ],
-          "maxLength": 4096,
+          "description": "Single-line UI chrome: at most 26 Unicode characters; no newline or tab. The runtime also bounds rendering to its reserved region.",
+          "maxLength": 26,
           "minLength": 1,
           "pattern": "[^ \\t\\r\\n]",
           "type": "string"

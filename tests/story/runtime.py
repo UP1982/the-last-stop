@@ -32,7 +32,7 @@ def call(command, save, binary=BIN, root=ROOT, env=None):
 
 class StoryRuntimeTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix='tls-m3b-', dir=ROOT / 'build')
+        self.temp = tempfile.TemporaryDirectory(prefix='tls-m3b-', dir='/tmp')
         self.directory = Path(self.temp.name)
         self.save = self.directory / 'profile'
         self.path = self.save / 'chapter_01.json'
@@ -50,6 +50,7 @@ class StoryRuntimeTests(unittest.TestCase):
     def test_02_edited_long_text_all_roles_pagination_and_unicode(self):
         content = self.directory / 'content'
         shutil.copytree(ROOT / 'data', content / 'data')
+        shutil.copytree(ROOT / 'assets', content / 'assets')
         for path in (content / 'data/dialogue').glob('*.json'):
             d = json.loads(path.read_bytes())
             for line in d['lines'].values():
@@ -106,6 +107,38 @@ class StoryRuntimeTests(unittest.TestCase):
         self.assertEqual(self.record()['checkpoint'], 'chapter_start')
         self.assertIn('mode Station_Intro flower false', output)
         self.assertEqual(self.record()['puzzle']['handle_location'], 'shelf')
+
+    def test_07_v1_startup_diagnostic_before_new_or_continue_without_save_writes(self):
+        content = self.directory / 'v1-content'
+        shutil.copytree(ROOT / 'data', content / 'data')
+        if (ROOT / 'assets').exists(): shutil.copytree(ROOT / 'assets', content / 'assets')
+        for name, path in [('chapter_01.json', 'chapters/chapter_01.json'),
+                           ('oliver_intro.json', 'dialogue/oliver_intro.json'),
+                           ('oliver_arrival.json', 'dialogue/oliver_arrival.json')]:
+            shutil.copyfile(ROOT / 'tests/story/fixtures/v1' / name, content / 'data' / path)
+        before = hashes(content)
+        outputs = [call('startup-rejected', self.save, root=content)]
+        self.assertFalse(self.save.exists(), 'rejected startup must not even create a profile directory')
+        for state in ('chapter_start', 'boarded', 'shelf', 'returned', 'arrival', 'complete'):
+            self.seed(state)
+            original = hashes(self.save)
+            outputs.append(call('startup-rejected', self.save, root=content))
+            self.assertEqual(hashes(self.save), original)
+        self.assertEqual(hashes(content), before)
+        (OUT / 'runtime-v1-startup.txt').write_text('\n'.join(outputs))
+
+    def test_08_v2_chapter_with_v1_dialogue_also_requires_migration(self):
+        content = self.directory / 'mixed-content'
+        shutil.copytree(ROOT / 'data', content / 'data')
+        shutil.copytree(ROOT / 'assets', content / 'assets')
+        shutil.copyfile(ROOT / 'tests/story/fixtures/v1/oliver_intro.json',
+                        content / 'data/dialogue/oliver_intro.json')
+        before = hashes(content)
+        output = call('startup-rejected', self.save, root=content)
+        self.assertIn('Dialogue intro is schema v1', output)
+        self.assertFalse(self.save.exists())
+        self.assertEqual(hashes(content), before)
+        (OUT / 'runtime-mixed-startup.txt').write_text(output)
 
 
 if __name__ == '__main__':
