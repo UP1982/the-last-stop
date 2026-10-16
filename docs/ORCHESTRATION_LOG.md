@@ -67,6 +67,9 @@
 
 | T-ART-2 | gpt-6.1-sol (high) | art import batch 1 (assets/, data/assets/manifest.json, tests/assets/) + MISSING_ART_SPEC | Game @ 0be6065 | delivered (10 assets, 51-item MISSING_ART_SPEC → docs/art). Its asset import broke test fixtures that copy data/ without assets; T-M3-FIX repaired fixtures concurrently → commit both together after T-M3-FIX |
 
+| T-M3-R2 | gpt-6-astra (high) | M3 review r2 (worktree @ adb69a6) | /tmp | R1 findings resolved; 1 new P2 wrap (leading space + wide word → empty row + 578px row) → fixed by Opus with regressions. **M3 automated scope ACCEPTED** |
+| T-ART-3 | gpt-6.1-sol (high) | draw batch-1 sprites at runtime | Game @ adb69a6 | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-ART-3-sol-r1 |
+
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 
 ## Next

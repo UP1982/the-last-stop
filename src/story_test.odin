@@ -158,13 +158,16 @@ story_test_guards :: proc(g:^Game_State) {
     fmt.println("PASS guards: travel/obstacle skip retain uncleared puzzle; repeated farewell grants one derived flower, no duplicate cues")
 }
 story_test_text :: proc() {
-    for s in ([]string{"A little further down the line…","WILLOW CREEK PLATFORM SUPPER — ALL WELCOME",strings.repeat("word ",820),strings.repeat("猫",4096),"line one\nline two",strings.repeat("W",4096)}) {
+    for s in ([]string{"A little further down the line…","WILLOW CREEK PLATFORM SUPPER — ALL WELCOME",strings.repeat("word ",820),strings.repeat("猫",4096),"line one\nline two",strings.repeat("W",4096),
+        // Astra M3-R2: leading space + over-wide word once made an empty row then a 578px row.
+        strings.concatenate({" ",strings.repeat("W",35),"iW"}),strings.concatenate({"a ",strings.repeat("W",40)}),strings.concatenate({"  ",strings.repeat("W",36),"i"})}) {
         ends,count:=story_line_ends(s)
         start:=0
         for end,index in ends[:count] {
             assert(end>=start && end<=len(s))
             if end<len(s) { assert(s[end]&0xc0!=0x80) }
             assert(story_text_width(story_line(s,ends[:count],index))<=STORY_TEXT_WIDTH)
+            if index==0 && len(s)>0 && s[0]==' ' { assert(len(story_line(s,ends[:count],index))>0) }
             assert(264+i32(index%STORY_ROWS)*STORY_LINE_HEIGHT+STORY_FONT_SIZE<=336)
             start=end
         }

@@ -40,23 +40,36 @@ story_text_width :: proc(s:string) -> i32 {
 story_line_ends :: proc(s: string) -> (ends: [4097]int, count: int) {
     start,space:=0,-1
     width:=i32(0)
+    seen:=false // a visible glyph precedes the candidate space on this row
     // Range supplies UTF-8 byte offsets; a long word can only break at a rune.
     for ch,i in s {
         if ch=='\n' {
-            ends[count]=i+1; count+=1; start=i+1; width=0; space=-1; continue
+            ends[count]=i+1; count+=1; start=i+1; width=0; space=-1; seen=false; continue
         }
         if ch=='\r' { continue }
-        if ch==' ' || ch=='\t' { space=i }
+        if ch==' ' || ch=='\t' { if seen { space=i } } else { seen=true }
         next:=width+story_glyph_width(ch)+STORY_SPACING
         if next-STORY_SPACING>STORY_TEXT_WIDTH {
             end:=i
+            // Break after a space only if visible text precedes it on this
+            // row (space is only recorded then); else hard-break before ch.
             if space>=start { end=space+1 }
-            ends[count]=end; count+=1; start=end; space=-1
+            ends[count]=end; count+=1; start=end; space=-1; seen=false
             // Include the partial word after the chosen space, including ch.
             width=0
             if end<=i {
-                for tail in s[start:i] { width+=story_glyph_width(tail)+STORY_SPACING }
+                for tail in s[start:i] {
+                    width+=story_glyph_width(tail)+STORY_SPACING
+                    if tail!=' ' && tail!='\t' { seen=true }
+                }
                 width+=story_glyph_width(ch)+STORY_SPACING
+                if ch!=' ' && ch!='\t' { seen=true }
+                // The carried word may itself be too wide: hard-break before ch.
+                if width-STORY_SPACING>STORY_TEXT_WIDTH && i>start {
+                    ends[count]=i; count+=1; start=i
+                    width=story_glyph_width(ch)+STORY_SPACING
+                    seen=ch!=' ' && ch!='\t'
+                }
             }
         } else { width=next }
     }

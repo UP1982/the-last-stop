@@ -30,7 +30,7 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 - [x] Return-to-train and Oliver arrival farewell.
 - [x] Single paper-flower keepsake award.
 **Gate:** Title-to-end journey in one playthrough.
-**Status:** implemented (screenplay content, placeholder visuals); automated + native scripted advance/skip/relaunch runs pass. Astra review + typography fix pending; human playthrough pending.
+**Status:** implemented (screenplay content, placeholder visuals); automated + native scripted advance/skip/relaunch runs pass. Astra R1+R2 findings resolved (last fixed by Opus); automated scope accepted. Human playthrough pending.
 
 ## M4: Saving and resilience
 - [ ] Versioned save representation and atomic write.
