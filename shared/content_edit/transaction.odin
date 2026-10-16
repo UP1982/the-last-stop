@@ -30,6 +30,15 @@ checkpoint :: proc(name:string) {
         }
     }
 }
+exit_code_for :: proc(diagnostics:[]c.Diagnostic) -> int {
+    code:=2
+    for d in diagnostics {
+        if d.code=="external_change" { code=max(code,3) }
+        if d.code=="io_read" { code=4 }
+    }
+    return code
+}
+
 result_error :: proc(r:^Edit_Result,exit_code:int,code,file,message:string) {
     r.exit_code=exit_code
     ds:=make([]c.Diagnostic,1); ds[0]=c.diagnostic(code,strings.clone(file),"",strings.clone(message)); r.diagnostics=ds
@@ -101,17 +110,14 @@ apply_edit :: proc(project_root:string,request:Edit_Request,allocator:mem.Alloca
     if loaded.snapshot==nil {
         // Copy diagnostics into this result's domain before the load is destroyed.
         r.diagnostics=clone_diagnostics(loaded.diagnostics)
-        r.exit_code=2
-        for d in r.diagnostics {
-            if d.code=="external_change" { r.exit_code=3 }
-            if d.code=="io_read" { r.exit_code=4 }
-        }
+        r.exit_code=exit_code_for(r.diagnostics)
         return r
     }
     s:=loaded.snapshot; r.old_revision=s.revision; r.new_revision=s.revision
     if c.revision_string(s.revision)!=request.expected_revision { result_error(&r,3,"stale_revision",s.chapter_path,"Chapter graph changed; inspect before retrying"); return r }
     prepared,ds:=prepare_edit(s,request,context.allocator,project_root,fd)
-    if prepared==nil { r.diagnostics=ds; r.exit_code=2; return r }
+    // Candidate preparation may read newly referenced assets, so classify I/O like loading.
+    if prepared==nil { r.diagnostics=ds; r.exit_code=exit_code_for(ds); return r }
     defer destroy_prepared_edit(prepared)
     r.changed_document=strings.clone(prepared.path)
     if prepared.noop { return r }

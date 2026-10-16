@@ -475,6 +475,21 @@ class E0(unittest.TestCase):
         self.assertEqual(redone['new_revision'], deleted['new_revision'])
         self.assertEqual(redone['new_revision'], self.revision())
 
+    def test_13_unreadable_new_asset_is_io_failure(self):
+        asset = self.asset_fixture()
+        request = self.request([{'op':'create','collection':'assets','id':'new_asset','value':asset}], document='chapter_01_assets')
+        before = self.disk()
+        target = self.root / 'assets/new.bin'
+        target.chmod(0)
+        try:
+            body = self.apply(request, 4)
+        finally:
+            target.chmod(0o644)
+        self.assertEqual(body['commit_state'], 'not_committed')
+        self.assertIn('io_read', [d['code'] for d in body['diagnostics']])
+        self.assertEqual(self.disk(), before)
+        self.apply(request)
+
     def test_12_new_asset_confinement_and_recheck(self):
         asset = self.asset_fixture()
         for path, code in [('../outside.bin','unsafe_path'), ('/tmp/outside.bin','unsafe_path'),

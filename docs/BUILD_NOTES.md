@@ -17,5 +17,9 @@ macOS 27.2 arm64; Odin `dev-2026-10:84bc3fc21`; bundled vendor:raylib 6.0. No ex
 - `./scripts/check.sh` exit 0; `python3 -B tests/editor/run.py` 9 groups OK; CLI validate/inspect/edit/stale(3)/malformed(2) demo with byte-identical rejection evidence in `build/evidence/e0a/`. Legacy manifest byte-exact. Native integration unverified (E0b).
 - Env: Python 3.9.6 OK; Node broken (missing libsimdjson) — not a dependency.
 
+## E0a review
+- Astra R1: 2 P2 (aliased lock lost update; new-asset deps) → fixed ae3448f. Astra R2: verified fixes + 279 malformed inputs, 100 asset txn alloc cycles; 1 P2 exit code → fixed by Opus with regression test_13. check.sh exit 0, 13 test groups OK. E0a accepted.
+- Documented limitation: unmanaged writers ignoring the lock can race the final recheck/rename.
+
 ## Open issues
 - None confirmed.
