@@ -33,12 +33,12 @@ Game milestones M0–M5 remain ordered. The user also authorized all editor surf
 **Status:** implemented (screenplay content, placeholder visuals); automated + native scripted advance/skip/relaunch runs pass. Astra R1+R2 findings resolved (last fixed by Opus); automated scope accepted. Human playthrough pending.
 
 ## M4: Saving and resilience
-- [ ] Versioned save representation and atomic write.
-- [ ] Load stable checkpoints from every meaningful puzzle state.
-- [ ] Resume after scene skip, quit, and reward replay.
+- [x] Versioned save representation and atomic write.
+- [x] Load stable checkpoints from every meaningful puzzle state.
+- [x] Resume after scene skip, quit, and reward replay.
 **Gate:** Tests in TEST_PLAN.md all pass, no duplicate keepsakes or unreachable handle.
 **Scope decision (Opus, 2026-10-16):** M4 covers game resilience (TEST_PLAN game cases + Astra T-M4-A tasks 1–6, 8). TEST_PLAN editor cases (E2 apply/undo/isolation, E3 dialogue/source/build/provider) are gated by E2/E3/E4, not M4; they remain required for final delivery.
-**Status:** NOT MET — Astra audit at 17fe2a2: P1 failed-save→Title→Continue loses progress; P2 reload leaves unsupported dropped handle; P2 stale second instance overwrites Complete; P2 replaced save dir reports false success; P2 Continue uses cached state after save deleted. Fixes in progress.
+**Status:** automated game scope MET (Astra T-M4-R2 at c8fd7de; F1–F5 closed). Open: P3 ENOLCK misreported as 'another copy running' (saving still fails safely). Human-only: keyboard/focus/feel, min-size readability, 3 hand completions, fresh-player walkthrough.
 
 ## M5: Presentation + playtest
 - [~] Original pixel art replacements and cozy animations. (batch 1 drawn: Milo/Oliver/Rin/Brass/2 backgrounds; 51 items in docs/art/MISSING_ART_SPEC.md pending)
