@@ -76,7 +76,8 @@
 | T-POL-1 | gpt-6.1-sol (medium) | story staging/label polish | Game @ 17fe2a2 | delivered; Opus verified only stage numbers changed, check.sh 0, screenshots; committed |
 
 | T-M4-R2 | gpt-6-astra (high) | M4 review r2 (worktree @ c8fd7de) | /tmp | **M4 automated scope MET**; P3 ENOLCK message queued; evidence build/evidence/m4-r2/ |
-| T-E2-1 | gpt-6.1-sol (high) | E2 in-game edit mode (src/, tests/dev_editor) | Game @ c8fd7de | running — taskId node:delegated-task:command%3Amcp%3A4f96dae7-0c6f-4eaf-a081-4f2ccac40abe%3Adelegate-task%3AT-E2-1-sol-r1 |
+| T-E2-1 | gpt-6.1-sol (high) | E2 in-game edit mode (src/, tests/dev_editor) | Game @ c8fd7de | delivered; Opus: check.sh 0, save.odin/data unchanged, release strings clean; committed |
+| T-E4-1 | gpt-6.1-sol (high) | run-journey wiring, P3 ENOLCK msg, E4 automatable reliability | Game @ E2 commit | running |
 
 File owners now: src/, tests/runtime/, scripts/check.sh, README.md → T-M2-1; editor/, tests/editor_ui/ → T-E1-1; docs/ → Opus.
 

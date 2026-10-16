@@ -66,10 +66,11 @@ Hazel/waterwheel; Felix/mirror signal; Bea/sleepy bear; Lumi/turntable; cozy und
 **Status:** gate demonstrated via API-driven browser flow + native dump/screenshot (build/evidence/e1/). Physical mouse-drag and accessibility unverified — human check.
 
 ## E2: In-game edit mode — after E0, with M2
-- [ ] Development overlays for collision/interactions/camera and stable IDs.
-- [ ] Pause/step/reset, permitted property changes and explicit apply-to-content.
-- [ ] Isolated preview saves and release-disabled authoring writes.
+- [x] Development overlays for collision/interactions/camera and stable IDs.
+- [x] Pause/step/reset, permitted property changes and explicit apply-to-content.
+- [x] Isolated preview saves and release-disabled authoring writes.
 **Gate:** Applied changes reopen correctly in the visual editor; ordinary play never alters authored defaults or real player saves.
+**Status:** implemented (T-E2-1): 21 E2 tests, native apply/relaunch demo, release binary has no authoring strings. Human input/usability pending.
 
 ## E3: Dialogue, assets and coding/agent workspace — after E1, with M3/M4
 - [x] Structured dialogue/beat editing and asset/provenance browser.
